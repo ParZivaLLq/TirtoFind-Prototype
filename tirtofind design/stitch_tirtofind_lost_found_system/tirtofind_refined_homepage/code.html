@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TirtoFind | Terminal Tirtonadi Lost &amp; Found</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "status-found": "#00703C",
+                        "on-background": "#1b1c1c",
+                        "surface-container-low": "#f5f3f2",
+                        "surface-variant": "#e4e2e1",
+                        "surface-container-high": "#e9e8e7",
+                        "tertiary-fixed-dim": "#a0caff",
+                        "secondary-fixed": "#e3e2e1",
+                        "on-error-container": "#93000a",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-container": "#626362",
+                        "primary-fixed": "#dbe1ff",
+                        "error-container": "#ffdad6",
+                        "border-subtle": "#E5E7EB",
+                        "error": "#ba1a1a",
+                        "on-tertiary-container": "#e9f1ff",
+                        "tertiary-fixed": "#d2e4ff",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "on-secondary": "#ffffff",
+                        "on-surface": "#1b1c1c",
+                        "primary-container": "#2563eb",
+                        "on-secondary-fixed": "#1a1c1c",
+                        "outline-variant": "#c3c6d7",
+                        "tertiary-container": "#1d70b8",
+                        "on-tertiary-fixed": "#001c37",
+                        "inverse-on-surface": "#f2f0f0",
+                        "on-secondary-fixed-variant": "#464746",
+                        "on-error": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "outline": "#737686",
+                        "surface-tint": "#0053db",
+                        "status-danger": "#D33222",
+                        "surface": "#fbf9f8",
+                        "background": "#fbf9f8",
+                        "on-primary-fixed": "#00174b",
+                        "primary": "#004ac6",
+                        "on-surface-variant": "#434655",
+                        "surface-bright": "#fbf9f8",
+                        "surface-container-highest": "#e4e2e1",
+                        "secondary-container": "#e0dfde",
+                        "inverse-surface": "#303030",
+                        "tertiary": "#005796",
+                        "surface-dim": "#dbdad9",
+                        "secondary-fixed-dim": "#c7c6c5",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "on-primary-container": "#eeefff",
+                        "inverse-primary": "#b4c5ff",
+                        "surface-container": "#efeded",
+                        "surface-white": "#FFFFFF",
+                        "on-primary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "xs": "4px",
+                        "lg": "24px",
+                        "sm": "8px",
+                        "xl": "32px",
+                        "md": "16px",
+                        "gutter": "24px",
+                        "max-width": "1280px",
+                        "margin-desktop": "64px",
+                        "base": "4px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "title-lg": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #FFFFFF; }
+        .soft-shadow { box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.05); }
+        .bento-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 24px; }
+        .nav-active { border-bottom: 2px solid #004ac6; color: #004ac6; font-weight: 700; padding-bottom: 4px; }
+    </style>
+</head>
+<body class="text-on-background">
+<!-- TopNavBar -->
+<header class="sticky top-0 w-full z-50 bg-surface-white border-b border-border-subtle h-16">
+<div class="max-w-max-width mx-auto px-lg h-full flex justify-between items-center">
+<div class="flex items-center gap-xl">
+<a class="text-title-lg font-title-lg font-bold text-primary" href="#">TirtoFind</a>
+<nav class="hidden md:flex gap-lg items-center">
+<a class="text-label-md font-label-md nav-active transition-colors" href="#">Found Items</a>
+<a class="text-label-md font-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Report Lost</a>
+<a class="text-label-md font-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">About</a>
+</nav>
+</div>
+<div class="flex items-center gap-md">
+<button class="md:hidden p-2 text-on-surface-variant">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<button class="px-md py-sm bg-primary-container text-on-primary-container rounded-lg text-label-md font-label-md hover:opacity-80 transition-opacity">
+                    Login
+                </button>
+</div>
+</div>
+</header>
+<main>
+<!-- Hero Section -->
+<section class="relative pt-xl pb-24 overflow-hidden">
+<div class="max-w-max-width mx-auto px-lg text-center relative z-10">
+<h1 class="text-display-lg font-display-lg mt-xl mb-md">Reconnecting You with Your Belongings</h1>
+<p class="text-body-lg font-body-lg text-on-surface-variant max-w-2xl mx-auto mb-xl">
+                    TirtoFind uses advanced AI to help you find lost items at Terminal Tirtonadi efficiently and securely.
+                </p>
+<div class="max-w-2xl mx-auto bg-surface-white p-2 rounded-xl soft-shadow border border-border-subtle flex items-center">
+<span class="material-symbols-outlined ml-md text-outline">search</span>
+<input class="flex-grow border-none focus:ring-0 text-body-md font-body-md px-md" placeholder="Search for your lost item..." type="text"/>
+<button class="px-xl py-md bg-primary-container text-on-primary-container rounded-lg font-label-md hover:opacity-90 transition-all">
+                        Search
+                    </button>
+</div>
+<div class="mt-sm text-label-sm font-label-sm text-outline">
+                    Popular: "Blue Backpack", "Wallet", "Smartphone", "Keys"
+                </div>
+</div>
+<!-- Atmospheric BG Element -->
+<div class="absolute top-0 right-0 -z-10 opacity-10">
+
+</div>
+</section>
+<!-- Statistics Section -->
+<section class="bg-surface py-xl">
+<div class="max-w-max-width mx-auto px-lg">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-lg">
+<div class="bg-surface-white p-xl rounded-xl soft-shadow border border-border-subtle text-center">
+<p class="text-label-sm font-label-sm text-outline uppercase tracking-wider mb-sm">Total Found Items</p>
+<h2 class="text-display-lg font-display-lg text-primary">4,821</h2>
+</div>
+<div class="bg-surface-white p-xl rounded-xl soft-shadow border border-border-subtle text-center">
+<p class="text-label-sm font-label-sm text-outline uppercase tracking-wider mb-sm">Total Returned Items</p>
+<h2 class="text-display-lg font-display-lg text-primary">3,942</h2>
+</div>
+<div class="bg-surface-white p-xl rounded-xl soft-shadow border border-border-subtle text-center">
+<p class="text-label-sm font-label-sm text-outline uppercase tracking-wider mb-sm">Total Lost Reports</p>
+<h2 class="text-display-lg font-display-lg text-primary">1,248</h2>
+</div>
+</div>
+</div>
+</section>
+<!-- Latest Found Items -->
+<section class="py-xl">
+<div class="max-w-max-width mx-auto px-lg">
+<div class="flex justify-between items-end mb-xl">
+<div>
+<h2 class="text-headline-lg font-headline-lg">Latest Found Items</h2>
+<p class="text-body-md font-body-md text-on-surface-variant">Recently recovered items in the terminal area</p>
+</div>
+<a class="text-primary font-label-md flex items-center gap-xs hover:underline" href="#">
+                        View All <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-lg">
+<!-- Card 1 -->
+<div class="bg-surface-white border border-border-subtle rounded-xl overflow-hidden soft-shadow group cursor-pointer hover:border-primary transition-all">
+<div class="h-48 overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A high-quality studio photograph of a premium black leather bifold wallet lying on a clean white surface with sharp shadows, reflecting a professional and organized aesthetic for a lost and found application." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVg47JczhTb74pAE23hPHRp28nuJ2OjFjEw6f21c5fYeP1zyVu76KlBC47wccoTqitMSbc4sFm1etJzI5T24oXgQEsiuLTREOq0x-Vd_NVoEryZnwqO-6D_vr6aZy4SXtl-vaw3HQMMa6oEV85-obzTaK_r_0ixpmpHdriygYhsVUG7yLfYp-qqjsIN-_VlTbtbQs527aCofGPlgj_Y47iKj72QYt-VNipIfT1plgohT-0Q8vxARjVxg"/>
+</div>
+<div class="p-md">
+<div class="flex justify-between items-start mb-xs">
+<h3 class="text-title-lg font-title-lg">Black Leather Wallet</h3>
+<span class="bg-status-found/10 text-status-found px-sm py-xs rounded-full text-label-sm font-label-sm">Found</span>
+</div>
+<p class="text-label-md font-label-md text-outline flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">calendar_today</span> Oct 24, 2024
+                            </p>
+<p class="text-label-md font-label-md text-outline flex items-center gap-xs mt-xs">
+<span class="material-symbols-outlined text-[16px]">location_on</span> Platform 4, Terminal Tirtonadi
+                            </p>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-white border border-border-subtle rounded-xl overflow-hidden soft-shadow group cursor-pointer hover:border-primary transition-all">
+<div class="h-48 overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A sleek, modern iPhone 13 in Sierra Blue, captured in crisp daylight on a minimalist concrete background, emphasizing the device's build and color for clear identification in a professional inventory system." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD012YQ6CuG8kTh-_Z9OXPwsx4AMojiG567j18dLK93k_Z5iRywzPg0E41h0S_XXw334zyHM29EIev0bIF7m5zgJPwU0vVq8PQPe9t2vdm6RP_jVLM6C2gNOfPfU3VgcBCfj0vyopywzKRItxQyrClk1mf8SzinGrybARmmx6FUXLsqExTLTIrNJcI_iGTMLAQGsuZds2ohp2tukaus_CX8nzvHtbEhFq839kc3KcuebjaGT1tTqcswLg"/>
+</div>
+<div class="p-md">
+<div class="flex justify-between items-start mb-xs">
+<h3 class="text-title-lg font-title-lg">iPhone 13 - Blue</h3>
+<span class="bg-status-found/10 text-status-found px-sm py-xs rounded-full text-label-sm font-label-sm">Found</span>
+</div>
+<p class="text-label-md font-label-md text-outline flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">calendar_today</span> Oct 23, 2024
+                            </p>
+<p class="text-label-md font-label-md text-outline flex items-center gap-xs mt-xs">
+<span class="material-symbols-outlined text-[16px]">location_on</span> Waiting Hall Zone B
+                            </p>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-white border border-border-subtle rounded-xl overflow-hidden soft-shadow group cursor-pointer hover:border-primary transition-all">
+<div class="h-48 overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A pair of stylish, high-end noise-canceling headphones resting on a wooden bench, with soft morning light illuminating the metallic details and leather padding, highlighting a typical lost item in a transportation hub." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAnQu8VxLSUj_dTeTXgWrJzRSuU0go5DopuAufte75bs0iAh5AMJbRKcuybshyq4i6KmrUWIMVm-oSozRQF-DuIVawZyyAGYtszP1Ns-oWVunyXYWxWEuChEDdmhrwDcoHtYkoSy1VknDvLojdKD-hcNmS1HmPALNs2eG8P0mLAs4y3-cLM50Xz8bXKzP6FtcEe0LRlPAznB9u-2WSpjB7J3NavjljcbiApQV_D6aCYPmLfsgR8ucE9PQ"/>
+</div>
+<div class="p-md">
+<div class="flex justify-between items-start mb-xs">
+<h3 class="text-title-lg font-title-lg">Sony Headphones</h3>
+<span class="bg-status-found/10 text-status-found px-sm py-xs rounded-full text-label-sm font-label-sm">Found</span>
+</div>
+<p class="text-label-md font-label-md text-outline flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">calendar_today</span> Oct 23, 2024
+                            </p>
+<p class="text-label-md font-label-md text-outline flex items-center gap-xs mt-xs">
+<span class="material-symbols-outlined text-[16px]">location_on</span> Food Court Area
+                            </p>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="bg-surface-white border border-border-subtle rounded-xl overflow-hidden soft-shadow group cursor-pointer hover:border-primary transition-all">
+<div class="h-48 overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A rugged dark grey backpack with multiple compartments and zippers, placed neatly against a modern architectural wall, shot in high resolution to showcase texture and branding for easy recognition." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHaDyuYAbAH1sqyUY5phv0gcngiByiBwatuP_ofAP-yoy1doBZuxjevGka0xB4FXToiXOTYw1Ykf2Kbp6P8qb-oqGHke8VuAe2FPJepaJ0Csa6U6rFyLLFyssN_Cl2OrqVA0Y0DQ2RTEhW-SuAA_Rq3beSpR9fOosdg7c5s4XRpqtE-eyNzhKRwA5YkroNl2A9xknQkF6YCTBK019YCkGbbVw4s_fdEFicRitiYvqR3EkzeDQE4nIjXA"/>
+</div>
+<div class="p-md">
+<div class="flex justify-between items-start mb-xs">
+<h3 class="text-title-lg font-title-lg">Grey Backpack</h3>
+<span class="bg-status-found/10 text-status-found px-sm py-xs rounded-full text-label-sm font-label-sm">Found</span>
+</div>
+<p class="text-label-md font-label-md text-outline flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">calendar_today</span> Oct 22, 2024
+                            </p>
+<p class="text-label-md font-label-md text-outline flex items-center gap-xs mt-xs">
+<span class="material-symbols-outlined text-[16px]">location_on</span> Bus Arrival Gate
+                            </p>
+</div>
+</div>
+<!-- Card 5 -->
+<div class="bg-surface-white border border-border-subtle rounded-xl overflow-hidden soft-shadow group cursor-pointer hover:border-primary transition-all">
+<div class="h-48 overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A set of car keys with a distinct leather keychain and a remote fob, lying on a reflective glass surface, photographed with a shallow depth of field to emphasize the key profile for identification purposes." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAEze8hUmh4qH4M2mkivvasIgKJPMM_aM1Od63g6oq-L0PrkpoR44NxAVB7U_zDjwHgeOcmv9pNvOMo_VFASIDwxhh2kK54UdtLdTTx7PTyjBVJFKbSMiw3ro7x9ecEN-Y9eVYokRn9mo7KCwIPQjJx43w0eS_szqn451OJPqB6yZAGiPmtF13Hjj5BkDW8wfegTVGLHgZVfN2SMKXcnZ4kSyy22fmIA6yfTCQdiwYXyu9_4j4NhxBEGQ"/>
+</div>
+<div class="p-md">
+<div class="flex justify-between items-start mb-xs">
+<h3 class="text-title-lg font-title-lg">Car Keys - Toyota</h3>
+<span class="bg-status-found/10 text-status-found px-sm py-xs rounded-full text-label-sm font-label-sm">Found</span>
+</div>
+<p class="text-label-md font-label-md text-outline flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">calendar_today</span> Oct 21, 2024
+                            </p>
+<p class="text-label-md font-label-md text-outline flex items-center gap-xs mt-xs">
+<span class="material-symbols-outlined text-[16px]">location_on</span> Parking Lot South
+                            </p>
+</div>
+</div>
+<!-- Card 6 -->
+<div class="bg-surface-white border border-border-subtle rounded-xl overflow-hidden soft-shadow group cursor-pointer hover:border-primary transition-all">
+<div class="h-48 overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A sophisticated analog wristwatch with a silver band and navy blue face, shown in a close-up macro shot that captures the details of the dial and markers, ideal for a professional item catalog." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCI2Vp1duMsdxo9V9AmuJf8JriSRQJC1DEQB8HqAZNOaoigsIqZhofvd68y_K71c6sOlyxjpj2idINTuoZsl8s6dh0uN5Gwkt-bjXuRA2xvlNRcwhnEx6z03NirU_XjTMOhWtntE3x6yh_lkrguZacU3o7fGb5rsZJHHcYLS1B7cRTndYTBXmBjImxfYlmN_-ovYxFMTa0i9QI-nQCEPg1Yd-6tjpaReD9hGstt2iPbxPYQaY-XbO2K5Q"/>
+</div>
+<div class="p-md">
+<div class="flex justify-between items-start mb-xs">
+<h3 class="text-title-lg font-title-lg">Analog Wristwatch</h3>
+<span class="bg-status-found/10 text-status-found px-sm py-xs rounded-full text-label-sm font-label-sm">Found</span>
+</div>
+<p class="text-label-md font-label-md text-outline flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">calendar_today</span> Oct 21, 2024
+                            </p>
+<p class="text-label-md font-label-md text-outline flex items-center gap-xs mt-xs">
+<span class="material-symbols-outlined text-[16px]">location_on</span> Restroom Area 2
+                            </p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- How It Works -->
+<section class="bg-surface-container-low py-24">
+<div class="max-w-max-width mx-auto px-lg">
+<div class="text-center mb-xl">
+<h2 class="text-headline-lg font-headline-lg">How TirtoFind Works</h2>
+<p class="text-body-lg font-body-lg text-on-surface-variant max-w-2xl mx-auto">A seamless process designed to bring your items back home.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-lg">
+<div class="relative text-center">
+<div class="w-16 h-16 bg-primary-container text-on-primary-container rounded-full flex items-center justify-center mx-auto mb-md font-bold text-headline-md">1</div>
+<h3 class="text-title-lg font-title-lg mb-xs">Search</h3>
+<p class="text-body-md font-body-md text-on-surface-variant">Browse the found items gallery with real-time updates.</p>
+<div class="hidden md:block absolute top-8 left-[calc(50%+40px)] w-[calc(100%-80px)] h-px bg-border-subtle"></div>
+</div>
+<div class="relative text-center">
+<div class="w-16 h-16 bg-primary-container text-on-primary-container rounded-full flex items-center justify-center mx-auto mb-md font-bold text-headline-md">2</div>
+<h3 class="text-title-lg font-title-lg mb-xs">Report</h3>
+<p class="text-body-md font-body-md text-on-surface-variant">Can't find it? Submit a detailed lost report quickly.</p>
+<div class="hidden md:block absolute top-8 left-[calc(50%+40px)] w-[calc(100%-80px)] h-px bg-border-subtle"></div>
+</div>
+<div class="relative text-center">
+<div class="w-16 h-16 bg-primary-container text-on-primary-container rounded-full flex items-center justify-center mx-auto mb-md font-bold text-headline-md">3</div>
+<h3 class="text-title-lg font-title-lg mb-xs">Match</h3>
+<p class="text-body-md font-body-md text-on-surface-variant">AI matches your report with our current found inventory.</p>
+<div class="hidden md:block absolute top-8 left-[calc(50%+40px)] w-[calc(100%-80px)] h-px bg-border-subtle"></div>
+</div>
+<div class="relative text-center">
+<div class="w-16 h-16 bg-primary-container text-on-primary-container rounded-full flex items-center justify-center mx-auto mb-md font-bold text-headline-md">4</div>
+<h3 class="text-title-lg font-title-lg mb-xs">Claim</h3>
+<p class="text-body-md font-body-md text-on-surface-variant">Verify ownership and collect your item from our office.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- AI Features Section -->
+<section class="py-24">
+<div class="max-w-max-width mx-auto px-lg">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-xl">
+<div class="bg-surface-white p-xl rounded-xl border border-border-subtle soft-shadow flex gap-lg">
+<div class="flex-shrink-0 w-12 h-12 bg-primary/10 text-primary rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined">bolt</span>
+</div>
+<div>
+<h3 class="text-title-lg font-title-lg mb-xs">AI Smart Matching</h3>
+<p class="text-body-md font-body-md text-on-surface-variant">Instant cross-referencing between lost reports and our entire found items inventory for immediate hits.</p>
+</div>
+</div>
+<div class="bg-surface-white p-xl rounded-xl border border-border-subtle soft-shadow flex gap-lg">
+<div class="flex-shrink-0 w-12 h-12 bg-primary/10 text-primary rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined">visibility</span>
+</div>
+<div>
+<h3 class="text-title-lg font-title-lg mb-xs">AI Auto Description</h3>
+<p class="text-body-md font-body-md text-on-surface-variant">Vision AI automatically catalogs items from photos, identifying color, brand, and type for faster discovery.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Contact Section -->
+<section class="bg-surface py-xl border-t border-border-subtle">
+<div class="max-w-max-width mx-auto px-lg text-center">
+<h2 class="text-headline-md font-headline-md mb-md">Need immediate assistance?</h2>
+<p class="text-body-md font-body-md text-on-surface-variant mb-xl">Our staff is available 24/7 at the Terminal Tirtonadi Information Desk.</p>
+<div class="flex flex-wrap justify-center gap-lg">
+<div class="flex items-center gap-xs text-on-surface">
+<span class="material-symbols-outlined text-primary">call</span>
+<span class="font-medium">+62 271 716 356</span>
+</div>
+<div class="flex items-center gap-xs text-on-surface">
+<span class="material-symbols-outlined text-primary">mail</span>
+<span class="font-medium">help@tirtofind.gov.id</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full py-xl px-lg mt-auto flex flex-col items-center gap-md bg-surface-container-highest">
+<div class="text-headline-md font-headline-md font-bold text-primary">TirtoFind</div>
+<div class="flex flex-wrap justify-center gap-xl">
+<a class="text-body-md font-body-md text-on-surface-variant opacity-80 hover:opacity-100 transition-opacity" href="#">Privacy Policy</a>
+<a class="text-body-md font-body-md text-on-surface-variant opacity-80 hover:opacity-100 transition-opacity" href="#">Terms of Service</a>
+<a class="text-body-md font-body-md text-on-surface-variant opacity-80 hover:opacity-100 transition-opacity" href="#">Contact Us</a>
+<a class="text-body-md font-body-md text-on-surface-variant opacity-80 hover:opacity-100 transition-opacity" href="#">Ministry Portal</a>
+</div>
+<div class="text-label-sm font-label-sm text-on-surface-variant mt-md">
+            © 2024 Ministry of Transportation - Terminal Tirtonadi. All rights reserved.
+        </div>
+</footer>
+<script>
+        // Micro-interactions and subtle effects
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('focus', () => {
+                input.parentElement.classList.add('ring-2', 'ring-primary/20', 'border-primary');
+            });
+            input.addEventListener('blur', () => {
+                input.parentElement.classList.remove('ring-2', 'ring-primary/20', 'border-primary');
+            });
+        });
+
+        // Simple smooth scroll for internal links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body></html>

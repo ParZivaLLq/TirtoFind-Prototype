@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TirtoFind Admin Console</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fbf9f8;
+            color: #1b1c1c;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-tertiary-container": "#e9f1ff",
+                      "status-found": "#00703C",
+                      "primary": "#004ac6",
+                      "on-secondary-fixed-variant": "#464746",
+                      "status-danger": "#D33222",
+                      "on-secondary-fixed": "#1a1c1c",
+                      "primary-container": "#2563eb",
+                      "tertiary": "#005796",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-container-low": "#f5f3f2",
+                      "status-pending": "#F59E0B",
+                      "tertiary-fixed-dim": "#a0caff",
+                      "surface-dim": "#dbdad9",
+                      "on-secondary-container": "#626362",
+                      "inverse-primary": "#b4c5ff",
+                      "background": "#fbf9f8",
+                      "tertiary-fixed": "#d2e4ff",
+                      "border-subtle": "#E5E7EB",
+                      "surface-white": "#FFFFFF",
+                      "on-error-container": "#93000a",
+                      "secondary-container": "#e0dfde",
+                      "on-background": "#1b1c1c",
+                      "secondary-fixed": "#e3e2e1",
+                      "surface-container-highest": "#e4e2e1",
+                      "on-tertiary-fixed-variant": "#00497e",
+                      "primary-fixed": "#dbe1ff",
+                      "on-primary-fixed": "#00174b",
+                      "surface-container-high": "#e9e8e7",
+                      "on-secondary": "#ffffff",
+                      "on-tertiary-fixed": "#001c37",
+                      "surface-container": "#efeded",
+                      "secondary": "#5e5e5e",
+                      "on-surface": "#1b1c1c",
+                      "on-primary": "#ffffff",
+                      "surface-tint": "#0053db",
+                      "surface-bright": "#fbf9f8",
+                      "inverse-surface": "#303030",
+                      "on-primary-fixed-variant": "#003ea8",
+                      "primary-fixed-dim": "#b4c5ff",
+                      "on-surface-variant": "#434655",
+                      "surface": "#fbf9f8",
+                      "inverse-on-surface": "#f2f0f0",
+                      "on-error": "#ffffff",
+                      "secondary-fixed-dim": "#c7c6c5",
+                      "surface-variant": "#e4e2e1",
+                      "outline-variant": "#c3c6d7",
+                      "on-primary-container": "#eeefff",
+                      "tertiary-container": "#1d70b8",
+                      "on-tertiary": "#ffffff",
+                      "error-container": "#ffdad6",
+                      "error": "#ba1a1a",
+                      "outline": "#737686"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "lg": "24px",
+                      "gutter": "24px",
+                      "sm": "8px",
+                      "margin-mobile": "16px",
+                      "md": "16px",
+                      "xs": "4px",
+                      "xl": "32px",
+                      "margin-desktop": "64px",
+                      "max-width": "1280px",
+                      "base": "4px"
+              },
+              "fontFamily": {
+                      "headline-lg-mobile": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "title-lg": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "display-lg": ["Inter"],
+                      "label-md": ["Inter"],
+                      "headline-lg": ["Inter"],
+                      "body-md": ["Inter"],
+                      "label-sm": ["Inter"]
+              },
+              "fontSize": {
+                      "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "title-lg": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}]
+              }
+            },
+          },
+        }
+      </script>
+</head>
+<body class="bg-surface">
+<!-- SideNavBar (The Anchor) -->
+<aside class="fixed left-0 top-0 h-screen w-64 flex flex-col p-md bg-surface-container-low border-r border-border-subtle z-50">
+<div class="mb-xl px-sm">
+<h1 class="text-headline-md font-headline-md font-bold text-on-surface">Admin Console</h1>
+<p class="text-label-sm text-outline">Terminal Tirtonadi Staff</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-md p-md bg-primary-container text-on-primary-container font-semibold rounded-lg scale-[0.98] transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="text-label-md font-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-md p-md text-on-surface-variant hover:bg-surface-container-high transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="text-label-md font-label-md">Items</span>
+</a>
+<a class="flex items-center gap-md p-md text-on-surface-variant hover:bg-surface-container-high transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">report_problem</span>
+<span class="text-label-md font-label-md">Reports</span>
+</a>
+<a class="flex items-center gap-md p-md text-on-surface-variant hover:bg-surface-container-high transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">verified</span>
+<span class="text-label-md font-label-md">Claims</span>
+</a>
+<a class="flex items-center gap-md p-md text-on-surface-variant hover:bg-surface-container-high transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">category</span>
+<span class="text-label-md font-label-md">Categories</span>
+</a>
+<a class="flex items-center gap-md p-md text-on-surface-variant hover:bg-surface-container-high transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="text-label-md font-label-md">Users</span>
+</a>
+</nav>
+<div class="mt-auto pt-md border-t border-border-subtle">
+<button class="w-full bg-primary text-on-primary p-md rounded-xl font-semibold mb-md hover:opacity-90 transition-opacity">
+                Smart Matching
+            </button>
+<a class="flex items-center gap-md p-md text-on-surface-variant hover:bg-surface-container-high transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-label-md font-label-md">Settings</span>
+</a>
+<a class="flex items-center gap-md p-md text-on-surface-variant hover:bg-surface-container-high transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="text-label-md font-label-md">Support</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-64 min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<header class="fixed top-0 right-0 left-64 h-16 bg-surface-white border-b border-border-subtle flex justify-between items-center px-xl z-40">
+<div class="flex items-center gap-xl flex-1">
+<h2 class="text-title-lg font-title-lg font-bold text-primary whitespace-nowrap">Good morning, Admin</h2>
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full pl-11 pr-md py-sm bg-surface-container rounded-xl border-none focus:ring-2 focus:ring-primary text-label-md" placeholder="Search items, reports, or users (Cmd+K)" type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<button class="p-sm hover:bg-surface-container rounded-full transition-transform active:scale-95">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+</button>
+<button class="p-sm hover:bg-surface-container rounded-full transition-transform active:scale-95">
+<span class="material-symbols-outlined text-on-surface-variant">history</span>
+</button>
+<div class="h-8 w-8 rounded-full bg-primary-fixed overflow-hidden border border-border-subtle">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a senior government terminal administrator, set against a clean, corporate background with neutral tones and soft, high-end studio lighting. The administrator is wearing a formal navy blue uniform with subtle gold insignia. The aesthetic is clean and authoritative, matching a high-end productivity tool interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzEfDrEqkt-y3Clq1zNIRzfPDrtLEDSO2bF0vkED4NLb-mqNtyKCsFGq8n7luzb4xtwL_Knpt5NjwVitVq_q_PzZJWP6ZYwbv3nVJbaZRfbEw9Luk_J96Vv7lIk5cjUiGgfkB0nED9p4lnApBC16wH-GOJpFti7h7Bt8043EtMo328G86Ixblpz2keAaPU5F2-sCn1CJLUQQhsuNE6TDsmJ6EdrEwM0KX5wO6__U-MkVKDD_XRG-eDSQ"/>
+</div>
+</div>
+</header>
+<!-- Dashboard Body -->
+<div class="mt-16 p-xl space-y-xl max-w-max-width mx-auto w-full">
+<!-- Section 1: KPI Cards -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-lg">
+<div class="bg-surface-white p-lg rounded-xl border border-border-subtle shadow-sm hover:shadow-md transition-shadow">
+<p class="text-label-sm text-outline uppercase tracking-wider mb-xs">Total Found Items</p>
+<div class="flex items-end justify-between">
+<h3 class="text-headline-lg font-headline-lg text-on-surface">4,821</h3>
+<span class="text-status-found text-label-sm font-bold flex items-center bg-status-found/10 px-xs py-0.5 rounded">
+<span class="material-symbols-outlined text-[16px]">trending_up</span> 12%
+                        </span>
+</div>
+</div>
+<div class="bg-surface-white p-lg rounded-xl border border-border-subtle shadow-sm hover:shadow-md transition-shadow">
+<p class="text-label-sm text-outline uppercase tracking-wider mb-xs">Active Lost Reports</p>
+<div class="flex items-end justify-between">
+<h3 class="text-headline-lg font-headline-lg text-on-surface">1,248</h3>
+<span class="text-status-pending text-label-sm font-bold flex items-center bg-status-pending/10 px-xs py-0.5 rounded">
+<span class="material-symbols-outlined text-[16px]">trending_down</span> 5%
+                        </span>
+</div>
+</div>
+<div class="bg-surface-white p-lg rounded-xl border border-border-subtle shadow-sm hover:shadow-md transition-shadow">
+<p class="text-label-sm text-outline uppercase tracking-wider mb-xs">Pending Claims</p>
+<div class="flex items-end justify-between">
+<h3 class="text-headline-lg font-headline-lg text-on-surface">156</h3>
+<span class="text-status-danger text-label-sm font-bold flex items-center bg-status-danger/10 px-xs py-0.5 rounded">
+<span class="material-symbols-outlined text-[16px]">priority_high</span> 8 Urgent
+                        </span>
+</div>
+</div>
+<div class="bg-surface-white p-lg rounded-xl border border-border-subtle shadow-sm hover:shadow-md transition-shadow">
+<p class="text-label-sm text-outline uppercase tracking-wider mb-xs">Successfully Returned</p>
+<div class="flex items-end justify-between">
+<h3 class="text-headline-lg font-headline-lg text-on-surface">3,942</h3>
+<span class="text-status-found text-label-sm font-bold flex items-center bg-status-found/10 px-xs py-0.5 rounded">
+<span class="material-symbols-outlined text-[16px]">check_circle</span> 82% Rate
+                        </span>
+</div>
+</div>
+</section>
+<!-- Section 2: Recent Claims & Latest Found -->
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-xl">
+<!-- Left: Recent Claims Table -->
+<div class="lg:col-span-2 bg-surface-white rounded-xl border border-border-subtle shadow-sm flex flex-col">
+<div class="p-lg border-b border-border-subtle flex justify-between items-center">
+<h4 class="text-title-lg font-title-lg text-on-surface">Recent Claims</h4>
+<button class="text-primary text-label-md font-semibold hover:underline">View all</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-surface-container-low text-label-sm text-outline uppercase">
+<tr>
+<th class="px-lg py-md">Item Name</th>
+<th class="px-lg py-md">Claimant</th>
+<th class="px-lg py-md">Date</th>
+<th class="px-lg py-md">Status</th>
+</tr>
+</thead>
+<tbody class="text-body-md divide-y divide-border-subtle">
+<tr class="hover:bg-surface-container transition-colors">
+<td class="px-lg py-md font-semibold">Leather Wallet (Black)</td>
+<td class="px-lg py-md text-on-surface-variant">Budi Santoso</td>
+<td class="px-lg py-md text-on-surface-variant">Oct 24, 2024</td>
+<td class="px-lg py-md">
+<span class="px-md py-1 rounded-full text-label-sm font-bold bg-status-pending/10 text-status-pending">Processing</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container transition-colors">
+<td class="px-lg py-md font-semibold">iPhone 14 Pro Max</td>
+<td class="px-lg py-md text-on-surface-variant">Siti Aminah</td>
+<td class="px-lg py-md text-on-surface-variant">Oct 23, 2024</td>
+<td class="px-lg py-md">
+<span class="px-md py-1 rounded-full text-label-sm font-bold bg-status-found/10 text-status-found">Verified</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container transition-colors">
+<td class="px-lg py-md font-semibold">Samsonite Carry-on</td>
+<td class="px-lg py-md text-on-surface-variant">David Chen</td>
+<td class="px-lg py-md text-on-surface-variant">Oct 23, 2024</td>
+<td class="px-lg py-md">
+<span class="px-md py-1 rounded-full text-label-sm font-bold bg-status-pending/10 text-status-pending">Processing</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container transition-colors">
+<td class="px-lg py-md font-semibold">Ray-Ban Sunglasses</td>
+<td class="px-lg py-md text-on-surface-variant">Eko Prasetyo</td>
+<td class="px-lg py-md text-on-surface-variant">Oct 22, 2024</td>
+<td class="px-lg py-md">
+<span class="px-md py-1 rounded-full text-label-sm font-bold bg-secondary/10 text-secondary">Awaiting Review</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Right: Latest Found Items -->
+<div class="bg-surface-white rounded-xl border border-border-subtle shadow-sm flex flex-col">
+<div class="p-lg border-b border-border-subtle">
+<h4 class="text-title-lg font-title-lg text-on-surface">Latest Found Items</h4>
+</div>
+<div class="p-md space-y-md">
+<div class="flex items-center gap-md p-sm hover:bg-surface-container rounded-lg cursor-pointer transition-colors">
+<div class="w-12 h-12 bg-surface-container-high rounded-lg overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="A clean, studio-lit photograph of a set of silver car keys with a leather keychain on a neutral white surface. The lighting is soft and professional, capturing metallic reflections and the texture of the leather. The overall style is minimalist and high-end, suitable for a terminal lost and found catalog." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBsvGIlqLYuUR-BPlL4L5ypa6ucuJxP8Vd_dnsrJZc84RgvepA1AYiP15q44Gr5WOoUntztzaYCZgCegSkFfqT2Dng-BQsQkT_4JjsXxxdnqG7oXxy4O24BpNdMMdN60s47hBcKkKs239PA6JD-xBiSHfTnklU43WvMQ6ow2xEfGTElIMPsBMktBFDIpLvIdEZYvVHcyUwy8VhWvg_T2TACXK88YxWyCM3C0lTMPNsUZ5RojdIaocqDwA"/>
+</div>
+<div class="flex-1 overflow-hidden">
+<p class="text-label-md font-semibold truncate">Toyota Car Keys</p>
+<p class="text-label-sm text-outline">Zone A - Waiting Room</p>
+</div>
+<p class="text-label-sm text-on-surface-variant font-medium whitespace-nowrap">2m ago</p>
+</div>
+<div class="flex items-center gap-md p-sm hover:bg-surface-container rounded-lg cursor-pointer transition-colors">
+<div class="w-12 h-12 bg-surface-container-high rounded-lg overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="A high-quality product photo of a vibrant blue children's backpack featuring a cartoon pattern, displayed in a bright and airy environment. The fabric texture is clearly visible, and the colors are saturated but realistic. The composition is clean, centered, and professional." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCc0gI8sJKOUnQufyTmA2oeoNNmWG6XEn5wRHYK7xT39sJ9hhRcOggMG_iEfrfebkGTBkp8asH-ezpVGbItqiKNzmU_d3nrtB_V9pGJNGW70qkgDn2-OgODy_5q8-WGv4JSln99_26kTu5xdVCXVq4iA77jQJcfyYrqxqwxtc20XHv_O1OrJzEdfJrxmPhBkD4bL5pv19eXRqFHoRcKDWay3EbKqzxcoH-Bw2jbAeVzcdGNRTd8_XxxRA"/>
+</div>
+<div class="flex-1 overflow-hidden">
+<p class="text-label-md font-semibold truncate">Blue Kids Backpack</p>
+<p class="text-label-sm text-outline">Zone C - Food Court</p>
+</div>
+<p class="text-label-sm text-on-surface-variant font-medium whitespace-nowrap">15m ago</p>
+</div>
+<div class="flex items-center gap-md p-sm hover:bg-surface-container rounded-lg cursor-pointer transition-colors">
+<div class="w-12 h-12 bg-surface-container-high rounded-lg overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="Close-up of an elegant rose-gold analog wristwatch with a white dial and brown leather strap, shot with professional macro photography on a light grey background. Precise lighting emphasizes the metallic finish and clean glass of the watch face. Modern and sophisticated aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAKfDnzufjUSFURVae1sAK-gIfICZ7yjJ9Y_LTuYH2kkTQphnFG6i3gcR4fjXsnqz7bc2NSvX9AXdHmEg1j4vfm-yObH3_-mK3YH7rajgFDB5XKxWK_MT5kM4yL1P4FUDm10Gq3vnEw-dJB5yewuhKUSLN1JY1ELCY2INHK_N6HPMFe0LPpdUeEUvzxvsIMpPdKKkiWHkT4eobfZcU7AViCrNevddgf4XvSaXRRpsOFehPMQaM6lUSKgw"/>
+</div>
+<div class="flex-1 overflow-hidden">
+<p class="text-label-md font-semibold truncate">Rose Gold Watch</p>
+<p class="text-label-sm text-outline">Platform 4</p>
+</div>
+<p class="text-label-sm text-on-surface-variant font-medium whitespace-nowrap">1h ago</p>
+</div>
+<div class="flex items-center gap-md p-sm hover:bg-surface-container rounded-lg cursor-pointer transition-colors">
+<div class="w-12 h-12 bg-surface-container-high rounded-lg overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="A high-resolution photograph of a black umbrella with a polished wooden handle, standing neatly against a white wall. The lighting is soft, creating gentle shadows that add depth without clutter. The presentation is professional and clean, highlighting the item's condition." src="https://lh3.googleusercontent.com/aida-public/AB6AXuANWljXy6T9z7od9ho1noXzGvexOfYv4V3KwRN7WioVkstiWjA_-bY4gmON5N50Qz1ZvI4NBDuRTnjWqtdx2UOW8gtn78KEUYz-iCTPMdlBTFQhfCpBujzzdiy-Fk-7l4m9jR9M-1Uyf8aiNJywSAF4ihw2GsxLzc5Gb5r-CJ-ES3CMSe7uY9uWBgSL_Tq5R11W4Jsku5IqZGYo9VDtd78vwWZVwTJU29BweiAlfUOC9KfulfEDbgw3Yg"/>
+</div>
+<div class="flex-1 overflow-hidden">
+<p class="text-label-md font-semibold truncate">Black Umbrella</p>
+<p class="text-label-sm text-outline">Entry Gate 2</p>
+</div>
+<p class="text-label-sm text-on-surface-variant font-medium whitespace-nowrap">3h ago</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 3: Charts & AI Widget -->
+<section class="grid grid-cols-1 lg:grid-cols-2 gap-xl">
+<!-- Left: Activity Chart -->
+<div class="bg-surface-white p-lg rounded-xl border border-border-subtle shadow-sm">
+<div class="flex justify-between items-center mb-lg">
+<h4 class="text-title-lg font-title-lg text-on-surface">Monthly Activity</h4>
+<div class="flex gap-md">
+<div class="flex items-center gap-xs">
+<div class="w-3 h-3 rounded-full bg-primary"></div>
+<span class="text-label-sm text-on-surface-variant">Found</span>
+</div>
+<div class="flex items-center gap-xs">
+<div class="w-3 h-3 rounded-full bg-status-found"></div>
+<span class="text-label-sm text-on-surface-variant">Returned</span>
+</div>
+</div>
+</div>
+<div class="chart-container flex items-end justify-between gap-sm pt-md border-l border-b border-border-subtle">
+<!-- Simulated Bar Chart -->
+<div class="flex-1 flex flex-col items-center gap-xs group">
+<div class="w-full flex gap-1 items-end h-full px-xs">
+<div class="flex-1 bg-primary rounded-t-sm" style="height: 40%"></div>
+<div class="flex-1 bg-status-found rounded-t-sm" style="height: 30%"></div>
+</div>
+<span class="text-label-sm text-outline">May</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-xs group">
+<div class="w-full flex gap-1 items-end h-full px-xs">
+<div class="flex-1 bg-primary rounded-t-sm" style="height: 65%"></div>
+<div class="flex-1 bg-status-found rounded-t-sm" style="height: 55%"></div>
+</div>
+<span class="text-label-sm text-outline">Jun</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-xs group">
+<div class="w-full flex gap-1 items-end h-full px-xs">
+<div class="flex-1 bg-primary rounded-t-sm" style="height: 80%"></div>
+<div class="flex-1 bg-status-found rounded-t-sm" style="height: 70%"></div>
+</div>
+<span class="text-label-sm text-outline">Jul</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-xs group">
+<div class="w-full flex gap-1 items-end h-full px-xs">
+<div class="flex-1 bg-primary rounded-t-sm" style="height: 50%"></div>
+<div class="flex-1 bg-status-found rounded-t-sm" style="height: 45%"></div>
+</div>
+<span class="text-label-sm text-outline">Aug</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-xs group">
+<div class="w-full flex gap-1 items-end h-full px-xs">
+<div class="flex-1 bg-primary rounded-t-sm" style="height: 90%"></div>
+<div class="flex-1 bg-status-found rounded-t-sm" style="height: 85%"></div>
+</div>
+<span class="text-label-sm text-outline">Sep</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-xs group">
+<div class="w-full flex gap-1 items-end h-full px-xs">
+<div class="flex-1 bg-primary rounded-t-sm" style="height: 75%"></div>
+<div class="flex-1 bg-status-found rounded-t-sm" style="height: 60%"></div>
+</div>
+<span class="text-label-sm text-outline">Oct</span>
+</div>
+</div>
+</div>
+<!-- Right: AI Smart Match Widget -->
+<div class="bg-primary text-on-primary p-lg rounded-xl border border-primary-container shadow-lg flex flex-col relative overflow-hidden">
+<!-- Subtle AI Glow Effect -->
+<div class="absolute -top-24 -right-24 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+<div class="flex items-center gap-md mb-lg relative z-10">
+<span class="material-symbols-outlined text-headline-md">auto_awesome</span>
+<div>
+<h4 class="text-title-lg font-title-lg">AI Smart Match</h4>
+<p class="text-label-sm opacity-80">3 new matches found today</p>
+</div>
+</div>
+<div class="space-y-md relative z-10">
+<div class="bg-white/10 p-md rounded-lg flex items-center justify-between border border-white/20">
+<div class="flex flex-col">
+<span class="text-label-sm font-bold">Match Score: 98%</span>
+<span class="text-body-md">iPhone 14 (Lost) &lt;-&gt; iPhone (Found)</span>
+</div>
+<button class="bg-white text-primary px-md py-sm rounded-lg text-label-sm font-bold hover:bg-on-tertiary-container transition-colors">Review</button>
+</div>
+<div class="bg-white/10 p-md rounded-lg flex items-center justify-between border border-white/20">
+<div class="flex flex-col">
+<span class="text-label-sm font-bold">Match Score: 92%</span>
+<span class="text-body-md">Blue Suitcase &lt;-&gt; Samsonite Bag</span>
+</div>
+<button class="bg-white text-primary px-md py-sm rounded-lg text-label-sm font-bold hover:bg-on-tertiary-container transition-colors">Review</button>
+</div>
+<div class="bg-white/10 p-md rounded-lg flex items-center justify-between border border-white/20">
+<div class="flex flex-col">
+<span class="text-label-sm font-bold">Match Score: 85%</span>
+<span class="text-body-md">Car Keys (Toyota) &lt;-&gt; Silver Keys</span>
+</div>
+<button class="bg-white text-primary px-md py-sm rounded-lg text-label-sm font-bold hover:bg-on-tertiary-container transition-colors">Review</button>
+</div>
+</div>
+<button class="mt-auto w-full text-center py-md border-t border-white/20 text-label-md font-semibold hover:bg-white/5 transition-colors relative z-10">
+                        View all recommended matches
+                    </button>
+</div>
+</section>
+</div>
+<!-- Footer -->
+<footer class="w-full py-xl px-lg mt-auto flex flex-col items-center gap-md bg-surface-container-highest">
+<p class="text-body-md text-on-surface-variant opacity-80">© 2024 Ministry of Transportation - Terminal Tirtonadi. All rights reserved.</p>
+<div class="flex gap-xl">
+<a class="text-label-sm text-on-surface-variant hover:opacity-100 transition-opacity" href="#">Privacy Policy</a>
+<a class="text-label-sm text-on-surface-variant hover:opacity-100 transition-opacity" href="#">Terms of Service</a>
+<a class="text-label-sm text-on-surface-variant hover:opacity-100 transition-opacity" href="#">Contact Us</a>
+<a class="text-label-sm text-on-surface-variant hover:opacity-100 transition-opacity" href="#">Ministry Portal</a>
+</div>
+</footer>
+</main>
+<script>
+        // Micro-interactions for Search Bar Focus
+        const searchInput = document.querySelector('input[type="text"]');
+        document.addEventListener('keydown', (e) => {
+            if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                e.preventDefault();
+                searchInput.focus();
+            }
+        });
+
+        // Simple row highlight animation
+        const rows = document.querySelectorAll('tbody tr');
+        rows.forEach(row => {
+            row.addEventListener('mouseenter', () => {
+                row.classList.add('translate-x-1');
+            });
+            row.addEventListener('mouseleave', () => {
+                row.classList.remove('translate-x-1');
+            });
+        });
+    </script>
+</body></html>

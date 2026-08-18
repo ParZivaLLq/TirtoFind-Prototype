@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Item Details - TirtoFind</title>
+<!-- Google Fonts: Inter -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-lowest": "#ffffff",
+                        "surface-white": "#FFFFFF",
+                        "surface-tint": "#0053db",
+                        "surface-container": "#efeded",
+                        "primary-container": "#2563eb",
+                        "on-error": "#ffffff",
+                        "surface-container-low": "#f5f3f2",
+                        "on-error-container": "#93000a",
+                        "on-primary": "#ffffff",
+                        "outline-variant": "#c3c6d7",
+                        "error": "#ba1a1a",
+                        "inverse-surface": "#303030",
+                        "tertiary-fixed": "#d2e4ff",
+                        "tertiary-container": "#1d70b8",
+                        "on-secondary-fixed-variant": "#464746",
+                        "surface-container-high": "#e9e8e7",
+                        "on-surface-variant": "#434655",
+                        "on-primary-fixed": "#00174b",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "status-danger": "#D33222",
+                        "on-secondary-container": "#626362",
+                        "on-surface": "#1b1c1c",
+                        "on-background": "#1b1c1c",
+                        "on-tertiary-container": "#e9f1ff",
+                        "inverse-on-surface": "#f2f0f0",
+                        "inverse-primary": "#b4c5ff",
+                        "error-container": "#ffdad6",
+                        "surface-dim": "#dbdad9",
+                        "primary-fixed": "#dbe1ff",
+                        "tertiary-fixed-dim": "#a0caff",
+                        "surface": "#fbf9f8",
+                        "on-secondary": "#ffffff",
+                        "secondary": "#5e5e5e",
+                        "on-tertiary-fixed-variant": "#00497e",
+                        "background": "#fbf9f8",
+                        "secondary-container": "#e0dfde",
+                        "border-subtle": "#E5E7EB",
+                        "on-tertiary-fixed": "#001c37",
+                        "tertiary": "#005796",
+                        "status-pending": "#F59E0B",
+                        "status-found": "#00703C",
+                        "primary": "#004ac6",
+                        "secondary-fixed-dim": "#c7c6c5",
+                        "on-secondary-fixed": "#1a1c1c",
+                        "surface-variant": "#e4e2e1",
+                        "on-primary-container": "#eeefff",
+                        "surface-container-highest": "#e4e2e1",
+                        "secondary-fixed": "#e3e2e1",
+                        "on-tertiary": "#ffffff",
+                        "outline": "#737686",
+                        "surface-bright": "#fbf9f8",
+                        "primary-fixed-dim": "#b4c5ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sm": "8px",
+                        "max-width": "1280px",
+                        "xl": "32px",
+                        "xs": "4px",
+                        "md": "16px",
+                        "gutter": "24px",
+                        "base": "4px",
+                        "lg": "24px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "64px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "title-lg": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface flex flex-col min-h-screen">
+<!-- TopNavBar -->
+<header class="sticky top-0 w-full z-50 flex justify-between items-center px-lg h-16 max-w-max-width mx-auto bg-surface-white border-b border-border-subtle">
+<div class="flex items-center gap-xl">
+<span class="text-title-lg font-title-lg font-bold text-primary">TirtoFind</span>
+<nav class="hidden md:flex items-center gap-lg">
+<a class="text-primary font-bold border-b-2 border-primary pb-1 text-label-md font-label-md transition-colors" href="#">Found Items</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors text-label-md font-label-md" href="#">Report Lost</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors text-label-md font-label-md" href="#">About</a>
+</nav>
+</div>
+<div class="flex items-center gap-md">
+<div class="hidden sm:flex items-center bg-surface-container-low px-md py-xs rounded-lg border border-border-subtle">
+<span class="material-symbols-outlined text-outline mr-sm">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-label-md w-48" placeholder="Search items..." type="text"/>
+</div>
+<button class="bg-primary text-on-primary px-lg py-sm rounded-lg text-label-md font-label-md hover:opacity-80 transition-opacity">Login</button>
+</div>
+</header>
+<!-- Breadcrumb (Contextual Navigation) -->
+<div class="w-full max-w-max-width mx-auto px-lg pt-xl">
+<nav class="flex items-center gap-sm text-label-sm font-label-sm text-on-surface-variant">
+<a class="hover:text-primary" href="#">Home</a>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<a class="hover:text-primary" href="#">Found Items</a>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<span class="text-on-surface">Black Leather Wallet</span>
+</nav>
+</div>
+<!-- Main Content Canvas -->
+<main class="w-full max-w-max-width mx-auto px-lg py-xl flex-grow">
+<!-- Item Detail Section -->
+<section class="grid grid-cols-1 md:grid-cols-12 gap-xl mb-xl">
+<!-- Left Column: Image -->
+<div class="md:col-span-7">
+<div class="bg-surface-white rounded-xl border border-border-subtle overflow-hidden shadow-sm aspect-video">
+<img class="w-full h-full object-cover" data-alt="A professional high-resolution studio photograph of a premium black leather bi-fold wallet resting on a clean, white minimalist surface. The lighting is soft and directional, highlighting the fine texture and stitching of the leather. The background is a neutral, light-gray gradient that aligns with a modern corporate and dependable government aesthetic. The composition is centered, conveying precision and organized logistics for a lost-and-found management platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDiXAuHIE1MEAwOlVbb1QC1vvcZ8TyS1UJ150sOtThyum4a8m0vZppxTLdA5aldX6pyA0lKv16lEDXUBDZS_yAZg8ZVIT0FKrJFqDpNqS6JkKMKg3Jpc4EMT7qNZMxxalWFcVHFefBSVBfiohWvK0fQW27-p7_BviRsLFDxtA10SWHysn3l4CbLZE98cG1_rbiIEGfeefHiuqPjgywOwzW_O4LAdf-KRnIX1Twfc9dShX0kKEipYrX7qg"/>
+</div>
+</div>
+<!-- Right Column: Info -->
+<div class="md:col-span-5 flex flex-col gap-lg">
+<div class="flex flex-col gap-sm">
+<div class="flex justify-between items-start">
+<span class="inline-flex items-center px-sm py-xs rounded-lg bg-tertiary-fixed text-on-tertiary-fixed-variant text-label-sm font-label-sm uppercase tracking-wider">
+                            Accessories
+                        </span>
+<div class="bg-status-found/10 text-status-found px-md py-xs rounded-full text-label-md font-semibold border border-status-found/20">
+                            Available
+                        </div>
+</div>
+<h1 class="text-headline-lg font-headline-lg text-on-surface">Black Leather Wallet</h1>
+<p class="text-on-surface-variant text-label-md flex items-center gap-xs">
+                        Ref ID: <span class="font-mono">TRT-20240512-094</span>
+</p>
+</div>
+<div class="space-y-md border-t border-b border-border-subtle py-lg">
+<div class="flex items-start gap-md">
+<div class="p-sm bg-surface-container-low rounded-lg border border-border-subtle">
+<span class="material-symbols-outlined text-primary">calendar_today</span>
+</div>
+<div>
+<p class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-tighter">Found Date</p>
+<p class="text-body-md font-semibold">May 12, 2024 • 14:45 PM</p>
+</div>
+</div>
+<div class="flex items-start gap-md">
+<div class="p-sm bg-surface-container-low rounded-lg border border-border-subtle">
+<span class="material-symbols-outlined text-primary">location_on</span>
+</div>
+<div>
+<p class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-tighter">Location</p>
+<p class="text-body-md font-semibold">Platform 3, Waiting Lounge Area</p>
+<p class="text-label-sm text-on-surface-variant">Terminal Tirtonadi, Surakarta</p>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-sm">
+<h3 class="text-label-md font-bold text-on-surface">Description</h3>
+<p class="text-body-md text-on-surface-variant leading-relaxed">
+                        A premium black leather bi-fold wallet found near the seating area. The wallet contains some identity documents (KTP), bank cards, and a small amount of cash. No external markings or brand names are clearly visible except for a subtle geometric embossed logo on the corner.
+                    </p>
+</div>
+<div class="mt-auto pt-lg">
+<button class="w-full bg-primary text-on-primary py-lg rounded-xl text-title-lg font-bold shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-md">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">verified</span>
+                        Claim This Item
+                    </button>
+<p class="text-center text-label-sm text-on-surface-variant mt-md italic">
+                        *Proof of ownership will be required during the verification process.
+                    </p>
+</div>
+</div>
+</section>
+<!-- Related Items Section -->
+<section class="mt-xl border-t border-border-subtle pt-xl">
+<div class="flex justify-between items-center mb-lg">
+<h2 class="text-headline-md font-headline-md">Related Found Items</h2>
+<a class="text-primary text-label-md font-semibold hover:underline flex items-center gap-xs" href="#">
+                    View All <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-lg">
+<!-- Card 1 -->
+<div class="bg-surface-white rounded-xl border border-border-subtle overflow-hidden hover:shadow-lg transition-shadow group">
+<div class="h-48 overflow-hidden relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A detailed photo of a brown leather cardholder lying on a gray industrial waiting bench. The style is clean, sharp, and corporate, with realistic shadows and soft natural lighting coming from a nearby window. The aesthetic follows the professional visual language of a high-end lost and found portal with government-level reliability." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDs8LfbmGV6ITZcwzUJnETDPNPTcysoicKNtJwz70Q4WsU0cfSnZspKJ-lFbaDifwfizeGk2smQuXALfNDAim0Zp9jt00k0wg9D9PXXHEq_13HHKxmigzTDUFTUTxzW7j4wlHSRpVRutQ4orQ1LIuXwaweDaZelt0Ag0q0SehMMdKkVAyZCrYG_gTDlGG93u4qUp3_RwcGnODLxa6xh3waoNalvviE3MFVOLk89AUaMOGSoDlfinWV9w"/>
+<div class="absolute top-sm right-sm bg-status-found/90 backdrop-blur-sm text-surface-white px-md py-xs rounded-lg text-label-sm">Found</div>
+</div>
+<div class="p-md">
+<p class="text-label-sm font-label-sm text-primary mb-xs">Accessories</p>
+<h4 class="text-title-lg font-bold mb-md truncate">Brown Leather Cardholder</h4>
+<div class="flex items-center gap-sm text-on-surface-variant text-label-sm">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+                            May 10, 2024
+                        </div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-white rounded-xl border border-border-subtle overflow-hidden hover:shadow-lg transition-shadow group">
+<div class="h-48 overflow-hidden relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A modern dark blue smartphone with a translucent case, placed on a clean white surface with minimal distractions. The lighting is high-key and professional, suitable for a terminal management system. The image conveys precision and care in the handling of lost electronic property, maintaining a trustworthy and institutional feel." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4S1BlB4uRUoCaNU0Jw6mVN_0qS-QcF1Tz0G-oJ_EDFRpzaHVI9CjM94s_cZcbuq-YdXJDZiJe8evgOPfuj8ty4HmTdSJhnHKNGC_SNKYTk7jAe5R5-V8SRgTu7jNNaHQFKpPYHFHABklM6mwb7sRhUzEf6vtpLj5FEcucCsagJrOPq-5PuLdaK8BT1Kesiv2Jrnd7C2DUhMinJpzrU58V0hg0J6-zfvN3bGpjRcHdb--8oe1yqnVsXw"/>
+<div class="absolute top-sm right-sm bg-status-found/90 backdrop-blur-sm text-surface-white px-md py-xs rounded-lg text-label-sm">Found</div>
+</div>
+<div class="p-md">
+<p class="text-label-sm font-label-sm text-primary mb-xs">Electronics</p>
+<h4 class="text-title-lg font-bold mb-md truncate">Blue Smartphone (Android)</h4>
+<div class="flex items-center gap-sm text-on-surface-variant text-label-sm">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+                            May 11, 2024
+                        </div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-white rounded-xl border border-border-subtle overflow-hidden hover:shadow-lg transition-shadow group">
+<div class="h-48 overflow-hidden relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A pair of elegant silver-framed reading glasses in a hard black case, resting on a wooden table texture. The scene is bright, with soft professional lighting and a shallow depth of field. The visual style reflects the organized and authoritative nature of a Ministry of Transportation terminal service." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD3psMkl5zwwL7FBhOQ2Kx0jdM966sw4BqvQ1sG_8WO6jzAdlEMZ6dIAMvggUO7gpEbKomTWoEjKW_3-ybEAJEpm4J9mH3xnfmzk5tF6Kpd3hsGGojXrXQCxiW90YPhheUR3KHMPVMQiyz8pvQJ_nWb54OPgGjgjN1-DVWJvJgDp4InbAsrf9gylgwqH2s_AgwTI6rApNaFqwlawdV00o3dTv57xW2nMTdM5855b5Gbq_jDVwNPVHpuGw"/>
+<div class="absolute top-sm right-sm bg-status-found/90 backdrop-blur-sm text-surface-white px-md py-xs rounded-lg text-label-sm">Found</div>
+</div>
+<div class="p-md">
+<p class="text-label-sm font-label-sm text-primary mb-xs">Personal Items</p>
+<h4 class="text-title-lg font-bold mb-md truncate">Silver Reading Glasses</h4>
+<div class="flex items-center gap-sm text-on-surface-variant text-label-sm">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+                            May 13, 2024
+                        </div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full py-xl px-lg mt-auto flex flex-col items-center gap-md bg-surface-container-highest border-t border-border-subtle">
+<div class="flex flex-col items-center gap-sm">
+<span class="text-headline-md font-headline-md font-bold text-primary">TirtoFind</span>
+<p class="text-body-md font-body-md text-on-surface-variant text-center max-w-lg">
+                Official Lost &amp; Found Management System for Terminal Tirtonadi, operated by the Ministry of Transportation.
+            </p>
+</div>
+<div class="flex flex-wrap justify-center gap-lg mt-md">
+<a class="text-on-surface-variant opacity-80 hover:opacity-100 transition-opacity text-label-sm font-label-sm" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant opacity-80 hover:opacity-100 transition-opacity text-label-sm font-label-sm" href="#">Terms of Service</a>
+<a class="text-on-surface-variant opacity-80 hover:opacity-100 transition-opacity text-label-sm font-label-sm" href="#">Contact Us</a>
+<a class="text-on-surface-variant opacity-80 hover:opacity-100 transition-opacity text-label-sm font-label-sm" href="#">Ministry Portal</a>
+</div>
+<div class="border-t border-outline-variant/30 w-full max-w-max-width mt-lg pt-lg flex flex-col md:flex-row justify-between items-center gap-md">
+<p class="text-label-sm font-label-sm text-on-surface-variant">
+                © 2024 Ministry of Transportation - Terminal Tirtonadi. All rights reserved.
+            </p>
+<div class="flex gap-md">
+<span class="material-symbols-outlined text-on-surface-variant hover:text-primary cursor-pointer transition-colors">qr_code_2</span>
+<span class="material-symbols-outlined text-on-surface-variant hover:text-primary cursor-pointer transition-colors">language</span>
+</div>
+</div>
+</footer>
+<script>
+        // Micro-interaction for Claim button
+        document.querySelector('button.bg-primary').addEventListener('click', function() {
+            const originalText = this.innerHTML;
+            this.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span> Processing...';
+            this.disabled = true;
+            this.style.opacity = '0.7';
+            
+            setTimeout(() => {
+                alert('Claim request initiated. Please prepare your identity documents for verification at the Terminal Staff Office.');
+                this.innerHTML = originalText;
+                this.disabled = false;
+                this.style.opacity = '1';
+            }, 1500);
+        });
+    </script>
+</body></html>

@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI Smart Matching | TirtoFind Admin</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed-variant": "#464746",
+                    "secondary": "#5e5e5e",
+                    "background": "#fbf9f8",
+                    "status-danger": "#D33222",
+                    "on-tertiary-fixed-variant": "#00497e",
+                    "border-subtle": "#E5E7EB",
+                    "on-tertiary-container": "#e9f1ff",
+                    "surface-dim": "#dbdad9",
+                    "surface-container-highest": "#e4e2e1",
+                    "on-secondary-fixed": "#1a1c1c",
+                    "on-tertiary": "#ffffff",
+                    "secondary-fixed-dim": "#c7c6c5",
+                    "tertiary-fixed": "#d2e4ff",
+                    "primary-container": "#2563eb",
+                    "surface-tint": "#0053db",
+                    "on-primary-fixed": "#00174b",
+                    "surface-variant": "#e4e2e1",
+                    "tertiary-container": "#1d70b8",
+                    "outline-variant": "#c3c6d7",
+                    "on-surface": "#1b1c1c",
+                    "on-background": "#1b1c1c",
+                    "primary-fixed": "#dbe1ff",
+                    "on-secondary-container": "#626362",
+                    "on-primary-container": "#eeefff",
+                    "on-secondary": "#ffffff",
+                    "surface": "#fbf9f8",
+                    "status-found": "#00703C",
+                    "on-tertiary-fixed": "#001c37",
+                    "tertiary-fixed-dim": "#a0caff",
+                    "on-surface-variant": "#434655",
+                    "on-error-container": "#93000a",
+                    "inverse-on-surface": "#f2f0f0",
+                    "status-pending": "#F59E0B",
+                    "inverse-surface": "#303030",
+                    "surface-container-high": "#e9e8e7",
+                    "secondary-container": "#e0dfde",
+                    "surface-container-lowest": "#ffffff",
+                    "error": "#ba1a1a",
+                    "primary": "#004ac6",
+                    "outline": "#737686",
+                    "primary-fixed-dim": "#b4c5ff",
+                    "on-error": "#ffffff",
+                    "tertiary": "#005796",
+                    "inverse-primary": "#b4c5ff",
+                    "surface-container": "#efeded",
+                    "secondary-fixed": "#e3e2e1",
+                    "error-container": "#ffdad6",
+                    "surface-white": "#FFFFFF",
+                    "surface-container-low": "#f5f3f2",
+                    "on-primary-fixed-variant": "#003ea8",
+                    "on-primary": "#ffffff",
+                    "surface-bright": "#fbf9f8"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "md": "16px",
+                    "base": "4px",
+                    "max-width": "1280px",
+                    "xl": "32px",
+                    "margin-mobile": "16px",
+                    "lg": "24px",
+                    "sm": "8px",
+                    "gutter": "24px",
+                    "xs": "4px",
+                    "margin-desktop": "64px"
+            },
+            "fontFamily": {
+                    "headline-lg-mobile": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "display-lg": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "label-md": ["Inter"],
+                    "title-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                    "title-lg": ["20px", {"lineHeight": "28px", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #fbf9f8; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .sidebar-transition { transition: all 0.2s ease-in-out; }
+    </style>
+</head>
+<body class="text-on-background antialiased">
+<!-- SideNavBar Shell -->
+<aside class="fixed left-0 top-0 h-screen w-64 bg-surface-container-low border-r border-border-subtle flex flex-col p-md z-50">
+<div class="flex items-center gap-md px-md py-lg mb-xl">
+<div class="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-white">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">qr_code_2</span>
+</div>
+<div>
+<h2 class="text-on-surface font-headline-md text-headline-md leading-tight">Staff Portal</h2>
+<p class="text-on-surface-variant font-label-md text-label-md opacity-70">Terminal Tirtonadi</p>
+</div>
+</div>
+<nav class="flex-1 flex flex-col gap-xs">
+<a class="flex items-center gap-md p-md text-on-surface-variant font-body-md text-body-md hover:bg-surface-container-high rounded-lg sidebar-transition" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-md p-md text-on-surface-variant font-body-md text-body-md hover:bg-surface-container-high rounded-lg sidebar-transition" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span>Items</span>
+</a>
+<a class="flex items-center gap-md p-md text-on-surface-variant font-body-md text-body-md hover:bg-surface-container-high rounded-lg sidebar-transition" href="#">
+<span class="material-symbols-outlined">report_problem</span>
+<span>Reports</span>
+</a>
+<a class="flex items-center gap-md p-md text-on-surface-variant font-body-md text-body-md hover:bg-surface-container-high rounded-lg sidebar-transition" href="#">
+<span class="material-symbols-outlined">verified</span>
+<span>Claims</span>
+</a>
+<a class="flex items-center gap-md p-md text-on-surface-variant font-body-md text-body-md hover:bg-surface-container-high rounded-lg sidebar-transition" href="#">
+<span class="material-symbols-outlined">category</span>
+<span>Categories</span>
+</a>
+<a class="flex items-center gap-md p-md text-on-surface-variant font-body-md text-body-md hover:bg-surface-container-high rounded-lg sidebar-transition" href="#">
+<span class="material-symbols-outlined">group</span>
+<span>Users</span>
+</a>
+<div class="mt-xl px-md">
+<button class="w-full bg-primary text-white py-sm rounded-lg font-label-md text-label-md flex items-center justify-center gap-sm shadow-sm hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined text-[18px]">auto_awesome</span>
+                Smart Matching
+            </button>
+</div>
+</nav>
+<div class="mt-auto border-t border-border-subtle pt-md flex flex-col gap-xs">
+<a class="flex items-center gap-md p-md text-on-surface-variant font-body-md text-body-md hover:bg-surface-container-high rounded-lg sidebar-transition" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings</span>
+</a>
+<a class="flex items-center gap-md p-md text-on-surface-variant font-body-md text-body-md hover:bg-surface-container-high rounded-lg sidebar-transition" href="#">
+<span class="material-symbols-outlined">help</span>
+<span>Support</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-64 min-h-screen flex flex-col relative">
+<!-- TopNavBar Shell (Admin Console version) -->
+<header class="fixed top-0 right-0 left-64 h-16 bg-surface-white border-b border-border-subtle flex justify-between items-center px-lg z-40">
+<div class="flex items-center gap-lg flex-1">
+<h1 class="text-primary font-bold text-title-lg font-title-lg">Admin Console</h1>
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-lg pl-10 py-sm text-body-md font-body-md focus:ring-1 focus:ring-primary" placeholder="Search matches (Cmd+K)" type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<button class="p-sm text-on-surface-variant hover:bg-surface-container rounded-full sidebar-transition">
+<span class="material-symbols-outlined">history</span>
+</button>
+<button class="p-sm text-on-surface-variant hover:bg-surface-container rounded-full sidebar-transition relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-status-danger rounded-full"></span>
+</button>
+<div class="h-8 w-8 rounded-full bg-surface-container flex items-center justify-center border border-border-subtle overflow-hidden">
+<img alt="Admin Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHLiZD3weysYDpFK0SrVVAqY6IsEoo2MztinZGv6pvTssJdH0RIs9esMCuIykWAHtw2Zo_KJ0KnY7nlaOjMpP6oq92K2N2ES-SVUtJThqZ7ssbuTQw-Q3sodLXT5U1M7SxmFbBp-8AhJBG5i2di3y4WaKIEGXeL6Yy6BQxLzsQ-Feh96xXyD1dtojPUqGZEbQYZELLGh9Uq2i-DuS_FRsB7JhtWejIh_FhRkUMoVQoeAYID3ce32J-HQ"/>
+</div>
+</div>
+</header>
+<!-- Page Content -->
+<div class="pt-16 flex-1 flex flex-col">
+<!-- Page Header Section -->
+<section class="px-xl py-xl bg-surface-white border-b border-border-subtle">
+<div class="max-w-5xl mx-auto">
+<div class="mb-lg">
+<h2 class="text-on-surface font-headline-lg text-headline-lg">AI Smart Matching</h2>
+<p class="text-on-surface-variant font-body-md text-body-md mt-xs max-w-2xl">
+                        AI analyzes lost reports and found items to recommend potential matches. Final verification is performed by Customer Service.
+                    </p>
+</div>
+<!-- Functional Bar -->
+<div class="flex flex-wrap items-center gap-md pt-lg">
+<div class="flex-1 min-w-[240px] relative">
+<span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline text-[20px]">search</span>
+<input class="w-full pl-10 pr-md py-sm bg-surface-container-lowest border border-border-subtle rounded-lg text-label-md" placeholder="Search by ID or keywords..." type="text"/>
+</div>
+<select class="bg-surface-container-lowest border border-border-subtle rounded-lg px-md py-sm text-label-md focus:ring-primary w-48">
+<option>Filter by Similarity</option>
+<option>High (&gt;90%)</option>
+<option>Medium (60-89%)</option>
+<option>Low (&lt;60%)</option>
+</select>
+<select class="bg-surface-container-lowest border border-border-subtle rounded-lg px-md py-sm text-label-md focus:ring-primary w-48">
+<option>Filter by Status</option>
+<option>New Recommendation</option>
+<option>In Review</option>
+</select>
+</div>
+</div>
+</section>
+<!-- Content Area -->
+<section class="flex-1 px-xl py-xl bg-background">
+<div class="max-w-5xl mx-auto flex flex-col gap-lg">
+<!-- Compact Card 1 -->
+<div class="bg-surface-white border border-border-subtle rounded-lg overflow-hidden flex flex-col transition-shadow hover:shadow-sm">
+<div class="flex flex-col md:flex-row divide-y md:divide-y-0 md:divide-x divide-border-subtle">
+<!-- Left: Found Item -->
+<div class="flex-1 p-lg flex gap-md">
+<div class="w-20 h-20 bg-surface-container-low rounded-lg border border-border-subtle overflow-hidden shrink-0">
+<img alt="Found Wallet" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBS80Ig2RrT_P6Shp2pNwqDngf3Qe9enhcOUTL5aqjb7tEBuXa3fA8z0LzrPU4VAuaL96wcvp9NmTY-ijqje45lSMy0upgyy_Hha1jRKWBCGfO7ycBoYoQZaKsrjNgA5VsRdsACraQOb-6QP_RLXMgPGlFVoE0WB6OruYMFO4Q2o2LXVU91uNJDXIIZkGoikWLKOFoLI7T9nU3uIcFlpMhLnsBZz7TUcvDvK3xdBhFMXMmpz9brWqK93w"/>
+</div>
+<div class="flex flex-col justify-center">
+<span class="text-label-sm text-outline uppercase tracking-wider mb-xs">Found Item</span>
+<h3 class="text-on-surface font-semibold text-body-md">Brown Leather Wallet</h3>
+<p class="text-on-surface-variant text-label-md">Leather Goods</p>
+</div>
+</div>
+<!-- Right: Matched Lost Report -->
+<div class="flex-[1.2] p-lg flex flex-col justify-center gap-sm">
+<div class="flex items-center justify-between">
+<div class="flex flex-col">
+<span class="text-label-sm text-outline uppercase tracking-wider mb-xs">Matched Lost Report</span>
+<h4 class="text-on-surface font-semibold text-body-md">#LST-2024-0742 (Bifold Wallet)</h4>
+</div>
+<span class="px-2 py-0.5 bg-status-found/10 text-status-found text-label-sm font-semibold rounded border border-status-found/20">High Confidence</span>
+</div>
+<div class="flex items-center gap-md">
+<div class="flex-1 bg-surface-container-low h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full" style="width: 94%"></div>
+</div>
+<span class="text-label-sm font-bold text-primary">94% Similarity</span>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest px-lg py-sm border-t border-border-subtle flex justify-between items-center">
+<span class="text-label-sm text-on-surface-variant italic">New recommendation • Detected 2h ago</span>
+<div class="flex gap-md">
+<button class="text-primary font-label-md hover:underline flex items-center gap-xs" onclick="togglePanel()">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+                                View Comparison
+                            </button>
+<button class="bg-primary text-white px-md py-1.5 rounded-lg text-label-md font-semibold hover:bg-opacity-90 transition-all">
+                                Verify Claim
+                            </button>
+</div>
+</div>
+</div>
+<!-- Compact Card 2 -->
+<div class="bg-surface-white border border-border-subtle rounded-lg overflow-hidden flex flex-col transition-shadow hover:shadow-sm">
+<div class="flex flex-col md:flex-row divide-y md:divide-y-0 md:divide-x divide-border-subtle">
+<div class="flex-1 p-lg flex gap-md">
+<div class="w-20 h-20 bg-surface-container-low rounded-lg border border-border-subtle overflow-hidden shrink-0">
+<img alt="Found Smartphone" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDw3BA5-OhUvA3dsfvzZuyqmSIaW6jC5cUINVfdZRkTKKzr5ih9JAEKlK02kyh7xhJZ7L5J5XeWiBwGIzLEd6a1xDRk8lCwjduXpKRmEn1ehw1-tXVWziUEN0x7pvfA6BQKAxN4qs24_0YAgnGEtoahhCqVy251wSj_bO0YvZrQMabH6qvhJEuxNHeI7AwAzDwCRjH8LW55K7UTwp-UG_7TKjhyrNbWZ2lJuPOrDlhE7C3l6oyrg2nOUQ"/>
+</div>
+<div class="flex flex-col justify-center">
+<span class="text-label-sm text-outline uppercase tracking-wider mb-xs">Found Item</span>
+<h3 class="text-on-surface font-semibold text-body-md">Smartphone (Blue Case)</h3>
+<p class="text-on-surface-variant text-label-md">Electronics</p>
+</div>
+</div>
+<div class="flex-[1.2] p-lg flex flex-col justify-center gap-sm">
+<div class="flex items-center justify-between">
+<div class="flex flex-col">
+<span class="text-label-sm text-outline uppercase tracking-wider mb-xs">Matched Lost Report</span>
+<h4 class="text-on-surface font-semibold text-body-md">#LST-2024-0711 (iPhone 13 Pro)</h4>
+</div>
+<span class="px-2 py-0.5 bg-status-pending/10 text-status-pending text-label-sm font-semibold rounded border border-status-pending/20">Medium Confidence</span>
+</div>
+<div class="flex items-center gap-md">
+<div class="flex-1 bg-surface-container-low h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary-fixed-dim h-full" style="width: 72%"></div>
+</div>
+<span class="text-label-sm font-bold text-on-surface-variant">72% Similarity</span>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest px-lg py-sm border-t border-border-subtle flex justify-between items-center">
+<span class="text-label-sm text-on-surface-variant italic">New recommendation • Detected 5h ago</span>
+<div class="flex gap-md">
+<button class="text-primary font-label-md hover:underline flex items-center gap-xs">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+                                View Comparison
+                            </button>
+<button class="bg-primary text-white px-md py-1.5 rounded-lg text-label-md font-semibold hover:bg-opacity-90 transition-all">
+                                Verify Claim
+                            </button>
+</div>
+</div>
+</div>
+<!-- Compact Card 3 -->
+<div class="bg-surface-white border border-border-subtle rounded-lg overflow-hidden flex flex-col transition-shadow hover:shadow-sm">
+<div class="flex flex-col md:flex-row divide-y md:divide-y-0 md:divide-x divide-border-subtle">
+<div class="flex-1 p-lg flex gap-md">
+<div class="w-20 h-20 bg-surface-container-low rounded-lg border border-border-subtle flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-outline text-[40px]">description</span>
+</div>
+<div class="flex flex-col justify-center">
+<span class="text-label-sm text-outline uppercase tracking-wider mb-xs">Found Item</span>
+<h3 class="text-on-surface font-semibold text-body-md">Passport (Indonesia)</h3>
+<p class="text-on-surface-variant text-label-md">Documents</p>
+</div>
+</div>
+<div class="flex-[1.2] p-lg flex flex-col justify-center gap-sm">
+<div class="flex items-center justify-between">
+<div class="flex flex-col">
+<span class="text-label-sm text-outline uppercase tracking-wider mb-xs">Matched Lost Report</span>
+<h4 class="text-on-surface font-semibold text-body-md">#LST-2024-0801 (Budi Santoso)</h4>
+</div>
+<span class="px-2 py-0.5 bg-status-found/10 text-status-found text-label-sm font-semibold rounded border border-status-found/20">High Confidence</span>
+</div>
+<div class="flex items-center gap-md">
+<div class="flex-1 bg-surface-container-low h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full" style="width: 98%"></div>
+</div>
+<span class="text-label-sm font-bold text-primary">98% Similarity</span>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest px-lg py-sm border-t border-border-subtle flex justify-between items-center">
+<span class="text-label-sm text-on-surface-variant italic">New recommendation • Detected 15m ago</span>
+<div class="flex gap-md">
+<button class="text-primary font-label-md hover:underline flex items-center gap-xs">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+                                View Comparison
+                            </button>
+<button class="bg-primary text-white px-md py-1.5 rounded-lg text-label-md font-semibold hover:bg-opacity-90 transition-all">
+                                Verify Claim
+                            </button>
+</div>
+</div>
+</div>
+<!-- Pagination Placeholder -->
+<div class="mt-lg flex justify-center">
+<nav class="flex items-center gap-xs">
+<button class="p-sm rounded border border-border-subtle hover:bg-surface-container-low disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined text-[20px]">chevron_left</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded bg-primary text-white font-label-md">1</button>
+<button class="w-8 h-8 flex items-center justify-center rounded hover:bg-surface-container-low text-label-md">2</button>
+<button class="w-8 h-8 flex items-center justify-center rounded hover:bg-surface-container-low text-label-md">3</button>
+<button class="p-sm rounded border border-border-subtle hover:bg-surface-container-low">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+</nav>
+</div>
+</div>
+</section>
+<!-- Page Footer -->
+<footer class="w-full py-lg flex flex-col items-center gap-md border-t border-border-subtle mt-xl bg-surface-white">
+<p class="text-on-surface-variant text-label-md opacity-80">© 2024 Ministry of Transportation - Terminal Tirtonadi. All rights reserved.</p>
+<div class="flex gap-lg">
+<a class="text-on-surface-variant text-label-sm hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant text-label-sm hover:text-primary transition-colors" href="#">Terms of Service</a>
+<a class="text-on-surface-variant text-label-sm hover:text-primary transition-colors" href="#">Support</a>
+</div>
+</footer>
+</div>
+<!-- Comparison Side Panel (Hidden by default) -->
+<div class="fixed inset-0 bg-black/30 backdrop-blur-sm z-[100] hidden transition-opacity flex justify-end" id="comparison-panel">
+<div class="w-full max-w-4xl bg-surface-white h-screen shadow-2xl flex flex-col transform transition-transform translate-x-full" id="panel-content">
+<header class="h-16 px-xl border-b border-border-subtle flex justify-between items-center bg-surface-white shrink-0">
+<h3 class="text-title-lg font-bold text-on-surface">Match Comparison Review</h3>
+<button class="p-sm hover:bg-surface-container-low rounded-full" onclick="togglePanel()">
+<span class="material-symbols-outlined">close</span>
+</button>
+</header>
+<div class="flex-1 overflow-y-auto p-xl">
+<div class="grid grid-cols-3 gap-xl">
+<!-- Found Item -->
+<div class="flex flex-col gap-lg">
+<div class="p-md bg-status-found/5 rounded-lg border border-status-found/10 text-center text-status-found font-semibold text-label-sm uppercase">Found Item</div>
+<div class="aspect-square rounded-lg border border-border-subtle overflow-hidden bg-surface-container-low">
+<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBS80Ig2RrT_P6Shp2pNwqDngf3Qe9enhcOUTL5aqjb7tEBuXa3fA8z0LzrPU4VAuaL96wcvp9NmTY-ijqje45lSMy0upgyy_Hha1jRKWBCGfO7ycBoYoQZaKsrjNgA5VsRdsACraQOb-6QP_RLXMgPGlFVoE0WB6OruYMFO4Q2o2LXVU91uNJDXIIZkGoikWLKOFoLI7T9nU3uIcFlpMhLnsBZz7TUcvDvK3xdBhFMXMmpz9brWqK93w"/>
+</div>
+<div class="space-y-md">
+<div>
+<label class="text-label-sm text-outline uppercase block mb-xs">Item Name</label>
+<p class="text-body-md font-semibold">Brown Leather Wallet</p>
+</div>
+<div>
+<label class="text-label-sm text-outline uppercase block mb-xs">Category</label>
+<p class="text-body-md">Personal Accessories</p>
+</div>
+<div>
+<label class="text-label-sm text-outline uppercase block mb-xs">Found Date/Time</label>
+<p class="text-body-md">Oct 24, 2024 • 14:30</p>
+</div>
+<div>
+<label class="text-label-sm text-outline uppercase block mb-xs">Found Location</label>
+<p class="text-body-md">Waiting Hall Platform 3</p>
+</div>
+</div>
+</div>
+<!-- Comparison Summary -->
+<div class="flex flex-col items-center py-xl px-md bg-surface-container-low/50 rounded-xl border border-border-subtle">
+<div class="text-center mb-xl">
+<div class="text-display-lg font-bold text-primary leading-tight">94%</div>
+<div class="text-label-md font-semibold text-primary uppercase tracking-widest">Similarity Score</div>
+</div>
+<div class="w-full space-y-lg">
+<div class="p-md bg-white rounded-lg border border-border-subtle shadow-sm">
+<h4 class="text-label-md font-bold mb-sm flex items-center gap-xs">
+<span class="material-symbols-outlined text-[18px] text-status-found">check_circle</span>
+                                    Key Commonalities
+                                </h4>
+<ul class="text-label-md space-y-xs text-on-surface-variant">
+<li>• Matching Material: Leather</li>
+<li>• Color Match: Brown</li>
+<li>• Object Type: Bifold Wallet</li>
+<li>• Proximate Location: Terminal A</li>
+</ul>
+</div>
+<div class="p-md bg-white rounded-lg border border-border-subtle shadow-sm">
+<h4 class="text-label-md font-bold mb-sm flex items-center gap-xs">
+<span class="material-symbols-outlined text-[18px] text-status-pending">warning</span>
+                                    Observation
+                                </h4>
+<p class="text-label-md text-on-surface-variant">Report mentions "slightly worn edges" which matches the physical item condition.</p>
+</div>
+</div>
+</div>
+<!-- Lost Report -->
+<div class="flex flex-col gap-lg">
+<div class="p-md bg-status-pending/5 rounded-lg border border-status-pending/10 text-center text-status-pending font-semibold text-label-sm uppercase">Lost Report</div>
+<div class="aspect-square rounded-lg border border-border-subtle overflow-hidden bg-surface-container-low flex items-center justify-center">
+<span class="material-symbols-outlined text-outline text-[64px]">account_balance_wallet</span>
+</div>
+<div class="space-y-md">
+<div>
+<label class="text-label-sm text-outline uppercase block mb-xs">Reference Title</label>
+<p class="text-body-md font-semibold">Leather Wallet (Bifold)</p>
+</div>
+<div>
+<label class="text-label-sm text-outline uppercase block mb-xs">Owner Name</label>
+<p class="text-body-md">John Doe (Reported)</p>
+</div>
+<div>
+<label class="text-label-sm text-outline uppercase block mb-xs">Lost Date/Time</label>
+<p class="text-body-md">Oct 24, 2024 • 14:15</p>
+</div>
+<div>
+<label class="text-label-sm text-outline uppercase block mb-xs">Lost Location</label>
+<p class="text-body-md">Near Ticket Counter</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<footer class="p-xl border-t border-border-subtle bg-surface-white flex justify-end gap-md shrink-0">
+<button class="px-lg py-sm rounded-lg border border-border-subtle font-semibold text-label-md hover:bg-surface-container-low transition-colors" onclick="togglePanel()">Close View</button>
+<button class="px-lg py-sm rounded-lg border border-status-danger text-status-danger font-semibold text-label-md hover:bg-status-danger/5 transition-colors">Discard Match</button>
+<button class="px-lg py-sm rounded-lg bg-primary text-white font-semibold text-label-md shadow-sm hover:opacity-90 transition-opacity">Verify Claim &amp; Contact Owner</button>
+</footer>
+</div>
+</div>
+</main>
+<script>
+    function togglePanel() {
+        const panel = document.getElementById('comparison-panel');
+        const content = document.getElementById('panel-content');
+        if (panel.classList.contains('hidden')) {
+            panel.classList.remove('hidden');
+            setTimeout(() => {
+                content.classList.remove('translate-x-full');
+                content.classList.add('translate-x-0');
+            }, 10);
+        } else {
+            content.classList.remove('translate-x-0');
+            content.classList.add('translate-x-full');
+            setTimeout(() => {
+                panel.classList.add('hidden');
+            }, 300);
+        }
+    }
+
+    // Handle ESC key for modal
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            const panel = document.getElementById('comparison-panel');
+            if (!panel.classList.contains('hidden')) togglePanel();
+        }
+    });
+</script>
+</body></html>

@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Found Items | TirtoFind</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-bright": "#fbf9f8",
+                        "on-secondary-container": "#626362",
+                        "surface-container-highest": "#e4e2e1",
+                        "on-primary-container": "#eeefff",
+                        "on-primary-fixed": "#00174b",
+                        "status-danger": "#D33222",
+                        "secondary-fixed-dim": "#c7c6c5",
+                        "secondary-fixed": "#e3e2e1",
+                        "primary": "#004ac6",
+                        "on-tertiary-fixed": "#001c37",
+                        "surface-container-low": "#f5f3f2",
+                        "inverse-surface": "#303030",
+                        "surface-tint": "#0053db",
+                        "on-background": "#1b1c1c",
+                        "surface-container": "#efeded",
+                        "on-tertiary-fixed-variant": "#00497e",
+                        "surface-variant": "#e4e2e1",
+                        "background": "#fbf9f8",
+                        "surface-dim": "#dbdad9",
+                        "surface": "#fbf9f8",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "primary-container": "#2563eb",
+                        "on-tertiary-container": "#e9f1ff",
+                        "status-found": "#00703C",
+                        "secondary": "#5e5e5e",
+                        "secondary-container": "#e0dfde",
+                        "error": "#ba1a1a",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "primary-fixed": "#dbe1ff",
+                        "border-subtle": "#E5E7EB",
+                        "surface-container-high": "#e9e8e7",
+                        "surface-white": "#FFFFFF",
+                        "on-primary": "#ffffff",
+                        "on-surface": "#1b1c1c",
+                        "error-container": "#ffdad6",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed-dim": "#a0caff",
+                        "tertiary-fixed": "#d2e4ff",
+                        "tertiary-container": "#1d70b8",
+                        "outline": "#737686",
+                        "inverse-on-surface": "#f2f0f0",
+                        "status-pending": "#F59E0B",
+                        "on-secondary-fixed-variant": "#464746",
+                        "on-secondary-fixed": "#1a1c1c",
+                        "outline-variant": "#c3c6d7",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-primary": "#b4c5ff",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "tertiary": "#005796",
+                        "on-surface-variant": "#434655",
+                        "on-error": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "max-width": "1280px",
+                        "margin-desktop": "64px",
+                        "gutter": "24px",
+                        "md": "16px",
+                        "margin-mobile": "16px",
+                        "xs": "4px",
+                        "lg": "24px",
+                        "xl": "32px",
+                        "sm": "8px",
+                        "base": "4px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "title-lg": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .item-card:hover { transform: translateY(-4px); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen flex flex-col">
+<!-- Top Navigation Bar -->
+<nav class="sticky top-0 w-full z-50 flex justify-between items-center px-lg h-16 max-w-max-width mx-auto bg-surface-white border-b border-border-subtle">
+<div class="flex items-center gap-xl">
+<span class="text-title-lg font-title-lg font-bold text-primary">TirtoFind</span>
+<div class="hidden md:flex gap-lg items-center h-full">
+<a class="text-primary font-bold border-b-2 border-primary pb-1 text-label-md font-label-md hover:text-primary transition-colors" href="#">Found Items</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors text-label-md font-label-md" href="#">Report Lost</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors text-label-md font-label-md" href="#">About</a>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-low border border-border-subtle rounded-lg text-label-md focus:outline-none focus:border-primary-container w-64 transition-all" placeholder="Search items..." type="text"/>
+</div>
+<button class="bg-primary text-on-primary px-lg py-2 rounded-lg text-label-md font-bold hover:opacity-80 transition-opacity">Login</button>
+</div>
+</nav>
+<main class="flex-grow w-full max-w-max-width mx-auto px-lg py-xl">
+<!-- Header Section -->
+<header class="mb-xl">
+<h1 class="text-display-lg font-display-lg text-on-surface mb-xs">Found Items</h1>
+<p class="text-body-lg font-body-lg text-on-surface-variant max-w-2xl">
+                Browse all items recovered at Terminal Tirtonadi. If you recognize something, use the claim process with proper identification.
+            </p>
+</header>
+<!-- Filter Bar -->
+<section class="bg-surface-white border border-border-subtle rounded-xl p-md mb-xl flex flex-wrap gap-md items-end">
+<div class="flex-grow min-w-[240px]">
+<label class="block text-label-sm font-label-sm text-on-surface-variant mb-xs">Keywords</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full pl-10 pr-4 py-2.5 bg-background border border-border-subtle rounded-lg text-body-md focus:ring-2 focus:ring-primary-container/20 focus:border-primary transition-all" placeholder="e.g. iPhone, Blue Bag..." type="text"/>
+</div>
+</div>
+<div class="w-full md:w-auto min-w-[200px]">
+<label class="block text-label-sm font-label-sm text-on-surface-variant mb-xs">Category</label>
+<select class="w-full px-4 py-2.5 bg-background border border-border-subtle rounded-lg text-body-md appearance-none focus:ring-2 focus:ring-primary-container/20 focus:border-primary transition-all">
+<option>All Categories</option>
+<option>Electronics</option>
+<option>Bags &amp; Luggage</option>
+<option>Wallets &amp; Keys</option>
+<option>Documents</option>
+</select>
+</div>
+<div class="w-full md:w-auto min-w-[200px]">
+<label class="block text-label-sm font-label-sm text-on-surface-variant mb-xs">Date Range</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">calendar_today</span>
+<input class="w-full pl-10 pr-4 py-2.5 bg-background border border-border-subtle rounded-lg text-body-md focus:ring-2 focus:ring-primary-container/20 focus:border-primary transition-all" type="date"/>
+</div>
+</div>
+<button class="bg-primary-container text-on-primary-container px-xl py-2.5 rounded-lg text-label-md font-bold hover:scale-[0.98] transition-transform flex items-center gap-xs">
+<span class="material-symbols-outlined">filter_list</span>
+                Apply Filters
+            </button>
+</section>
+<!-- Results Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-lg">
+<!-- Item Card 1 -->
+<article class="item-card bg-surface-white border border-border-subtle rounded-xl overflow-hidden flex flex-col shadow-sm">
+<div class="h-48 w-full bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A high-quality product shot of a black iPhone 15 Pro resting on a clean white marble surface with soft, cinematic side lighting. The scene is minimalist and professional, consistent with a modern corporate aesthetic. The overall mood is crisp, clean, and high-end, utilizing a palette of whites, grays, and deep blacks." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvMR2oaAzuYLIVLL2jKlA3mV-pe0zVqh5WRJfCiAg_f3dZnIALto8DNXjyucZYLG9sRO_MJx6pCkaXDgCrp-oEzXXfXFXb9Mbis3TLvlfQlZYzdrpAEpkpco_liZ3iil-xzKVfd4zzfGWQCJh8AmrFqGvs528Sk_mCxm3Pwx3xXEek-Bd8-_FpSrYAdJZpp6MdZ6igE5w1HsjuEcc0-5jb0KMJezVYoRPSy_8BKUPb7QxNBIiO6lCeyw"/>
+</div>
+<div class="p-md flex flex-col flex-grow">
+<div class="flex justify-between items-start mb-xs">
+<span class="px-2 py-0.5 bg-tertiary-container/10 text-tertiary-container text-label-sm font-label-sm rounded uppercase tracking-wider">Electronics</span>
+<span class="px-2 py-0.5 bg-status-found/10 text-status-found text-label-sm font-label-sm rounded">Available</span>
+</div>
+<h3 class="text-title-lg font-title-lg text-on-surface mb-sm">iPhone 15 Pro - Black</h3>
+<div class="flex flex-col gap-xs mb-md text-on-surface-variant">
+<div class="flex items-center gap-xs text-body-md font-body-md">
+<span class="material-symbols-outlined text-[18px]">calendar_month</span>
+                            Oct 24, 2024
+                        </div>
+<div class="flex items-center gap-xs text-body-md font-body-md">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+                            Waiting Area - Gate 3
+                        </div>
+</div>
+<button class="mt-auto w-full py-2.5 border border-primary text-primary font-bold rounded-lg hover:bg-primary hover:text-on-primary transition-all">View Details</button>
+</div>
+</article>
+<!-- Item Card 2 -->
+<article class="item-card bg-surface-white border border-border-subtle rounded-xl overflow-hidden flex flex-col shadow-sm">
+<div class="h-48 w-full bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional studio photo of a weathered brown leather wallet overflowing with various IDs and cards. The lighting is soft and diffused, highlighting the texture of the leather. The background is a solid neutral gray to maintain focus on the object. The composition is clean and follows a modern, organized logistics aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBFAgn0qTAx5AtyK72KM-dFazzBzdX9ksFQg5CUjKfifQMs5vI8md0AXMq44dYEjs_bQPRcoVbIxcASQnOPabT30c0qFuK1tbJC3B6HR0m4mE-Ujv10469z8rlGzvjM4wHMcTyw_qRPbmpoQcELnqjz_0VAYecLPmj11FljxPbYQOzO6W80C8Px0UniRtSogIF7atLsnjR8ZTU28efHmqDm6A1cWAvm0PT7aOKu3v_KUQ_gP3aCCSCbhA"/>
+</div>
+<div class="p-md flex flex-col flex-grow">
+<div class="flex justify-between items-start mb-xs">
+<span class="px-2 py-0.5 bg-tertiary-container/10 text-tertiary-container text-label-sm font-label-sm rounded uppercase tracking-wider">Wallets</span>
+<span class="px-2 py-0.5 bg-status-found/10 text-status-found text-label-sm font-label-sm rounded">Available</span>
+</div>
+<h3 class="text-title-lg font-title-lg text-on-surface mb-sm">Brown Leather Wallet</h3>
+<div class="flex flex-col gap-xs mb-md text-on-surface-variant">
+<div class="flex items-center gap-xs text-body-md font-body-md">
+<span class="material-symbols-outlined text-[18px]">calendar_month</span>
+                            Oct 23, 2024
+                        </div>
+<div class="flex items-center gap-xs text-body-md font-body-md">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+                            Food Court Area
+                        </div>
+</div>
+<button class="mt-auto w-full py-2.5 border border-primary text-primary font-bold rounded-lg hover:bg-primary hover:text-on-primary transition-all">View Details</button>
+</div>
+</article>
+<!-- Item Card 3 -->
+<article class="item-card bg-surface-white border border-border-subtle rounded-xl overflow-hidden flex flex-col shadow-sm">
+<div class="h-48 w-full bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A photograph of a blue Samsonite hardshell suitcase standing upright in a brightly lit, modern transit terminal. The background shows blurred architectural details of a high-tech transportation hub. The lighting is bright and airy, emphasizing a light-mode UI aesthetic. The composition is professional and clean, highlighting the item's condition." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBod-derwklVlxS4dg0MYM1W9ZExPi7u5lWUk_p2PlbMWczbr0DDlisW-T0NVqTrY1KTL26SVFBVVDYAYmpS1GfGvGHOy0Cr1phzDhN_yeqdZuMNDt6tOStOGwbFhpOXRbnnui0qsoXrkTFfAv48T6jxbAKn2_VKsu7qKgFTImDdJdLfQjzfeHVb8ds1BLp78jgN28IRC-OGpNsWhMKciDbZp2YaDNASzb-pFf_INeG1DVy0rfUHv0Lig"/>
+</div>
+<div class="p-md flex flex-col flex-grow">
+<div class="flex justify-between items-start mb-xs">
+<span class="px-2 py-0.5 bg-tertiary-container/10 text-tertiary-container text-label-sm font-label-sm rounded uppercase tracking-wider">Bags</span>
+<span class="px-2 py-0.5 bg-status-pending/10 text-status-pending text-label-sm font-label-sm rounded">Processing</span>
+</div>
+<h3 class="text-title-lg font-title-lg text-on-surface mb-sm">Blue Samsonite Suitcase</h3>
+<div class="flex flex-col gap-xs mb-md text-on-surface-variant">
+<div class="flex items-center gap-xs text-body-md font-body-md">
+<span class="material-symbols-outlined text-[18px]">calendar_month</span>
+                            Oct 22, 2024
+                        </div>
+<div class="flex items-center gap-xs text-body-md font-body-md">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+                            Bus Platform B
+                        </div>
+</div>
+<button class="mt-auto w-full py-2.5 border border-primary text-primary font-bold rounded-lg hover:bg-primary hover:text-on-primary transition-all">View Details</button>
+</div>
+</article>
+<!-- More Cards (Simulated) -->
+<article class="item-card bg-surface-white border border-border-subtle rounded-xl overflow-hidden flex flex-col shadow-sm">
+<div class="h-48 w-full bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A clean, flat-lay photograph of a silver MacBook Air on a white desk. The lighting is high-key and soft, creating a pristine tech-focused look. The setting is bright and uncluttered, adhering to a professional corporate design system. The image is crisp and sharp, showcasing the item clearly for identification." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAX_zKH8kn_669aC00e7X4OB9LajEI7j5QBFozJ82ymjXwdfNDdi5qKW-2SoeXgIHdNauJyn4nBAaywcvALLnO8uHrOxYihOpZE8na9LfNCbHABlHmdC4Wv_EHOrQ3abrwb7eBUs2NokFJH7iH85xKAplh-EYeG9p03KHGF7FSoaeKsn8AN9T3Qnb1wWArsTfsIIBNQgqpQeO8GjxVJlaXLJQqphqMJKDEK04RAkwOfwLAkR6QHkQpCfw"/>
+</div>
+<div class="p-md flex flex-col flex-grow">
+<div class="flex justify-between items-start mb-xs">
+<span class="px-2 py-0.5 bg-tertiary-container/10 text-tertiary-container text-label-sm font-label-sm rounded uppercase tracking-wider">Electronics</span>
+<span class="px-2 py-0.5 bg-status-found/10 text-status-found text-label-sm font-label-sm rounded">Available</span>
+</div>
+<h3 class="text-title-lg font-title-lg text-on-surface mb-sm">MacBook Air - Silver</h3>
+<div class="flex flex-col gap-xs mb-md text-on-surface-variant">
+<div class="flex items-center gap-xs text-body-md font-body-md">
+<span class="material-symbols-outlined text-[18px]">calendar_month</span>
+                            Oct 21, 2024
+                        </div>
+<div class="flex items-center gap-xs text-body-md font-body-md">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+                            Ticketing Counter
+                        </div>
+</div>
+<button class="mt-auto w-full py-2.5 border border-primary text-primary font-bold rounded-lg hover:bg-primary hover:text-on-primary transition-all">View Details</button>
+</div>
+</article>
+<article class="item-card bg-surface-white border border-border-subtle rounded-xl overflow-hidden flex flex-col shadow-sm">
+<div class="h-48 w-full bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A high-contrast photo of a set of car keys with a Toyota logo fob resting on a dark gray slate surface. The lighting is sharp and directional, highlighting the metallic details of the keys. The composition is professional and utilitarian, designed for easy identification. The aesthetic is modern and clear." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBKR4okyeRa3UJt6yrwbnrfESRg9pRI9bulvs6n9ERyvz2aukom5uy8lnneNdPX_yI5iDqpAuQolkD2gW0Cxwe9Lcbnn41VruCMRdbzbASXmu064qyjAwHq51R_ar-R3xlNHLcF2qIX6BSg7psncMygoGfRH4xNpoPA6ugDFg2EEUKUab4jls1caRLWmAzrilitLHM-JmTDur7WIap8Ja6WLHfM6AUOfHFroDnLzViSkTagVIIUuy_onw"/>
+</div>
+<div class="p-md flex flex-col flex-grow">
+<div class="flex justify-between items-start mb-xs">
+<span class="px-2 py-0.5 bg-tertiary-container/10 text-tertiary-container text-label-sm font-label-sm rounded uppercase tracking-wider">Keys</span>
+<span class="px-2 py-0.5 bg-status-found/10 text-status-found text-label-sm font-label-sm rounded">Available</span>
+</div>
+<h3 class="text-title-lg font-title-lg text-on-surface mb-sm">Toyota Car Keys</h3>
+<div class="flex flex-col gap-xs mb-md text-on-surface-variant">
+<div class="flex items-center gap-xs text-body-md font-body-md">
+<span class="material-symbols-outlined text-[18px]">calendar_month</span>
+                            Oct 20, 2024
+                        </div>
+<div class="flex items-center gap-xs text-body-md font-body-md">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+                            Parking Zone A
+                        </div>
+</div>
+<button class="mt-auto w-full py-2.5 border border-primary text-primary font-bold rounded-lg hover:bg-primary hover:text-on-primary transition-all">View Details</button>
+</div>
+</article>
+<article class="item-card bg-surface-white border border-border-subtle rounded-xl overflow-hidden flex flex-col shadow-sm">
+<div class="h-48 w-full bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A clear, frontal shot of a green Indonesian passport resting on a clean wooden surface. The lighting is even and bright, ensuring all text on the cover is legible. The style is documentary yet professional, fitting for a government-managed lost and found portal. The colors are natural and well-saturated." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtfyqTxHODNpjD7B4NSmhqCp4tK34M0pE8r7hqxTKXjls6Z6QAAFBADp4nKFVkHx-YcpKnda2eEFF3Pgx51e4JF-5WnOygLi9IvLUCGF4gTsaxbuNvU0UA2V2OxbdpGaNP3-xK3FZtDg4j5WzkH2lpCweCewkBwKUCQO_Iqvf4c3cjiiGPa17ufSlzF4HhUJrpgw8chALH-xq-wvWeApHgDTwrmaxMLH9FSGZdPE5lWpnU9GXP6uDITw"/>
+</div>
+<div class="p-md flex flex-col flex-grow">
+<div class="flex justify-between items-start mb-xs">
+<span class="px-2 py-0.5 bg-tertiary-container/10 text-tertiary-container text-label-sm font-label-sm rounded uppercase tracking-wider">Documents</span>
+<span class="px-2 py-0.5 bg-status-danger/10 text-status-danger text-label-sm font-label-sm rounded">Urgent</span>
+</div>
+<h3 class="text-title-lg font-title-lg text-on-surface mb-sm">Indonesian Passport</h3>
+<div class="flex flex-col gap-xs mb-md text-on-surface-variant">
+<div class="flex items-center gap-xs text-body-md font-body-md">
+<span class="material-symbols-outlined text-[18px]">calendar_month</span>
+                            Oct 19, 2024
+                        </div>
+<div class="flex items-center gap-xs text-body-md font-body-md">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+                            International Gate
+                        </div>
+</div>
+<button class="mt-auto w-full py-2.5 border border-primary text-primary font-bold rounded-lg hover:bg-primary hover:text-on-primary transition-all">View Details</button>
+</div>
+</article>
+<article class="item-card bg-surface-white border border-border-subtle rounded-xl overflow-hidden flex flex-col shadow-sm">
+<div class="h-48 w-full bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A high-quality image of white Sony noise-canceling headphones resting on a minimalist felt desk mat. The lighting is soft and ambient, creating a modern, premium feel. The color palette is composed of soft whites and grays, matching a professional light-mode interface. The focus is sharp on the product details." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC6uBFNW_MDmuCUE24GCjedesyBFVqqyls69OEJMQ7uLq_BS0MAI8BkerWdgJjhd7ylKslwq2dfV15S896PfY6tCXoxSfNMCTrF039Din4p6L-HTaMHmtrmlSGPrm051Um2ZdvkVc1te0RwbfL6lbPgpyyxURovkZ7cZ7yHTldMZcQrMH7KMuPuZCApgALSt1rJ5O4p2jo9hdIfP7mJW6kSs4xeLLxbin_g7v25gAzjEOoLkXfdtBwWXg"/>
+</div>
+<div class="p-md flex flex-col flex-grow">
+<div class="flex justify-between items-start mb-xs">
+<span class="px-2 py-0.5 bg-tertiary-container/10 text-tertiary-container text-label-sm font-label-sm rounded uppercase tracking-wider">Electronics</span>
+<span class="px-2 py-0.5 bg-status-found/10 text-status-found text-label-sm font-label-sm rounded">Available</span>
+</div>
+<h3 class="text-title-lg font-title-lg text-on-surface mb-sm">Sony WH-1000XM5</h3>
+<div class="flex flex-col gap-xs mb-md text-on-surface-variant">
+<div class="flex items-center gap-xs text-body-md font-body-md">
+<span class="material-symbols-outlined text-[18px]">calendar_month</span>
+                            Oct 18, 2024
+                        </div>
+<div class="flex items-center gap-xs text-body-md font-body-md">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+                            Lounge Area
+                        </div>
+</div>
+<button class="mt-auto w-full py-2.5 border border-primary text-primary font-bold rounded-lg hover:bg-primary hover:text-on-primary transition-all">View Details</button>
+</div>
+</article>
+<article class="item-card bg-surface-white border border-border-subtle rounded-xl overflow-hidden flex flex-col shadow-sm">
+<div class="h-48 w-full bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A photograph of a colorful child's backpack with a playful pattern, sitting on a polished terminal floor. The lighting is bright and cheerful, reflecting the item's nature while maintaining a professional photographic style. The composition is balanced and clear, emphasizing the bag's distinctive design for easy owner recognition." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSRfy5Ntev8gzZNkIPe11V_usFfKIL84dcn8-0vV7JRCKUM5G5ho_9eedAhK9XaA3tWIs6hwHHMylWfPIRat1fmb4YRDj2zZg86uho3CfGuUmYCBIePn5fUc48mdOuXFaNeYhcl0prF6tqnxEe09tfPKED6qNN1tc-ioJGfvdipFl1WfspLslxAcW_7nLGWwNtECnXC43YHi1pUij3EFCMAa5WF8tjulIE3qI89yePBW-2fj02vUQk2Q"/>
+</div>
+<div class="p-md flex flex-col flex-grow">
+<div class="flex justify-between items-start mb-xs">
+<span class="px-2 py-0.5 bg-tertiary-container/10 text-tertiary-container text-label-sm font-label-sm rounded uppercase tracking-wider">Bags</span>
+<span class="px-2 py-0.5 bg-status-found/10 text-status-found text-label-sm font-label-sm rounded">Available</span>
+</div>
+<h3 class="text-title-lg font-title-lg text-on-surface mb-sm">Kids Pattern Backpack</h3>
+<div class="flex flex-col gap-xs mb-md text-on-surface-variant">
+<div class="flex items-center gap-xs text-body-md font-body-md">
+<span class="material-symbols-outlined text-[18px]">calendar_month</span>
+                            Oct 17, 2024
+                        </div>
+<div class="flex items-center gap-xs text-body-md font-body-md">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+                            Play Zone
+                        </div>
+</div>
+<button class="mt-auto w-full py-2.5 border border-primary text-primary font-bold rounded-lg hover:bg-primary hover:text-on-primary transition-all">View Details</button>
+</div>
+</article>
+<article class="item-card bg-surface-white border border-border-subtle rounded-xl overflow-hidden flex flex-col shadow-sm">
+<div class="h-48 w-full bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A studio photograph of a pair of classic Ray-Ban Aviator sunglasses resting on a reflective glass surface. The lighting is sophisticated, creating elegant reflections and highlighting the metallic frame and dark lenses. The overall aesthetic is high-end and professional, using a clean palette that fits a modern productivity tool's visual identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCM2bM9XoUwV7_pzm1PX21VFFYcMn06gH3OuqHb7J1rrEo4QSXOkcbjjqJkvXEng1yHNTS_8qUvSrOs4yKq0IR1RmKRKicgijx5uY-ouXjmeEpdHcuvj4DEtDyBtmXtMK-L_fC367obx84Y70_4pgB2vFn2-F677kKFAMhllvNV6sGsy2BJ_1TwhBM6lpN8qgsiVQ4EgeaEt1JW65HPsmwg2kM7YLhfz0N6jFInLYvU8pgIiti4Rr7eyA"/>
+</div>
+<div class="p-md flex flex-col flex-grow">
+<div class="flex justify-between items-start mb-xs">
+<span class="px-2 py-0.5 bg-tertiary-container/10 text-tertiary-container text-label-sm font-label-sm rounded uppercase tracking-wider">Accessories</span>
+<span class="px-2 py-0.5 bg-status-found/10 text-status-found text-label-sm font-label-sm rounded">Available</span>
+</div>
+<h3 class="text-title-lg font-title-lg text-on-surface mb-sm">Ray-Ban Aviators</h3>
+<div class="flex flex-col gap-xs mb-md text-on-surface-variant">
+<div class="flex items-center gap-xs text-body-md font-body-md">
+<span class="material-symbols-outlined text-[18px]">calendar_month</span>
+                            Oct 16, 2024
+                        </div>
+<div class="flex items-center gap-xs text-body-md font-body-md">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+                            Coffee Shop Counter
+                        </div>
+</div>
+<button class="mt-auto w-full py-2.5 border border-primary text-primary font-bold rounded-lg hover:bg-primary hover:text-on-primary transition-all">View Details</button>
+</div>
+</article>
+</div>
+<!-- Pagination -->
+<nav class="mt-xl flex justify-center items-center gap-sm">
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-border-subtle text-on-surface-variant hover:border-primary hover:text-primary transition-all">
+<span class="material-symbols-outlined text-[20px]">chevron_left</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg bg-primary text-on-primary font-bold">1</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-border-subtle text-on-surface-variant hover:border-primary hover:text-primary transition-all">2</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-border-subtle text-on-surface-variant hover:border-primary hover:text-primary transition-all">3</button>
+<span class="text-on-surface-variant px-sm">...</span>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-border-subtle text-on-surface-variant hover:border-primary hover:text-primary transition-all">24</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-border-subtle text-on-surface-variant hover:border-primary hover:text-primary transition-all">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+</nav>
+</main>
+<!-- Footer -->
+<footer class="w-full py-xl px-lg mt-auto flex flex-col items-center gap-md bg-surface-container-highest border-t border-border-subtle">
+<div class="flex flex-col items-center gap-sm">
+<span class="text-headline-md font-headline-md font-bold text-primary">TirtoFind</span>
+<p class="text-body-md font-body-md text-on-surface-variant text-center max-w-md">Terminal Tirtonadi official Lost &amp; Found Management System.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-lg">
+<a class="text-label-sm font-label-sm text-on-surface-variant opacity-80 hover:opacity-100 transition-opacity" href="#">Privacy Policy</a>
+<a class="text-label-sm font-label-sm text-on-surface-variant opacity-80 hover:opacity-100 transition-opacity" href="#">Terms of Service</a>
+<a class="text-label-sm font-label-sm text-on-surface-variant opacity-80 hover:opacity-100 transition-opacity" href="#">Contact Us</a>
+<a class="text-label-sm font-label-sm text-on-surface-variant opacity-80 hover:opacity-100 transition-opacity" href="#">Ministry Portal</a>
+</div>
+<p class="text-label-sm font-label-sm text-on-surface-variant opacity-60 mt-md">© 2024 Ministry of Transportation - Terminal Tirtonadi. All rights reserved.</p>
+</footer>
+<script>
+        // Simple interactive script for the category filter
+        document.querySelectorAll('select').forEach(select => {
+            select.addEventListener('change', (e) => {
+                console.log('Filtering items by:', e.target.value);
+                // Here one would typically trigger a fetch or local filter logic
+            });
+        });
+    </script>
+</body></html>

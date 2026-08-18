@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Successfully Returned Items - Terminal Tirtonadi</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary": "#5e5e5e",
+                    "surface-container-low": "#f5f3f2",
+                    "on-tertiary-fixed": "#001c37",
+                    "on-tertiary-fixed-variant": "#00497e",
+                    "on-secondary-fixed-variant": "#464746",
+                    "secondary-fixed": "#e3e2e1",
+                    "on-surface": "#1b1c1c",
+                    "on-tertiary-container": "#e9f1ff",
+                    "inverse-on-surface": "#f2f0f0",
+                    "tertiary-container": "#1d70b8",
+                    "error": "#ba1a1a",
+                    "surface": "#fbf9f8",
+                    "on-primary-fixed-variant": "#003ea8",
+                    "on-surface-variant": "#434655",
+                    "inverse-surface": "#303030",
+                    "surface-dim": "#dbdad9",
+                    "surface-white": "#FFFFFF",
+                    "on-secondary-container": "#626362",
+                    "surface-container": "#efeded",
+                    "secondary-fixed-dim": "#c7c6c5",
+                    "primary-fixed-dim": "#b4c5ff",
+                    "status-pending": "#F59E0B",
+                    "primary": "#004ac6",
+                    "tertiary-fixed-dim": "#a0caff",
+                    "secondary-container": "#e0dfde",
+                    "status-found": "#00703C",
+                    "tertiary-fixed": "#d2e4ff",
+                    "surface-tint": "#0053db",
+                    "inverse-primary": "#b4c5ff",
+                    "background": "#fbf9f8",
+                    "on-secondary": "#ffffff",
+                    "surface-container-high": "#e9e8e7",
+                    "on-primary": "#ffffff",
+                    "on-background": "#1b1c1c",
+                    "on-error": "#ffffff",
+                    "status-danger": "#D33222",
+                    "on-primary-container": "#eeefff",
+                    "surface-container-lowest": "#ffffff",
+                    "border-subtle": "#E5E7EB",
+                    "on-primary-fixed": "#00174b",
+                    "primary-container": "#2563eb",
+                    "surface-bright": "#fbf9f8",
+                    "surface-variant": "#e4e2e1",
+                    "outline-variant": "#c3c6d7",
+                    "outline": "#737686",
+                    "on-secondary-fixed": "#1a1c1c",
+                    "tertiary": "#005796",
+                    "on-error-container": "#93000a",
+                    "error-container": "#ffdad6",
+                    "surface-container-highest": "#e4e2e1",
+                    "on-tertiary": "#ffffff",
+                    "primary-fixed": "#dbe1ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "base": "4px",
+                    "sm": "8px",
+                    "max-width": "1280px",
+                    "margin-desktop": "64px",
+                    "gutter": "24px",
+                    "lg": "24px",
+                    "margin-mobile": "16px",
+                    "xl": "32px",
+                    "md": "16px",
+                    "xs": "4px"
+            },
+            "fontFamily": {
+                    "label-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "title-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "display-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "title-lg": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #F3F2F1; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .sidebar-active {
+            @apply bg-primary-container text-on-primary-container font-bold;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .drawer-transition { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    </style>
+</head>
+<body class="bg-background text-on-surface">
+<!-- Side Navigation Shell -->
+<aside class="fixed left-0 top-0 h-full w-64 bg-surface-white border-r border-border-subtle flex flex-col p-4 gap-2 z-40">
+<div class="mb-8 px-2">
+<h1 class="font-headline-md text-headline-md font-bold text-primary">Terminal Tirtonadi</h1>
+<p class="font-label-sm text-label-sm text-secondary">Lost &amp; Found Management</p>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-4 py-3 text-secondary hover:bg-surface-container-high transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-secondary hover:bg-surface-container-high transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-label-md text-label-md">Items</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-primary-container text-on-primary-container rounded-lg font-bold" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-md text-label-md">Reports</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-secondary hover:bg-surface-container-high transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">handshake</span>
+<span class="font-label-md text-label-md">Claims</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-secondary hover:bg-surface-container-high transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">category</span>
+<span class="font-label-md text-label-md">Categories</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-secondary hover:bg-surface-container-high transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-md text-label-md">Users</span>
+</a>
+</nav>
+</aside>
+<!-- Main Content Wrapper -->
+<main class="ml-64 min-h-screen flex flex-col">
+<!-- Top Navigation Bar -->
+<header class="h-16 bg-surface-white border-b border-border-subtle flex justify-between items-center px-lg sticky top-0 z-30">
+<div class="flex items-center gap-4">
+<div class="relative">
+<span class="absolute inset-y-0 left-3 flex items-center text-outline">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container border-none rounded-xl text-label-md focus:ring-2 focus:ring-primary w-64" placeholder="Global search..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-secondary hover:bg-surface-container-high rounded-full transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-secondary hover:bg-surface-container-high rounded-full transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="h-8 w-8 rounded-full bg-primary-fixed-dim border border-border-subtle overflow-hidden">
+<img class="h-full w-full object-cover" data-alt="Close-up professional headshot of a middle-aged female administrative officer with a friendly smile, wearing a dark blue formal government uniform. The background is a soft-focus office environment with warm indoor lighting, creating a professional and trustworthy institutional atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0fsQZ8XyZ3Pxp73WDzxvDWRibhRyrxlT3qOFgSNDptUNPSYS0J2SjE4OjM0N7chMe05VoLG7xSr2_X_174hVoA46NTxqk2tDyCvJilyO8KQF6B8eewcN4ONK1HWMTrbfe9K9gD7rYXUEXwZyVdQMwpm0N2HyFQWk8AnSqsKKCwh8I3Fv69D0dK0o-nkegU1iCZCkck2OLi9nyksHpVtYdQQMSokJMoPLkD--4YS7uILm6w6N-6-rlyg"/>
+</div>
+</div>
+</header>
+<!-- Page Canvas -->
+<div class="p-lg max-w-max-width mx-auto w-full flex flex-col gap-lg">
+<!-- Header Section -->
+<div class="flex justify-between items-end">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Successfully Returned Items</h2>
+<p class="font-body-md text-body-md text-secondary">View and manage the history of items successfully returned to their owners.</p>
+</div>
+<div class="flex gap-sm">
+<button class="flex items-center gap-2 px-4 py-2 bg-surface-white border border-border-subtle rounded-lg font-label-md text-label-md text-on-surface hover:bg-surface-container transition-all active:scale-95">
+<span class="material-symbols-outlined text-[18px]">picture_as_pdf</span>
+                        Export PDF
+                    </button>
+<button class="flex items-center gap-2 px-4 py-2 bg-surface-white border border-border-subtle rounded-lg font-label-md text-label-md text-on-surface hover:bg-surface-container transition-all active:scale-95">
+<span class="material-symbols-outlined text-[18px]">table_view</span>
+                        Export Excel
+                    </button>
+</div>
+</div>
+<!-- Stats Section -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter">
+<div class="bg-surface-white p-lg rounded-xl border border-border-subtle shadow-sm flex flex-col gap-xs">
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Total Returned Items</span>
+<span class="font-headline-lg text-headline-lg text-on-surface">3,942</span>
+<div class="flex items-center text-status-found font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px]">arrow_upward</span>
+<span>12% from last year</span>
+</div>
+</div>
+<div class="bg-surface-white p-lg rounded-xl border border-border-subtle shadow-sm flex flex-col gap-xs">
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Returned This Month</span>
+<span class="font-headline-lg text-headline-lg text-on-surface">124</span>
+<div class="flex items-center text-secondary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px]">trending_flat</span>
+<span>Steady pace</span>
+</div>
+</div>
+<div class="bg-surface-white p-lg rounded-xl border border-border-subtle shadow-sm flex flex-col gap-xs">
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Avg Claim Processing</span>
+<span class="font-headline-lg text-headline-lg text-on-surface">3.4 Days</span>
+<div class="flex items-center text-status-found font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px]">speed</span>
+<span>0.5 days faster</span>
+</div>
+</div>
+<div class="bg-surface-white p-lg rounded-xl border border-border-subtle shadow-sm flex flex-col gap-xs">
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Return Success Rate</span>
+<span class="font-headline-lg text-headline-lg text-on-surface">82%</span>
+<div class="w-full bg-surface-container h-1.5 rounded-full mt-2">
+<div class="bg-primary h-full rounded-full" style="width: 82%"></div>
+</div>
+</div>
+</div>
+<!-- Filter Section -->
+<section class="bg-surface-white p-lg rounded-xl border border-border-subtle shadow-sm">
+<div class="grid grid-cols-1 md:grid-cols-6 gap-md items-end">
+<div class="md:col-span-1">
+<label class="block font-label-sm text-label-sm text-secondary mb-1">Search ID/Item</label>
+<input class="w-full px-3 py-2 bg-surface-bright border border-border-subtle rounded-lg text-label-md focus:ring-primary focus:border-primary" placeholder="RET-XXXX" type="text"/>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-secondary mb-1">Date Range</label>
+<input class="w-full px-3 py-2 bg-surface-bright border border-border-subtle rounded-lg text-label-md focus:ring-primary focus:border-primary" type="date"/>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-secondary mb-1">Category</label>
+<select class="w-full px-3 py-2 bg-surface-bright border border-border-subtle rounded-lg text-label-md focus:ring-primary focus:border-primary">
+<option>All Categories</option>
+<option>Personal Effects</option>
+<option>Electronics</option>
+<option>Documents</option>
+</select>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-secondary mb-1">Return Status</label>
+<select class="w-full px-3 py-2 bg-surface-bright border border-border-subtle rounded-lg text-label-md focus:ring-primary focus:border-primary">
+<option>Handed Over</option>
+<option>Sent via Courier</option>
+</select>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-secondary mb-1">Customer Service</label>
+<select class="w-full px-3 py-2 bg-surface-bright border border-border-subtle rounded-lg text-label-md focus:ring-primary focus:border-primary">
+<option>All Staff</option>
+<option>Sarah J.</option>
+<option>Budi A.</option>
+</select>
+</div>
+<button class="px-4 py-2 bg-surface-container-high text-on-surface font-label-md text-label-md rounded-lg hover:bg-surface-container-highest transition-colors">
+                        Reset Filters
+                    </button>
+</div>
+</section>
+<!-- Table Section -->
+<section class="bg-surface-white rounded-xl border border-border-subtle shadow-sm overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-low border-b border-border-subtle">
+<tr>
+<th class="px-lg py-4 font-label-sm text-label-sm text-secondary uppercase tracking-wider">Return ID</th>
+<th class="px-lg py-4 font-label-sm text-label-sm text-secondary uppercase tracking-wider">Item Details</th>
+<th class="px-lg py-4 font-label-sm text-label-sm text-secondary uppercase tracking-wider">Owner Name</th>
+<th class="px-lg py-4 font-label-sm text-label-sm text-secondary uppercase tracking-wider">Claim / Return Date</th>
+<th class="px-lg py-4 font-label-sm text-label-sm text-secondary uppercase tracking-wider">Staff</th>
+<th class="px-lg py-4 font-label-sm text-label-sm text-secondary uppercase tracking-wider">Status</th>
+<th class="px-lg py-4 font-label-sm text-label-sm text-secondary uppercase tracking-wider">Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-subtle">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-bright transition-colors">
+<td class="px-lg py-4 font-label-md text-label-md font-semibold text-on-surface">#RET-0891</td>
+<td class="px-lg py-4">
+<div class="flex items-center gap-3">
+<div class="h-10 w-10 rounded-lg overflow-hidden border border-border-subtle bg-surface-container">
+<img class="h-full w-full object-cover" data-alt="A high-quality studio photograph of a premium brown leather bifold wallet lying on a clean white surface. The lighting is soft and neutral, highlighting the fine texture and stitching of the leather. The style is minimalist and professional, consistent with a modern corporate lost and found inventory system." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCpkw0C4jfbJ0ZoM5pwcmOnbNG1UWcReaPLcHA94GetjvLe5kY0bM8PQO7a1M7rM1yhIWEAEJK2EgvLeSZxYKYn0jOFin60iLM2XHtqopx8xL5uetfjPWUfAmm6v52ODXTUKKV3XHU10DdQ7TmClwpINjIPc44SJgXn6ewHzbaX6ZygkONDFRDOKTscvJRLGhmADLwjZys2w10Zax80csXk5DppOtjknrYpwUsSLQtqBR9ayeR7roqpiQ"/>
+</div>
+<div>
+<div class="font-label-md text-label-md text-on-surface">Leather Wallet</div>
+<div class="text-[12px] text-secondary">Personal Effects</div>
+</div>
+</div>
+</td>
+<td class="px-lg py-4 font-label-md text-label-md text-on-surface">Budi Santoso</td>
+<td class="px-lg py-4">
+<div class="text-label-md text-on-surface">Oct 25, 2024</div>
+<div class="text-[12px] text-secondary">Claimed: Oct 24</div>
+</td>
+<td class="px-lg py-4 font-label-md text-label-md text-on-surface">Sarah J.</td>
+<td class="px-lg py-4">
+<span class="px-2.5 py-0.5 rounded-full bg-status-found/10 text-status-found text-[12px] font-bold">Returned</span>
+</td>
+<td class="px-lg py-4">
+<button class="text-primary hover:underline font-label-md text-label-md" onclick="toggleDrawer()">View Details</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="bg-surface-container-lowest/50 hover:bg-surface-bright transition-colors">
+<td class="px-lg py-4 font-label-md text-label-md font-semibold text-on-surface">#RET-0890</td>
+<td class="px-lg py-4">
+<div class="flex items-center gap-3">
+<div class="h-10 w-10 rounded-lg overflow-hidden border border-border-subtle bg-surface-container">
+<img class="h-full w-full object-cover" data-alt="A sleek black smartphone with a reflective glass screen placed on a neutral grey background. The image is crisp and professional, using high-key lighting to emphasize the device's design. This visual is part of a clean, institutional lost-and-found portal design system." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAa6ganOGsx84LWaWPz-l3voMRIM4yP73p8dllgk0H-IqbY0B3PxJMRWQeC9DqQ8tvuy1lZvnwlWbY3YSYzilwO_o76o89VP3fdf-jd7E2aUGm2RevHPP0FdxuVU71tmDmpbfts-ydZaPnJMWILfHW249lkkQ9uhyeyU9TKYbRpoWgkRjtc4zj37a6cHj26jizfiwBGnLpyT-uPN5O1aJbAv7c0iO_R6UeyA6jic_FeiIZEMP9vwZ6huw"/>
+</div>
+<div>
+<div class="font-label-md text-label-md text-on-surface">iPhone 13 Pro</div>
+<div class="text-[12px] text-secondary">Electronics</div>
+</div>
+</div>
+</td>
+<td class="px-lg py-4 font-label-md text-label-md text-on-surface">Dewi Lestari</td>
+<td class="px-lg py-4">
+<div class="text-label-md text-on-surface">Oct 23, 2024</div>
+<div class="text-[12px] text-secondary">Claimed: Oct 22</div>
+</td>
+<td class="px-lg py-4 font-label-md text-label-md text-on-surface">Budi A.</td>
+<td class="px-lg py-4">
+<span class="px-2.5 py-0.5 rounded-full bg-status-found/10 text-status-found text-[12px] font-bold">Returned</span>
+</td>
+<td class="px-lg py-4">
+<button class="text-primary hover:underline font-label-md text-label-md" onclick="toggleDrawer()">View Details</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-bright transition-colors">
+<td class="px-lg py-4 font-label-md text-label-md font-semibold text-on-surface">#RET-0889</td>
+<td class="px-lg py-4">
+<div class="flex items-center gap-3">
+<div class="h-10 w-10 rounded-lg overflow-hidden border border-border-subtle bg-surface-container">
+<img class="h-full w-full object-cover" data-alt="A clear plastic folder containing several official-looking paper documents with red stamps. The setting is clean and well-lit, suggesting an organized administrative environment. The aesthetic is professional, minimalist, and authoritative, matching a government logistics portal." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0buKHR1babDhdU8rpIZwW44Wb3tTeg9Y4R-fI1whu2mXcqffo8EpNhEC_oPOobkK6H214JWgo3uUjnh3OOnoUqMbxpvcv7CJa8FkC_FdMbIydycga2zqMIiUtDcQv-L3B69t0WwLO1x9MG869COJXxFUQVSU5utkZ9ge58Hbxc5qIc8ZGQS8IAziArxW-H7gID2CF-FqD5tf5yYXs4ah03y378LdSEPKjERIsaMrBGHW9MhaTbXgCcA"/>
+</div>
+<div>
+<div class="font-label-md text-label-md text-on-surface">Legal Documents</div>
+<div class="text-[12px] text-secondary">Documents</div>
+</div>
+</div>
+</td>
+<td class="px-lg py-4 font-label-md text-label-md text-on-surface">Ahmad Hidayat</td>
+<td class="px-lg py-4">
+<div class="text-label-md text-on-surface">Oct 21, 2024</div>
+<div class="text-[12px] text-secondary">Claimed: Oct 21</div>
+</td>
+<td class="px-lg py-4 font-label-md text-label-md text-on-surface">Sarah J.</td>
+<td class="px-lg py-4">
+<span class="px-2.5 py-0.5 rounded-full bg-status-found/10 text-status-found text-[12px] font-bold">Returned</span>
+</td>
+<td class="px-lg py-4">
+<button class="text-primary hover:underline font-label-md text-label-md" onclick="toggleDrawer()">View Details</button>
+</td>
+</tr>
+</tbody>
+</table>
+<!-- Footer / Pagination -->
+<footer class="px-lg py-8 flex justify-between items-center bg-surface-white border-t border-border-subtle">
+<span class="text-label-sm text-secondary font-label-sm">Showing 1 to 10 of 3,942 entries</span>
+<div class="flex items-center gap-2">
+<button class="w-8 h-8 flex items-center justify-center rounded hover:bg-surface-container text-secondary transition-colors">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded bg-primary text-on-primary font-label-md text-label-md">1</button>
+<button class="w-8 h-8 flex items-center justify-center rounded hover:bg-surface-container text-secondary font-label-md text-label-md">2</button>
+<button class="w-8 h-8 flex items-center justify-center rounded hover:bg-surface-container text-secondary font-label-md text-label-md">3</button>
+<span class="px-2 text-secondary">...</span>
+<button class="w-8 h-8 flex items-center justify-center rounded hover:bg-surface-container text-secondary font-label-md text-label-md">395</button>
+<button class="w-8 h-8 flex items-center justify-center rounded hover:bg-surface-container text-secondary transition-colors">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</footer>
+</section>
+</div>
+</main>
+<!-- Side Drawer (Details View) -->
+<div class="fixed inset-0 bg-black/40 z-50 hidden backdrop-blur-sm transition-opacity" id="drawerOverlay" onclick="toggleDrawer()"></div>
+<div class="fixed right-0 top-0 h-full w-[450px] bg-surface-white shadow-2xl z-50 translate-x-full drawer-transition flex flex-col" id="sideDrawer">
+<div class="p-6 border-b border-border-subtle flex justify-between items-center">
+<div>
+<h3 class="font-title-lg text-title-lg text-on-surface">Return Details</h3>
+<p class="font-label-sm text-label-sm text-secondary">Reference: #RET-0891</p>
+</div>
+<button class="p-2 hover:bg-surface-container rounded-full text-secondary transition-colors" onclick="toggleDrawer()">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="flex-1 overflow-y-auto p-6 hide-scrollbar flex flex-col gap-8">
+<!-- Item Info -->
+<section>
+<h4 class="font-label-sm text-label-sm text-secondary uppercase tracking-widest mb-4">Item Information</h4>
+<div class="flex gap-4 p-4 bg-surface-container-low rounded-xl">
+<div class="h-20 w-20 rounded-lg overflow-hidden bg-white border border-border-subtle shrink-0">
+<img class="h-full w-full object-cover" data-alt="A detailed, clear macro photograph of a dark brown leather wallet on a pristine white background. The photo is well-lit, emphasizing the quality of the leather and the stitching. The visual style is highly clinical and professional, suitable for a government agency's digital evidence or inventory management system." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC9sGkAPAE89oyKVjp67KlpUy1ycgRNndZRRAhEUnbJSjgaUDnIrh2kLrfbQCVEtIp68KVmMpuZpC6Gm80YmDC9a__rCZqE32kK5erVQcieI8BKXm_OMqI8hTinau3dcNJsSVu4OnscQOIdzEcfYG4byN_lpoXn93uSn8O7jJncdf0D_Dr5M73tSU7nduS38kdkhqK8c4MUTfqlUzDNCYb1_YtGq_M9BWjWAYunHB-hf6K-obkWVfd-lw"/>
+</div>
+<div>
+<p class="font-title-lg text-on-surface">Leather Wallet</p>
+<p class="text-label-md text-secondary">Category: Personal Effects</p>
+<p class="text-label-md text-secondary mt-1">Found Date: Oct 12, 2024</p>
+</div>
+</div>
+</section>
+<!-- Owner Info -->
+<section>
+<h4 class="font-label-sm text-label-sm text-secondary uppercase tracking-widest mb-4">Owner &amp; Verification</h4>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<p class="text-[12px] text-secondary">Full Name</p>
+<p class="font-label-md text-on-surface">Budi Santoso</p>
+</div>
+<div>
+<p class="text-[12px] text-secondary">Identification</p>
+<p class="font-label-md text-on-surface">KTP: 317************</p>
+</div>
+<div class="col-span-2">
+<p class="text-[12px] text-secondary">Verification Notes</p>
+<p class="font-label-md text-on-surface italic">"Owner correctly identified three bank cards and a specific family photo inside the inner pocket."</p>
+</div>
+</div>
+</section>
+<!-- Supporting Docs -->
+<section>
+<h4 class="font-label-sm text-label-sm text-secondary uppercase tracking-widest mb-4">Supporting Documents</h4>
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between p-3 border border-border-subtle rounded-lg hover:border-primary cursor-pointer transition-colors">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">description</span>
+<span class="font-label-md text-on-surface">Handover_Form_RET0891.pdf</span>
+</div>
+<span class="material-symbols-outlined text-secondary text-[20px]">download</span>
+</div>
+<div class="flex items-center justify-between p-3 border border-border-subtle rounded-lg hover:border-primary cursor-pointer transition-colors">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">photo_camera</span>
+<span class="font-label-md text-on-surface">Handover_Photo.jpg</span>
+</div>
+<span class="material-symbols-outlined text-secondary text-[20px]">download</span>
+</div>
+</div>
+</section>
+<!-- Return Timeline -->
+<section>
+<h4 class="font-label-sm text-label-sm text-secondary uppercase tracking-widest mb-4">Process Timeline</h4>
+<div class="space-y-4 relative before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-surface-container">
+<div class="relative pl-8">
+<div class="absolute left-0 top-1.5 w-4 h-4 bg-primary rounded-full border-4 border-surface-white ring-1 ring-primary/20"></div>
+<p class="font-label-md text-on-surface font-bold">Successfully Returned</p>
+<p class="text-[12px] text-secondary">Oct 25, 2024 • 14:20 PM by Sarah J.</p>
+</div>
+<div class="relative pl-8">
+<div class="absolute left-0 top-1.5 w-4 h-4 bg-surface-container-highest rounded-full border-4 border-surface-white"></div>
+<p class="font-label-md text-on-surface">Claim Verified</p>
+<p class="text-[12px] text-secondary">Oct 24, 2024 • 09:15 AM by Budi A.</p>
+</div>
+<div class="relative pl-8">
+<div class="absolute left-0 top-1.5 w-4 h-4 bg-surface-container-highest rounded-full border-4 border-surface-white"></div>
+<p class="font-label-md text-on-surface">Item Reported Lost</p>
+<p class="text-[12px] text-secondary">Oct 12, 2024 • 18:30 PM by Admin System</p>
+</div>
+</div>
+</section>
+</div>
+<div class="p-6 border-t border-border-subtle bg-surface-container-low flex gap-3">
+<button class="flex-1 px-4 py-3 bg-primary text-on-primary font-label-md text-label-md rounded-lg shadow-sm hover:opacity-90 transition-opacity">Print Handover Receipt</button>
+<button class="px-4 py-3 border border-border-subtle bg-white text-on-surface font-label-md text-label-md rounded-lg hover:bg-surface-container transition-colors" onclick="toggleDrawer()">Close</button>
+</div>
+</div>
+<script>
+        function toggleDrawer() {
+            const drawer = document.getElementById('sideDrawer');
+            const overlay = document.getElementById('drawerOverlay');
+            const isHidden = drawer.classList.contains('translate-x-full');
+
+            if (isHidden) {
+                drawer.classList.remove('translate-x-full');
+                overlay.classList.remove('hidden');
+                setTimeout(() => overlay.classList.add('opacity-100'), 10);
+            } else {
+                drawer.classList.add('translate-x-full');
+                overlay.classList.remove('opacity-100');
+                setTimeout(() => overlay.classList.add('hidden'), 300);
+            }
+        }
+    </script>
+</body></html>

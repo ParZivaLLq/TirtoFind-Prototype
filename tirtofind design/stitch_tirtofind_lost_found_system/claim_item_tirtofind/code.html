@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Claim Item | TirtoFind Terminal Tirtonadi</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Shared Tailwind Config -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "outline": "#737686",
+                    "on-primary": "#ffffff",
+                    "tertiary": "#005796",
+                    "status-found": "#00703C",
+                    "surface-bright": "#fbf9f8",
+                    "surface-container-high": "#e9e8e7",
+                    "on-surface-variant": "#434655",
+                    "surface": "#fbf9f8",
+                    "status-pending": "#F59E0B",
+                    "primary-container": "#2563eb",
+                    "primary": "#004ac6",
+                    "on-tertiary-fixed": "#001c37",
+                    "on-primary-fixed": "#00174b",
+                    "on-secondary-container": "#626362",
+                    "surface-container-lowest": "#ffffff",
+                    "on-primary-fixed-variant": "#003ea8",
+                    "border-subtle": "#E5E7EB",
+                    "secondary": "#5e5e5e",
+                    "primary-fixed": "#dbe1ff",
+                    "on-tertiary-fixed-variant": "#00497e",
+                    "surface-container-highest": "#e4e2e1",
+                    "on-secondary": "#ffffff",
+                    "secondary-container": "#e0dfde",
+                    "error": "#ba1a1a",
+                    "secondary-fixed-dim": "#c7c6c5",
+                    "inverse-surface": "#303030",
+                    "background": "#fbf9f8",
+                    "inverse-primary": "#b4c5ff",
+                    "on-primary-container": "#eeefff",
+                    "on-background": "#1b1c1c",
+                    "on-secondary-fixed-variant": "#464746",
+                    "surface-tint": "#0053db",
+                    "surface-white": "#FFFFFF",
+                    "tertiary-fixed-dim": "#a0caff",
+                    "secondary-fixed": "#e3e2e1",
+                    "on-tertiary-container": "#e9f1ff",
+                    "primary-fixed-dim": "#b4c5ff",
+                    "on-tertiary": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "error-container": "#ffdad6",
+                    "on-surface": "#1b1c1c",
+                    "surface-container": "#efeded",
+                    "surface-variant": "#e4e2e1",
+                    "on-error": "#ffffff",
+                    "tertiary-container": "#1d70b8",
+                    "surface-dim": "#dbdad9",
+                    "inverse-on-surface": "#f2f0f0",
+                    "surface-container-low": "#f5f3f2",
+                    "status-danger": "#D33222",
+                    "tertiary-fixed": "#d2e4ff",
+                    "outline-variant": "#c3c6d7",
+                    "on-secondary-fixed": "#1a1c1c"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "sm": "8px",
+                    "xs": "4px",
+                    "lg": "24px",
+                    "md": "16px",
+                    "xl": "32px",
+                    "margin-mobile": "16px",
+                    "max-width": "1280px",
+                    "gutter": "24px",
+                    "base": "4px",
+                    "margin-desktop": "64px"
+            },
+            "fontFamily": {
+                    "label-sm": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "title-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "display-lg": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "label-md": ["Inter"]
+            },
+            "fontSize": {
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "title-lg": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #F3F2F1; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px); }
+        .input-focus-ring:focus { border-color: #2563EB; ring: 2px; ring-color: rgba(37, 99, 235, 0.2); }
+        .custom-shadow { box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.05); }
+    </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<nav class="sticky top-0 w-full z-50 flex justify-between items-center px-lg h-16 max-w-max-width mx-auto bg-surface-white border-b border-border-subtle">
+<div class="flex items-center gap-xl">
+<span class="text-title-lg font-title-lg font-bold text-primary">TirtoFind</span>
+<div class="hidden md:flex items-center gap-md">
+<a class="text-label-md font-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Found Items</a>
+<a class="text-label-md font-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Report Lost</a>
+<a class="text-label-md font-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">About</a>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<div class="hidden md:flex relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-sm">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container rounded-xl border-none text-label-md focus:ring-2 focus:ring-primary/20 transition-all w-64" placeholder="Search items..." type="text"/>
+</div>
+<button class="text-label-md font-label-md font-bold text-primary bg-primary/10 px-md py-2 rounded-lg hover:bg-primary/20 transition-all">Login</button>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="flex-grow w-full max-w-max-width mx-auto px-lg py-xl">
+<!-- Breadcrumbs -->
+<nav class="flex items-center gap-xs text-on-surface-variant mb-xl">
+<a class="text-label-md hover:text-primary" href="#">Home</a>
+<span class="material-symbols-outlined text-xs">chevron_right</span>
+<a class="text-label-md hover:text-primary" href="#">Found Items</a>
+<span class="material-symbols-outlined text-xs">chevron_right</span>
+<span class="text-label-md font-bold text-on-surface">Claim Item</span>
+</nav>
+<header class="mb-xl">
+<h1 class="text-headline-lg font-headline-lg text-on-surface">Claim Ownership</h1>
+<p class="text-body-md text-on-surface-variant mt-xs">Please provide the required details to verify your ownership of the item found at Terminal Tirtonadi.</p>
+</header>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-xl">
+<!-- Left Column: Item Information -->
+<aside class="lg:col-span-5 space-y-lg">
+<div class="bg-surface-white rounded-xl border border-border-subtle custom-shadow overflow-hidden">
+<div class="h-64 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional studio product photograph of a high-quality black leather bifold wallet lying on a clean white minimalist surface. The lighting is bright and even, highlighting the fine texture of the leather and the meticulous stitching at the edges. The aesthetic is clean and corporate, consistent with a modern government inventory system. The mood is clinical yet respectful of the object's value." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5e-mNG8TBSP6QG6CEVgV2SadQUMPSweIhW2oCEmycQRMJl6e3BfqW-y9iTcMwP5a2BNJGiKDPBg8IHPy0oz593VwvNFvqMJdxHl5NZQV_oCPJxGnTLz8-rc8A98vE0mD7MX5TyvqNYrD3LwgcnEkj_fwJbyWuFZgG0zEW2EYBk0qN15Wm4dmlN4SDc_nkDFytI72HGWlgN5oXJ77H3E5bplDTao6B0ESf71FKeDfrSfr-r5gbqctkdw"/>
+</div>
+<div class="p-lg space-y-md">
+<div>
+<span class="text-label-sm uppercase tracking-wider text-primary bg-primary/10 px-2 py-1 rounded-md">Reference #TF-20240512-04</span>
+<h2 class="text-headline-md font-headline-md text-on-surface mt-sm">Black Leather Wallet</h2>
+</div>
+<div class="grid grid-cols-1 gap-md border-t border-border-subtle pt-md">
+<div class="flex items-start gap-md">
+<span class="material-symbols-outlined text-primary bg-primary/5 p-2 rounded-lg">category</span>
+<div>
+<p class="text-label-sm text-outline">Category</p>
+<p class="text-body-md font-medium">Accessories</p>
+</div>
+</div>
+<div class="flex items-start gap-md">
+<span class="material-symbols-outlined text-primary bg-primary/5 p-2 rounded-lg">calendar_today</span>
+<div>
+<p class="text-label-sm text-outline">Found Date</p>
+<p class="text-body-md font-medium">May 12, 2024</p>
+</div>
+</div>
+<div class="flex items-start gap-md">
+<span class="material-symbols-outlined text-primary bg-primary/5 p-2 rounded-lg">location_on</span>
+<div>
+<p class="text-label-sm text-outline">Location</p>
+<p class="text-body-md font-medium">Platform 3, Waiting Lounge Area</p>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-low p-md rounded-lg border-l-4 border-primary mt-md">
+<p class="text-label-sm font-bold text-primary mb-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">info</span> IMPORTANT
+                            </p>
+<p class="text-label-md text-on-surface-variant">Claims are processed within 3-5 working days. You will be required to present your original ID when collecting the item.</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Right Column: Claim Form -->
+<section class="lg:col-span-7">
+<div class="bg-surface-white rounded-xl border border-border-subtle custom-shadow p-xl">
+<form class="space-y-lg" id="claimForm">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+<div class="space-y-xs">
+<label class="text-label-md font-semibold text-on-surface">Full Name</label>
+<input class="w-full px-md py-3 rounded-lg border border-border-subtle bg-surface-white text-body-md focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-outline/50" placeholder="As shown on identity card" type="text"/>
+</div>
+<div class="space-y-xs">
+<label class="text-label-md font-semibold text-on-surface">Phone Number</label>
+<input class="w-full px-md py-3 rounded-lg border border-border-subtle bg-surface-white text-body-md focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-outline/50" placeholder="+62 8xx xxxx xxxx" type="tel"/>
+</div>
+</div>
+<div class="space-y-xs">
+<label class="text-label-md font-semibold text-on-surface">Identity Number (NIK)</label>
+<input class="w-full px-md py-3 rounded-lg border border-border-subtle bg-surface-white text-body-md focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-outline/50" placeholder="16-digit National Identity Number" type="text"/>
+</div>
+<div class="space-y-xs">
+<label class="text-label-md font-semibold text-on-surface">Item Characteristics</label>
+<textarea class="w-full px-md py-3 rounded-lg border border-border-subtle bg-surface-white text-body-md focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-outline/50" placeholder="Describe contents, brands, or specific marks (e.g., number of cards, photo inside, specific brand logo)" rows="3"></textarea>
+</div>
+<div class="space-y-xs">
+<label class="text-label-md font-semibold text-on-surface">Upload Proof of Ownership</label>
+<div class="border-2 border-dashed border-border-subtle rounded-xl p-xl flex flex-col items-center justify-center bg-surface-container-low hover:bg-surface-container-high transition-colors cursor-pointer group">
+<span class="material-symbols-outlined text-4xl text-outline group-hover:text-primary transition-colors mb-sm">cloud_upload</span>
+<p class="text-label-md font-medium text-on-surface">Click to upload or drag and drop</p>
+<p class="text-label-sm text-outline mt-1">PNG, JPG, or PDF (max. 5MB). Photo of receipt, old photos of item, etc.</p>
+<input class="hidden" type="file"/>
+</div>
+</div>
+<div class="space-y-xs">
+<label class="text-label-md font-semibold text-on-surface">Additional Notes</label>
+<textarea class="w-full px-md py-3 rounded-lg border border-border-subtle bg-surface-white text-body-md focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-outline/50" placeholder="Any other information that might help verify your claim" rows="2"></textarea>
+</div>
+<div class="pt-lg flex flex-col gap-md">
+<div class="flex items-center gap-md">
+<input class="rounded text-primary focus:ring-primary border-border-subtle w-5 h-5" id="consent" type="checkbox"/>
+<label class="text-label-sm text-on-surface-variant leading-relaxed" for="consent">
+                                    I certify that the information provided above is true and accurate. I understand that false claims are subject to legal consequences under the Ministry of Transportation regulations.
+                                </label>
+</div>
+<button class="w-full bg-primary text-on-primary font-bold py-4 rounded-xl hover:bg-primary-container transition-all active:scale-[0.98] shadow-lg shadow-primary/20" onclick="showModal()" type="button">
+                                Submit Claim
+                            </button>
+</div>
+</form>
+</div>
+</section>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full py-xl px-lg mt-auto flex flex-col items-center gap-md bg-surface-container-highest border-t border-border-subtle">
+<span class="text-headline-md font-headline-md font-bold text-primary">TirtoFind</span>
+<div class="flex flex-wrap justify-center gap-lg">
+<a class="text-label-sm text-on-surface-variant hover:underline" href="#">Privacy Policy</a>
+<a class="text-label-sm text-on-surface-variant hover:underline" href="#">Terms of Service</a>
+<a class="text-label-sm text-on-surface-variant hover:underline" href="#">Contact Us</a>
+<a class="text-label-sm text-on-surface-variant hover:underline" href="#">Ministry Portal</a>
+</div>
+<p class="text-label-sm text-on-surface-variant opacity-80 mt-md">© 2024 Ministry of Transportation - Terminal Tirtonadi. All rights reserved.</p>
+</footer>
+<!-- Confirmation Modal Overlay -->
+<div class="fixed inset-0 z-[100] hidden flex items-center justify-center p-md" id="confirmationModal">
+<div class="absolute inset-0 bg-on-background/40 backdrop-blur-sm" onclick="hideModal()"></div>
+<div class="relative bg-surface-white w-full max-w-md rounded-2xl p-xl shadow-2xl scale-95 transition-transform duration-300 ease-out flex flex-col items-center text-center">
+<div class="w-20 h-20 bg-status-found/10 rounded-full flex items-center justify-center mb-lg">
+<span class="material-symbols-outlined text-4xl text-status-found" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<h3 class="text-headline-md font-headline-md text-on-surface mb-sm">Confirm Submission</h3>
+<p class="text-body-md text-on-surface-variant mb-xl">Are you sure you want to submit this claim for the Black Leather Wallet? Once submitted, our staff will review your documentation.</p>
+<div class="flex flex-col w-full gap-md">
+<button class="w-full bg-primary text-on-primary font-bold py-3 rounded-xl hover:bg-primary-container transition-all" onclick="submitFinal()">Confirm and Submit</button>
+<button class="w-full bg-surface-container-low text-on-surface font-semibold py-3 rounded-xl hover:bg-surface-container-high transition-all" onclick="hideModal()">Go Back</button>
+</div>
+</div>
+</div>
+<!-- Success Feedback Overlay -->
+<div class="fixed inset-0 z-[110] hidden flex items-center justify-center p-md bg-surface-white" id="successOverlay">
+<div class="text-center max-w-md animate-in fade-in zoom-in duration-500">
+<div class="w-24 h-24 bg-status-found/20 rounded-full flex items-center justify-center mx-auto mb-xl">
+<span class="material-symbols-outlined text-6xl text-status-found" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+<h2 class="text-display-lg font-display-lg text-on-surface mb-md">Claim Submitted</h2>
+<p class="text-body-lg text-on-surface-variant mb-xl">Your claim reference number is <span class="font-bold text-primary">#TF-CLM-88291</span>. An email confirmation has been sent to you.</p>
+<button class="bg-primary text-on-primary font-bold px-xl py-4 rounded-xl hover:bg-primary-container transition-all" onclick="window.location.reload()">Return to Dashboard</button>
+</div>
+</div>
+<script>
+        function showModal() {
+            const modal = document.getElementById('confirmationModal');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.querySelector('.relative').classList.remove('scale-95');
+                modal.querySelector('.relative').classList.add('scale-100');
+            }, 10);
+        }
+
+        function hideModal() {
+            const modal = document.getElementById('confirmationModal');
+            modal.querySelector('.relative').classList.remove('scale-100');
+            modal.querySelector('.relative').classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 200);
+        }
+
+        function submitFinal() {
+            hideModal();
+            const success = document.getElementById('successOverlay');
+            success.classList.remove('hidden');
+        }
+
+        // Drop zone highlight interaction
+        const dropZone = document.querySelector('.border-dashed');
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, e => {
+                e.preventDefault();
+                e.stopPropagation();
+            }, false);
+        });
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => {
+                dropZone.classList.add('bg-primary/5', 'border-primary');
+            }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => {
+                dropZone.classList.remove('bg-primary/5', 'border-primary');
+            }, false);
+        });
+    </script>
+</body></html>

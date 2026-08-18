@@ -1,0 +1,103 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+    --color-primary: #1d4ed8;
+    --color-primary-container: #2563eb;
+    --color-on-primary: #ffffff;
+    --color-on-primary-container: #eff6ff;
+    --color-on-primary-fixed: #1e3a8a;
+    --color-on-primary-fixed-variant: #1e40af;
+    --color-primary-fixed: #dbeafe;
+    --color-primary-fixed-dim: #bfdbfe;
+
+    --color-surface: #f8fafc;
+    --color-surface-white: #ffffff;
+    --color-surface-dim: #f1f5f9;
+    --color-surface-bright: #ffffff;
+    --color-surface-container: #f1f5f9;
+    --color-surface-container-low: #f8fafc;
+    --color-surface-container-lowest: #ffffff;
+    --color-surface-container-high: #e2e8f0;
+    --color-surface-container-highest: #cbd5e1;
+
+    --color-on-background: #0f172a;
+    --color-on-surface: #0f172a;
+    --color-on-surface-variant: #475569;
+
+    --color-border-subtle: #e2e8f0;
+    --color-outline: #64748b;
+    --color-outline-variant: #94a3b8;
+
+    --color-status-found: #059669;
+    --color-status-danger: #dc2626;
+
+    --color-tertiary: #0284c7;
+    --color-tertiary-container: #0369a1;
+
+    --font-sans: 'Inter', system-ui, sans-serif;
+}
+
+/* Custom CSS Classes */
+.soft-shadow {
+    box-shadow: 0px 4px 20px rgba(15, 23, 42, 0.06);
+}
+
+.nav-active {
+    border-bottom: 2px solid #2563eb;
+    color: #2563eb;
+    font-weight: 700;
+    padding-bottom: 4px;
+}
+
+.text-label-sm {
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+}
+
+.text-label-md {
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 500;
+}
+
+.text-body-md {
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 400;
+}
+
+.text-body-lg {
+    font-size: 18px;
+    line-height: 28px;
+    font-weight: 400;
+}
+
+.text-title-lg {
+    font-size: 20px;
+    line-height: 28px;
+    font-weight: 600;
+}
+
+.text-headline-md {
+    font-size: 24px;
+    line-height: 32px;
+    font-weight: 600;
+}
+
+.text-headline-lg {
+    font-size: 32px;
+    line-height: 40px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+
+.text-display-lg {
+    font-size: 48px;
+    line-height: 56px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}

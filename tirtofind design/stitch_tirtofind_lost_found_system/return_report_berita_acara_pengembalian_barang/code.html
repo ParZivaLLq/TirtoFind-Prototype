@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Return Report | TirtoFind Admin</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-high": "#e9e8e7",
+                        "border-subtle": "#E5E7EB",
+                        "surface-variant": "#e4e2e1",
+                        "on-primary-fixed": "#00174b",
+                        "error-container": "#ffdad6",
+                        "surface-container-lowest": "#ffffff",
+                        "status-found": "#00703C",
+                        "primary-fixed": "#dbe1ff",
+                        "surface-tint": "#0053db",
+                        "on-background": "#1b1c1c",
+                        "on-surface-variant": "#434655",
+                        "on-tertiary-fixed": "#001c37",
+                        "on-secondary-fixed-variant": "#464746",
+                        "on-error-container": "#93000a",
+                        "primary-container": "#2563eb",
+                        "on-surface": "#1b1c1c",
+                        "surface-dim": "#dbdad9",
+                        "on-primary-container": "#eeefff",
+                        "tertiary-fixed": "#d2e4ff",
+                        "tertiary-fixed-dim": "#a0caff",
+                        "on-tertiary-container": "#e9f1ff",
+                        "on-error": "#ffffff",
+                        "on-secondary-container": "#626362",
+                        "inverse-surface": "#303030",
+                        "secondary-fixed": "#e3e2e1",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed-variant": "#00497e",
+                        "inverse-primary": "#b4c5ff",
+                        "outline-variant": "#c3c6d7",
+                        "surface-white": "#FFFFFF",
+                        "inverse-on-surface": "#f2f0f0",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "outline": "#737686",
+                        "status-danger": "#D33222",
+                        "secondary-fixed-dim": "#c7c6c5",
+                        "secondary-container": "#e0dfde",
+                        "on-primary": "#ffffff",
+                        "secondary": "#5e5e5e",
+                        "surface": "#fbf9f8",
+                        "on-secondary-fixed": "#1a1c1c",
+                        "tertiary-container": "#1d70b8",
+                        "primary": "#004ac6",
+                        "surface-container-highest": "#e4e2e1",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "tertiary": "#005796",
+                        "background": "#fbf9f8",
+                        "surface-bright": "#fbf9f8",
+                        "surface-container": "#efeded",
+                        "status-pending": "#F59E0B",
+                        "surface-container-low": "#f5f3f2"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "md": "16px",
+                        "margin-desktop": "64px",
+                        "base": "4px",
+                        "xl": "32px",
+                        "max-width": "1280px",
+                        "sm": "8px",
+                        "xs": "4px",
+                        "lg": "24px",
+                        "gutter": "24px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "title-lg": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #fbf9f8; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .document-shadow { box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); }
+        @media print {
+            .no-print { display: none !important; }
+            .print-padding { padding: 0 !important; }
+            .document-shadow { box-shadow: none !important; border: 1px solid #e5e7eb; }
+            body { background-color: white; }
+        }
+    </style>
+</head>
+<body class="text-on-surface">
+<!-- SideNavBar (Predicted) -->
+<aside class="no-print fixed left-0 top-0 h-screen w-64 flex flex-col p-md bg-surface-container-low border-r border-border-subtle z-50">
+<div class="mb-xl px-sm">
+<h1 class="text-headline-md font-headline-md font-bold text-on-surface">Staff Portal</h1>
+<p class="text-label-md font-label-md opacity-70">Terminal Tirtonadi</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high transition-all rounded-lg font-label-md" href="#">
+<span class="material-symbols-outlined">dashboard</span> Dashboard
+            </a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high transition-all rounded-lg font-label-md" href="#">
+<span class="material-symbols-outlined">inventory_2</span> Items
+            </a>
+<a class="flex items-center gap-md px-md py-sm bg-primary-container text-on-primary-container font-semibold rounded-lg shadow-sm font-label-md" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">verified</span> Claims
+            </a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high transition-all rounded-lg font-label-md" href="#">
+<span class="material-symbols-outlined">report_problem</span> Reports
+            </a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high transition-all rounded-lg font-label-md" href="#">
+<span class="material-symbols-outlined">category</span> Categories
+            </a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high transition-all rounded-lg font-label-md" href="#">
+<span class="material-symbols-outlined">group</span> Users
+            </a>
+</nav>
+<div class="mt-auto space-y-1 pt-md border-t border-border-subtle">
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high transition-all rounded-lg font-label-md" href="#">
+<span class="material-symbols-outlined">settings</span> Settings
+            </a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high transition-all rounded-lg font-label-md" href="#">
+<span class="material-symbols-outlined">help</span> Support
+            </a>
+</div>
+</aside>
+<!-- TopNavBar (Predicted) -->
+<header class="no-print fixed top-0 right-0 left-64 h-16 flex justify-between items-center px-lg bg-surface-white border-b border-border-subtle z-40">
+<div class="flex items-center gap-md">
+<span class="text-title-lg font-title-lg font-bold text-primary">Admin Console</span>
+<div class="h-6 w-px bg-border-subtle mx-sm"></div>
+<span class="text-label-md font-label-md text-on-surface-variant">Claims / Return Report</span>
+</div>
+<div class="flex items-center gap-lg">
+<div class="flex items-center gap-sm">
+<button class="p-sm hover:bg-surface-container rounded-full transition-transform active:scale-95">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+</button>
+<button class="p-sm hover:bg-surface-container rounded-full transition-transform active:scale-95">
+<span class="material-symbols-outlined text-on-surface-variant">history</span>
+</button>
+</div>
+<div class="flex items-center gap-sm border-l border-border-subtle pl-lg">
+<div class="text-right">
+<p class="text-label-md font-bold leading-none">Terminal Admin</p>
+<p class="text-[10px] uppercase tracking-wider text-outline">Tier 1 Staff</p>
+</div>
+<img class="w-8 h-8 rounded-full object-cover border border-border-subtle" data-alt="A professional headshot of a terminal staff member in a clean blue uniform, high-quality corporate photography, soft studio lighting, focused on the upper chest and head against a neutral gray background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBC_cbgeAfk_o90DZV1oA7lqQF3Zi6DRG3T_fVAkZtqr8demVYLly9mwR2OfW01gkvWnlIpxJRsgR3eK9sSc_OMRwNevEbPeC1Vp13aiu97JJEZvZJvtjjNYoy9QCMgyp2ZTxxVOISMhxAcLaLo4Lo3jtOS3mktq-w79L_N15jEQQ0l3K2ndZVcKrlXJA6tpSB3XVZW5afNYK8ImzGai6aAZAZ9w9JG_rr_hC5B91GJiB5uHHcfn1i3pg"/>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="ml-64 pt-16 min-h-screen bg-background print-padding">
+<div class="max-w-[1000px] mx-auto p-lg mb-xl">
+<!-- Dashboard Controls (Non-Printable) -->
+<div class="no-print flex justify-between items-center mb-lg">
+<button class="flex items-center gap-sm text-on-surface-variant hover:text-primary transition-colors" onclick="window.history.back()">
+<span class="material-symbols-outlined">arrow_back</span>
+<span class="font-label-md">Back to Claims List</span>
+</button>
+<div class="flex items-center gap-md">
+<button class="flex items-center gap-sm px-lg py-sm bg-surface-white border border-border-subtle rounded-lg font-label-md hover:bg-surface-container transition-colors shadow-sm" onclick="window.print()">
+<span class="material-symbols-outlined text-[20px]">print</span> Print Report
+                    </button>
+<button class="flex items-center gap-sm px-lg py-sm bg-primary text-on-primary rounded-lg font-label-md hover:opacity-90 transition-opacity shadow-sm">
+<span class="material-symbols-outlined text-[20px]">picture_as_pdf</span> Download PDF
+                    </button>
+</div>
+</div>
+<!-- Document Wrapper (The A4 Feel) -->
+<div class="bg-white p-[60px] document-shadow rounded-xl border border-border-subtle relative overflow-hidden">
+<!-- Branding Accent -->
+<div class="absolute top-0 left-0 w-full h-1.5 bg-primary"></div>
+<!-- Header -->
+<div class="flex justify-between items-start border-b border-border-subtle pb-lg mb-xl">
+<div class="flex gap-lg">
+<div class="w-16 h-16 bg-primary flex items-center justify-center rounded-lg">
+<span class="material-symbols-outlined text-on-primary text-[40px]" style="font-variation-settings: 'FILL' 1;">local_shipping</span>
+</div>
+<div>
+<h2 class="text-headline-md font-headline-md text-on-surface uppercase tracking-tight">Berita Acara Pengembalian Barang</h2>
+<p class="text-body-md text-on-surface-variant">Ministry of Transportation - Terminal Tirtonadi</p>
+<p class="text-label-sm text-outline mt-1 italic">Return Report of Lost Property</p>
+</div>
+</div>
+<div class="text-right">
+<div class="bg-surface-container-high px-md py-sm rounded-lg border border-border-subtle">
+<p class="text-label-sm text-on-secondary-fixed-variant">REPORT ID</p>
+<p class="text-title-lg font-bold text-primary">#BAPB-2024-0891</p>
+</div>
+<p class="text-label-md font-medium mt-md">Date: <span class="font-normal text-on-surface-variant">October 25, 2024</span></p>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-xl mb-xl">
+<!-- Section 1: Item Information -->
+<div class="col-span-1 border border-border-subtle rounded-xl p-md">
+<h3 class="text-label-sm font-bold uppercase tracking-widest text-outline mb-md flex items-center gap-sm">
+<span class="material-symbols-outlined text-[18px]">inventory</span> Item Information
+                        </h3>
+<div class="flex gap-md">
+<img class="w-24 h-24 rounded-lg object-cover border border-border-subtle" data-alt="A close-up shot of a high-quality brown leather bifold wallet with refined stitching, resting on a clean white surface. Soft side lighting emphasizes the texture of the leather. Minimalist, professional product photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwBdux6JnzloRUiScwosoT-gW2w4k3TjlC0vVULv_08mZF4m5DeWs0-fWzoeuohdO4a_2kuAjbkUcjM1_Pi7jVspfCUcetFIOkH1PHtQrNDIMSlbtA8uQFs0APOKwAvdW_1LDiDISpagAh0FmTMm4X21FjnHrVZbHaxVrnrzDlPUbBrh2c3KdTOxwgJtgD_52SPMK6sGbF5BHaKXd3JykJPTbsk8SE6iY-KHufGVvMk77RHmCAYhLaRA"/>
+<div class="flex-1 space-y-1">
+<p class="text-title-lg font-bold">Leather Wallet</p>
+<p class="text-label-md text-on-surface-variant">Category: <span class="font-semibold text-on-surface">Personal Effects</span></p>
+<p class="text-label-md text-on-surface-variant">Brand/Color: <span class="font-semibold text-on-surface">Unknown / Dark Brown</span></p>
+<div class="mt-md pt-sm border-t border-border-subtle">
+<p class="text-label-sm text-outline">Found at:</p>
+<p class="text-label-md font-medium">Waiting Lounge A, Gate 4</p>
+<p class="text-label-sm text-outline mt-sm">Found Date:</p>
+<p class="text-label-md font-medium">Oct 20, 2024 • 14:30 WIB</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Section 2: Owner Information -->
+<div class="col-span-1 border border-border-subtle rounded-xl p-md">
+<h3 class="text-label-sm font-bold uppercase tracking-widest text-outline mb-md flex items-center gap-sm">
+<span class="material-symbols-outlined text-[18px]">person</span> Owner Information
+                        </h3>
+<div class="space-y-4">
+<div class="flex justify-between items-end border-b border-surface-container-high pb-1">
+<span class="text-label-sm text-on-surface-variant">Full Name</span>
+<span class="text-label-md font-bold text-on-surface">Budi Santoso</span>
+</div>
+<div class="flex justify-between items-end border-b border-surface-container-high pb-1">
+<span class="text-label-sm text-on-surface-variant">Phone Number</span>
+<span class="text-label-md font-medium text-on-surface">+62 812-3456-7890</span>
+</div>
+<div class="flex justify-between items-end border-b border-surface-container-high pb-1">
+<span class="text-label-sm text-on-surface-variant">Identity (KTP)</span>
+<span class="text-label-md font-medium text-on-surface">3271040506880003</span>
+</div>
+<div>
+<span class="text-label-sm text-on-surface-variant block mb-1">Address</span>
+<span class="text-label-md text-on-surface-variant">Jl. Slamet Riyadi No. 15, Surakarta, Jawa Tengah 57123</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Section 3 & 4 Combined: Claim & Verification -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-xl mb-xl">
+<div class="md:col-span-1 space-y-md">
+<div class="border border-border-subtle rounded-xl p-md">
+<h3 class="text-label-sm font-bold uppercase tracking-widest text-outline mb-sm">Claim Context</h3>
+<p class="text-label-sm text-on-surface-variant">Claim ID: <span class="font-medium text-on-surface">#CLM-9002</span></p>
+<p class="text-label-sm text-on-surface-variant">Claimed On: <span class="font-medium text-on-surface">Oct 22, 2024</span></p>
+<p class="text-label-sm text-on-surface-variant">Staff: <span class="font-medium text-on-surface">Dewi Lestari</span></p>
+</div>
+</div>
+<div class="md:col-span-2 bg-status-found/5 border border-status-found/30 rounded-xl p-md">
+<div class="flex items-center gap-md mb-md">
+<div class="w-10 h-10 rounded-full bg-status-found flex items-center justify-center text-white">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div>
+<h3 class="text-title-lg font-bold text-status-found">Verification Result</h3>
+<p class="text-label-md font-medium text-status-found/80">Successfully Returned to Owner</p>
+</div>
+</div>
+<div class="bg-white/60 p-md rounded-lg">
+<p class="text-label-sm text-status-found font-bold uppercase mb-1">Verification Notes</p>
+<p class="text-body-md text-on-surface italic leading-relaxed">
+                                "Owner correctly identified unique contents including family photos and specific card placements in the hidden compartment. Identification matched the database records."
+                            </p>
+</div>
+</div>
+</div>
+<!-- Section 5: Supporting Evidence -->
+<div class="mb-xl">
+<h3 class="text-label-sm font-bold uppercase tracking-widest text-outline mb-md flex items-center gap-sm">
+<span class="material-symbols-outlined text-[18px]">attachment</span> Supporting Evidence
+                    </h3>
+<div class="grid grid-cols-3 gap-md">
+<div class="group relative aspect-video bg-surface-container rounded-lg overflow-hidden border border-border-subtle">
+<img class="w-full h-full object-cover" data-alt="A blurred identification card scan showing the name Budi Santoso, presented in a modern, secure document viewing interface. Minimalist aesthetic with high clarity on text areas." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDTkVjz6w1h7RUmbNM9weyz8tWZ3sjymQfTEyDYPkI2PxO9ZgwIuw6AZXAPk59vlfzDGL8MpAYgPG3nAkdNcZqTIDb-XbG5AOr6eGj1b-ezI6nkeR6OVeOIieESdoxpRNhZob3IB21IpJMH72neJvbum2Ln57JXlrWOuvtbxzSGBzC7v9d0NDT-XqwcpLRH8u0RYaYYxc0aFZMl3VaXp2NBuYv-uAmsIlllZsBC9FiXM7f0vIXBHcqJyg"/>
+<div class="absolute inset-0 bg-black/40 flex items-end p-sm opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="text-white text-label-sm font-medium">Identity Card</span>
+</div>
+</div>
+<div class="group relative aspect-video bg-surface-container rounded-lg overflow-hidden border border-border-subtle">
+<img class="w-full h-full object-cover" data-alt="A digital receipt from a bank transaction matching the wallet brand's purchase history, clean white background, digital document style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBr7OwgfL02vkUPQ58eA2fKGttXo8ohvgstbo8AnVu46VTYb8NiQDPhCG9OQGOGa42o_c62FCUMTT-6y__df-h_d-pLXwuB5IP0UFEKrzLDEhDfOyo00NQ22yYTTaTi_YOnvo4dAgSXzNe4AxUkvifBR-gzaSWAhUz7GkyiIdmT8WmrOBsypLG6hV-x1xtrJHH5N6fcKhgBVLTYZYb6XbfjShT8pEhVOYIWoPjuA7wqhwh1h46yakmp2A"/>
+<div class="absolute inset-0 bg-black/40 flex items-end p-sm opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="text-white text-label-sm font-medium">Proof of Ownership</span>
+</div>
+</div>
+<div class="group relative aspect-video bg-surface-container rounded-lg overflow-hidden border border-border-subtle">
+<img class="w-full h-full object-cover" data-alt="A medium shot of a terminal staff member handing a wallet to an elderly man, both smiling slightly, in a bright airport terminal setting. Professional corporate social responsibility photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUNNpRw917yZrpew_DFZRANOctAy8uzABRRBgaFfTP4rKcrG9syW7bdmdvnQ98kG29Uq2uOxPniPg2QMmSj6KVCRN_8oqLE67qzLox3dYZ_1txjGryNeP26sS_4vD0y9z5uqtdTya-tGIYVVeOSLRok-LtWJneC1eB8YW6MYntjHcvsyeQoMd3pMJbuX-C71c0gPvYF2BxT6jdao2AdgNBcFTAAePSbJzzo_kse0dLJcSnoPlRY14_EA"/>
+<div class="absolute inset-0 bg-black/40 flex items-end p-sm opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="text-white text-label-sm font-medium">Handover Photo</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Section 6: Timeline -->
+<div class="mb-xl bg-surface p-lg rounded-xl">
+<h3 class="text-label-sm font-bold uppercase tracking-widest text-outline mb-lg">Return Timeline</h3>
+<div class="relative">
+<div class="absolute left-4 top-0 h-full w-px bg-border-subtle"></div>
+<div class="space-y-6">
+<div class="relative flex items-center gap-lg pl-10">
+<div class="absolute left-2.5 w-3 h-3 bg-status-found rounded-full border-2 border-white ring-2 ring-status-found/20"></div>
+<div>
+<p class="text-label-md font-bold">Item Found</p>
+<p class="text-label-sm text-outline">Oct 20, 2024 • 14:30</p>
+</div>
+</div>
+<div class="relative flex items-center gap-lg pl-10">
+<div class="absolute left-2.5 w-3 h-3 bg-status-found rounded-full border-2 border-white ring-2 ring-status-found/20"></div>
+<div>
+<p class="text-label-md font-bold">Lost Report Submitted</p>
+<p class="text-label-sm text-outline">Oct 21, 2024 • 09:15</p>
+</div>
+</div>
+<div class="relative flex items-center gap-lg pl-10">
+<div class="absolute left-2.5 w-3 h-3 bg-status-found rounded-full border-2 border-white ring-2 ring-status-found/20"></div>
+<div>
+<p class="text-label-md font-bold">Claim Submitted</p>
+<p class="text-label-sm text-outline">Oct 22, 2024 • 11:40</p>
+</div>
+</div>
+<div class="relative flex items-center gap-lg pl-10">
+<div class="absolute left-2.5 w-3 h-3 bg-status-found rounded-full border-2 border-white ring-2 ring-status-found/20"></div>
+<div>
+<p class="text-label-md font-bold">Verification Completed</p>
+<p class="text-label-sm text-outline">Oct 25, 2024 • 10:05</p>
+</div>
+</div>
+<div class="relative flex items-center gap-lg pl-10">
+<div class="absolute left-2 w-4 h-4 bg-primary rounded-full border-2 border-white shadow-sm ring-4 ring-primary/10"></div>
+<div>
+<p class="text-label-md font-bold text-primary">Item Returned</p>
+<p class="text-label-sm text-primary/70">Oct 25, 2024 • 14:20</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Section 7: Digital Signature -->
+<div class="grid grid-cols-2 gap-margin-desktop mt-xl pt-lg border-t border-border-subtle">
+<div class="text-center">
+<p class="text-label-md mb-xl">Customer Service Officer</p>
+<div class="w-48 h-20 mx-auto mb-2 border-b border-on-surface-variant opacity-20"></div>
+<p class="font-bold text-on-surface">Dewi Lestari</p>
+<p class="text-label-sm text-outline">NIP. 19880405 201101 2 001</p>
+</div>
+<div class="text-center">
+<p class="text-label-md mb-xl">Receiver / Owner</p>
+<div class="w-48 h-20 mx-auto mb-2 relative">
+<!-- Signature Placeholder -->
+<svg class="absolute inset-0 w-full h-full text-primary/40" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 200 80">
+<path d="M40 50 Q70 20 90 40 T160 30" stroke-linecap="round"></path>
+</svg>
+<div class="absolute bottom-0 left-0 w-full border-b border-on-surface-variant"></div>
+</div>
+<p class="font-bold text-on-surface">Budi Santoso</p>
+<p class="text-label-sm text-outline">Identity No: 3271****003</p>
+</div>
+</div>
+<!-- Official Footer -->
+<div class="mt-[80px] border-t-2 border-surface-container-high pt-md">
+<div class="flex justify-between items-center opacity-60">
+<p class="text-label-sm max-w-[400px]">
+                            This report is automatically generated by TirtoFind and serves as official documentation for the return of lost property at Terminal Tirtonadi.
+                        </p>
+<div class="text-right">
+<p class="text-label-sm font-bold">Terminal Tirtonadi</p>
+<p class="text-[10px]">Surakarta, Central Java, Indonesia</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Global Footer (Predicted) -->
+<footer class="no-print w-full py-xl px-lg mt-xl flex flex-col items-center gap-md bg-surface-container-highest rounded-t-xl">
+<p class="text-body-md font-body-md text-on-surface">© 2024 Ministry of Transportation - Terminal Tirtonadi. All rights reserved.</p>
+<div class="flex gap-lg">
+<a class="text-label-sm text-on-surface-variant hover:opacity-100 opacity-80" href="#">Privacy Policy</a>
+<a class="text-label-sm text-on-surface-variant hover:opacity-100 opacity-80" href="#">Terms of Service</a>
+<a class="text-label-sm text-on-surface-variant hover:opacity-100 opacity-80" href="#">Contact Us</a>
+<a class="text-label-sm text-on-surface-variant hover:opacity-100 opacity-80" href="#">Ministry Portal</a>
+</div>
+</footer>
+</div>
+</main>
+<script>
+        // Micro-interaction for feedback
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.classList.add('scale-95');
+                setTimeout(() => this.classList.remove('scale-95'), 100);
+            });
+        });
+    </script>
+</body></html>
