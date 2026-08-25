@@ -14,7 +14,7 @@
         <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 soft-shadow overflow-hidden">
             <div class="p-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center text-xs text-slate-500 dark:text-slate-400">
                 <span>Daftar Permohonan Klaim Masuk</span>
-                <span class="font-bold text-slate-900 dark:text-white">5 Perlu Review</span>
+                <span class="font-bold text-slate-900 dark:text-white">{{ $claims->where('status', 'Menunggu Verifikasi')->count() }} Perlu Review</span>
             </div>
 
             <div class="overflow-x-auto">
@@ -31,24 +31,26 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
-                        <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                            <td class="px-6 py-4 font-mono font-bold text-slate-900 dark:text-white">#CLM-2024-4401</td>
-                            <td class="px-6 py-4">
-                                <div class="font-bold text-slate-900 dark:text-white">Budi Santoso</div>
-                                <div class="text-xs text-slate-400">KTP: 337201xxxxxxxxx</div>
-                            </td>
-                            <td class="px-6 py-4 font-medium text-slate-800 dark:text-slate-200">Dompet Kulit Imperial Horse (#TF-8912)</td>
-                            <td class="px-6 py-4 text-blue-600 dark:text-blue-400 font-semibold flex items-center gap-1">
-                                <span class="material-symbols-outlined text-base">attachment</span> KTP & Nota.jpg
-                            </td>
-                            <td class="px-6 py-4 text-slate-500 dark:text-slate-400">24 Oct 2024 (15:00)</td>
-                            <td class="px-6 py-4">
-                                <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800">Pending Review</span>
-                            </td>
-                            <td class="px-6 py-4 text-right">
-                                <button @click="verifyModalOpen = true" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold text-xs transition-all shadow-xs cursor-pointer">Verifikasi Berkas</button>
-                            </td>
-                        </tr>
+                        @forelse ($claims as $claim)
+                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                <td class="px-6 py-4 font-mono font-bold text-slate-900 dark:text-white">{{ $claim->claim_code }}</td>
+                                <td class="px-6 py-4"><div class="font-bold text-slate-900 dark:text-white">{{ $claim->claimant_name }}</div><div class="text-xs text-slate-400">{{ $claim->claimant_phone }}</div></td>
+                                <td class="px-6 py-4 font-medium text-slate-800 dark:text-slate-200">{{ $claim->foundItem->title }} ({{ $claim->foundItem->ref_code }})</td>
+                                <td class="px-6 py-4 text-slate-500">{{ $claim->supporting_document_path ? 'Dokumen tersedia' : 'Tidak ada dokumen' }}</td>
+                                <td class="px-6 py-4 text-slate-500 dark:text-slate-400">{{ $claim->created_at->format('d M Y H:i') }}</td>
+                                <td class="px-6 py-4"><span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-purple-50 text-purple-700 border border-purple-200">{{ $claim->status }}</span></td>
+                                <td class="px-6 py-4 text-right">
+                                    @if ($claim->status === 'Menunggu Verifikasi')
+                                        <div class="flex justify-end gap-2">
+                                            <form action="{{ route('admin.claims.reject', $claim->id) }}" method="POST">@csrf<button type="submit" class="px-3 py-1.5 bg-red-600 text-white rounded-lg font-bold text-xs">Tolak</button></form>
+                                            <form action="{{ route('admin.claims.approve', $claim->id) }}" method="POST">@csrf<button type="submit" class="px-3 py-1.5 bg-emerald-600 text-white rounded-lg font-bold text-xs">Setujui</button></form>
+                                        </div>
+                                    @endif
+                                </td>
+                            </tr>
+                        @empty
+                            <tr><td colspan="7" class="px-6 py-8 text-center text-slate-500">Belum ada pengajuan klaim.</td></tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>

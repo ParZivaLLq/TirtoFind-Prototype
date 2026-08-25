@@ -93,6 +93,19 @@
 
             <!-- Items Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                @forelse ($recentItems as $item)
+                    @php
+                        $imageUrl = $item->image_path ?: 'https://images.unsplash.com/photo-1627123424574-724758594e93?w=800';
+                        $imageUrl = str_starts_with($imageUrl, 'http') ? $imageUrl : asset(ltrim($imageUrl, '/'));
+                    @endphp
+                    <a href="{{ route('item-detail', $item->id) }}" class="bg-white border border-slate-200 rounded-2xl overflow-hidden soft-shadow group hover:border-blue-600 hover:shadow-lg transition-all duration-300">
+                        <div class="h-48 overflow-hidden bg-slate-100 relative"><img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="{{ $imageUrl }}" alt="{{ $item->title }}"/><span class="absolute top-3 right-3 bg-emerald-600 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-xs">Barang Ditemukan</span></div>
+                        <div class="p-5"><span class="text-[10px] font-bold text-blue-600 uppercase tracking-wider">{{ $item->category?->name ?: 'Lainnya' }}</span><h3 class="text-lg font-bold text-slate-900 group-hover:text-blue-600 transition-colors mt-0.5">{{ $item->title }}</h3><div class="mt-3 space-y-1.5 text-xs text-slate-500"><div class="flex items-center gap-2"><span class="material-symbols-outlined text-base text-slate-400">calendar_today</span><span>{{ $item->date_found->format('d M Y H:i') }} WIB</span></div><div class="flex items-center gap-2"><span class="material-symbols-outlined text-base text-slate-400">location_on</span><span>{{ $item->location_found }}</span></div></div></div>
+                    </a>
+                @empty
+                    <p class="col-span-full py-8 text-center text-sm text-slate-500">Belum ada barang temuan yang tersedia.</p>
+                @endforelse
+                @if (false)
                 <!-- Card 1 -->
                 <a href="{{ route('item-detail', 1) }}" class="bg-white border border-slate-200 rounded-2xl overflow-hidden soft-shadow group hover:border-blue-600 hover:shadow-lg transition-all duration-300">
                     <div class="h-48 overflow-hidden bg-slate-100 relative">
@@ -243,6 +256,7 @@
                     </div>
                 </a>
             </div>
+                @endif
         </div>
     </section>
 

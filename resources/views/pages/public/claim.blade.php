@@ -20,18 +20,28 @@
 
         <!-- Form Card -->
         <div class="bg-white rounded-2xl border border-border-subtle soft-shadow p-6 md:p-8 space-y-6">
-            <form @submit.prevent="success = true" class="space-y-6">
+            <form action="{{ route('claim.store', $item->id) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+                @csrf
+                <input type="hidden" name="found_item_id" value="{{ $item->id }}">
                 <!-- Reporter Info -->
                 <div class="space-y-4">
                     <h3 class="text-base font-bold text-on-background border-b border-border-subtle pb-2">1. Data Pemohon Klaim</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-semibold text-on-surface mb-1">Nama Lengkap Sesuai KTP</label>
-                            <input type="text" value="Budi Santoso" class="w-full px-4 py-2.5 border border-border-subtle rounded-xl text-sm focus:outline-none focus:border-primary" required/>
+                            <input type="text" name="claimant_name" value="{{ old('claimant_name') }}" class="w-full px-4 py-2.5 border border-border-subtle rounded-xl text-sm focus:outline-none focus:border-primary" required/>
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-on-surface mb-1">Nomor WhatsApp Aktif</label>
-                            <input type="tel" value="08123456789" class="w-full px-4 py-2.5 border border-border-subtle rounded-xl text-sm focus:outline-none focus:border-primary" required/>
+                            <input type="tel" name="claimant_phone" value="{{ old('claimant_phone') }}" class="w-full px-4 py-2.5 border border-border-subtle rounded-xl text-sm focus:outline-none focus:border-primary" required/>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">Email (opsional)</label>
+                            <input type="email" name="claimant_email" value="{{ old('claimant_email') }}" class="w-full px-4 py-2.5 border border-border-subtle rounded-xl text-sm focus:outline-none focus:border-primary"/>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-on-surface mb-1">Nomor Identitas</label>
+                            <input type="text" name="claimant_id_number" value="{{ old('claimant_id_number') }}" class="w-full px-4 py-2.5 border border-border-subtle rounded-xl text-sm focus:outline-none focus:border-primary" required/>
                         </div>
                     </div>
                 </div>
@@ -41,7 +51,8 @@
                     <h3 class="text-base font-bold text-on-background border-b border-border-subtle pb-2">2. Bukti Kepemilikan (Wajib)</h3>
                     <div>
                         <label class="block text-xs font-semibold text-on-surface mb-1">Unggah Foto Kartu Identitas (KTP / SIM / Paspor)</label>
-                        <div class="border-2 border-dashed border-border-subtle rounded-xl p-4 text-center hover:border-primary transition-colors cursor-pointer bg-surface-container-low">
+                            <div class="border-2 border-dashed border-border-subtle rounded-xl p-4 text-center hover:border-primary transition-colors cursor-pointer bg-surface-container-low">
+                                <input type="file" name="supporting_document" accept="image/jpeg,image/png,application/pdf" class="block w-full text-xs text-on-surface mb-2">
                             <span class="material-symbols-outlined text-3xl text-primary mb-1">badge</span>
                             <p class="text-xs font-bold text-on-background">Upload Foto KTP / Kartu Identitas</p>
                         </div>
@@ -57,7 +68,10 @@
 
                     <div>
                         <label class="block text-xs font-semibold text-on-surface mb-1">Catatan Verifikasi Tambahan</label>
-                        <textarea rows="3" placeholder="Sebutkan rincian tersembunyi yang hanya diketahui oleh pemilik (misal: isi uang dalam dompet, jumlah kartu, PIN, dll)..." class="w-full px-4 py-2.5 border border-border-subtle rounded-xl text-sm focus:outline-none focus:border-primary"></textarea>
+                            <textarea name="distinctive_features" rows="3" placeholder="Sebutkan rincian tersembunyi yang hanya diketahui oleh pemilik..." class="w-full px-4 py-2.5 border border-border-subtle rounded-xl text-sm focus:outline-none focus:border-primary"></textarea>
+                            <input type="hidden" name="relationship" value="Pemilik">
+                            <input type="hidden" name="reason" value="Pengajuan klaim melalui formulir resmi TirtoFind">
+                            <input type="hidden" name="lost_report_code" value="{{ old('lost_report_code') }}">
                     </div>
                 </div>
 

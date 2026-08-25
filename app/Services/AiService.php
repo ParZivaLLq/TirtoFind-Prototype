@@ -13,9 +13,9 @@ class AiService
 
     public function __construct()
     {
-        $this->apiKey = config('services.openrouter.key', env('OPENROUTER_API_KEY'));
-        $this->model = config('services.openrouter.model', 'google/gemini-2.5-flash');
-        $this->apiUrl = config('services.openrouter.url', 'https://openrouter.ai/api/v1/chat/completions');
+        $this->apiKey = (string) config('services.openrouter.key', env('OPENROUTER_API_KEY', ''));
+        $this->model = (string) config('services.openrouter.model', 'google/gemini-2.5-flash');
+        $this->apiUrl = (string) config('services.openrouter.url', 'https://openrouter.ai/api/v1/chat/completions');
     }
 
     /**
@@ -59,12 +59,14 @@ class AiService
     /**
      * Auto generate catalog description using OpenRouter.
      */
-    public function generateAutoDescription(string $title, string $category, string $color = '', string $style = 'Standar Katalog TirtoFind'): array
+    public function generateAutoDescription(string $title, string $category, string $color = '', string $style = 'Standar Katalog TirtoFind', ?string $imagePath = null, string $existingDescription = '', string $brand = ''): array
     {
         $prompt = "Buatkan deskripsi katalogisasi resmi barang temuan untuk sistem TirtoFind Terminal Tirtonadi Surakarta.\n" .
             "Nama Barang: {$title}\n" .
             "Kategori: {$category}\n" .
             "Warna: {$color}\n" .
+            "Merek: {$brand}\n" .
+            "Ciri/deskripsi yang sudah dicatat petugas: {$existingDescription}\n" .
             "Gaya Format: {$style}\n\n" .
             "Berikan respon JSON murni dengan format:\n" .
             "{\n" .
@@ -74,32 +76,90 @@ class AiService
             "  \"detected_brand\": \"Merek terdeteksi atau N/A\"\n" .
             "}";
 
-        $aiResult = $this->askAi($prompt, "Anda adalah sistem Vision AI cataloging engine TirtoFind.");
+        $aiResult = $this->askAiWithImage($prompt, "Anda adalah sistem Vision AI cataloging engine TirtoFind. Gunakan gambar sebagai referensi, tetapi jangan mengarang atribut yang tidak terlihat.", $imagePath);
 
         if ($aiResult) {
             $json = json_decode($this->cleanJsonResponse($aiResult), true);
-            if (isset($json['description'])) {
+            if (is_array($json) && !empty(trim((string) ($json['description'] ?? '')))) {
                 return [
-                    'description' => $json['description'],
+                    'available' => true,
+                    'description' => trim($json['description']),
                     'detected_category' => $json['detected_category'] ?? $category,
                     'detected_color' => $json['detected_color'] ?? $color,
-                    'detected_brand' => $json['detected_brand'] ?? 'Imperial Horse / Terdeteksi',
+                    'detected_brand' => $json['detected_brand'] ?? ($brand ?: '-'),
                 ];
             }
         }
 
+        $fallbackParts = ["Ditemukan {$title}"];
+        if ($color) {
+            $fallbackParts[] = "berwarna {$color}";
+        }
+        if ($brand) {
+            $fallbackParts[] = "dengan merek {$brand}";
+        }
+        $fallback = implode(' ', $fallbackParts) . ".";
+        if ($existingDescription) {
+            $fallback .= " Ciri-ciri: {$existingDescription}.";
+        }
+
         return [
-            'description' => "{$title} kategori {$category} dengan warna {$color}. Barang berada dalam kondisi aman di Pos Informasi Terminal Tirtonadi. Pemilik sah disarankan segera mendatangi lokasi atau mengajukan klaim verifikasi online.",
+            'available' => false,
+            'description' => $fallback,
             'detected_category' => $category,
-            'detected_color' => $color ?: 'Hitam',
-            'detected_brand' => 'Terdeteksi',
+            'detected_color' => $color,
+            'detected_brand' => $brand ?: '-',
         ];
+    }
+
+    protected function askAiWithImage(string $prompt, string $systemPrompt, ?string $imagePath): ?string
+    {
+        if (!$imagePath) {
+            return $this->askAi($prompt, $systemPrompt);
+        }
+
+        $absolutePath = public_path(ltrim(str_replace('/storage/', 'storage/', $imagePath), '/'));
+        if (!is_file($absolutePath)) {
+            return $this->askAi($prompt, $systemPrompt);
+        }
+
+        $mimeType = mime_content_type($absolutePath) ?: 'image/jpeg';
+        $imageData = base64_encode((string) file_get_contents($absolutePath));
+
+        if (empty($this->apiKey)) {
+            Log::warning('OpenRouter API key is missing.');
+            return null;
+        }
+
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer ' . $this->apiKey,
+                'HTTP-Referer' => config('app.url'),
+                'X-Title' => 'TirtoFind Lost & Found System',
+                'Content-Type' => 'application/json',
+            ])->timeout(30)->post($this->apiUrl, [
+                'model' => $this->model,
+                'messages' => [
+                    ['role' => 'system', 'content' => $systemPrompt],
+                    ['role' => 'user', 'content' => [
+                        ['type' => 'text', 'text' => $prompt],
+                        ['type' => 'image_url', 'image_url' => ['url' => "data:{$mimeType};base64,{$imageData}"]],
+                    ]],
+                ],
+                'temperature' => 0.4,
+            ]);
+
+            return $response->successful() ? ($response->json('choices.0.message.content') ?? null) : null;
+        } catch (\Exception $e) {
+            Log::error('OpenRouter Vision Exception: ' . $e->getMessage());
+            return null;
+        }
     }
 
     /**
      * Calculate AI Smart Matching confidence percentage between lost report & found item.
      */
-    public function matchItems(string $lostDescription, string $foundDescription): array
+    public function matchItems(string $lostDescription, string $foundDescription): ?array
     {
         $prompt = "Bandingkan dua deskripsi barang berikut dan analisis kecocokannya:\n" .
             "Laporan Kehilangan: \"{$lostDescription}\"\n" .
@@ -120,6 +180,7 @@ class AiService
             $json = json_decode($this->cleanJsonResponse($aiResult), true);
             if (isset($json['score'])) {
                 return [
+                    'available' => true,
                     'score' => (int) $json['score'],
                     'reason' => $json['reason'] ?? 'Cocok berdasarkan analisis deskripsi visual dan atribut lokasi.',
                     'color_match' => $json['color_match'] ?? 100,
@@ -130,14 +191,7 @@ class AiService
             }
         }
 
-        return [
-            'score' => 94,
-            'reason' => 'Cocok tinggi berdasarkan kemiripan warna hitam, bahan kulit, serta kemiripan lokasi Platform 4.',
-            'color_match' => 100,
-            'brand_match' => 95,
-            'location_match' => 90,
-            'time_match' => 92,
-        ];
+        return null;
     }
 
     /**
@@ -148,6 +202,11 @@ class AiService
         $text = preg_replace('/^```json\s*/i', '', trim($text));
         $text = preg_replace('/^```\s*/i', '', $text);
         $text = preg_replace('/\s*```$/i', '', $text);
+        $jsonStart = strpos($text, '{');
+        $jsonEnd = strrpos($text, '}');
+        if ($jsonStart !== false && $jsonEnd !== false && $jsonEnd > $jsonStart) {
+            $text = substr($text, $jsonStart, $jsonEnd - $jsonStart + 1);
+        }
         return trim($text);
     }
 }

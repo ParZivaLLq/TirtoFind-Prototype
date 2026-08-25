@@ -22,37 +22,26 @@
                         <th class="px-6 py-3.5 text-right">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                    <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                    @forelse ($users as $user)
                     <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                         <td class="px-6 py-4 flex items-center gap-3">
                             <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100" class="w-9 h-9 rounded-full object-cover border border-blue-500/50"/>
                             <div>
-                                <div class="font-bold text-slate-900 dark:text-white">Officer Handoko</div>
-                                <div class="text-xs text-slate-400">admin@tirtofind.go.id</div>
+                                <div class="font-bold text-slate-900 dark:text-white">{{ $user->name }}</div>
+                                <div class="text-xs text-slate-400">{{ $user->email }}</div>
                             </div>
                         </td>
-                        <td class="px-6 py-4 font-mono text-slate-600 dark:text-slate-300">198904122014031002</td>
-                        <td class="px-6 py-4"><span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">Super Administrator</span></td>
-                        <td class="px-6 py-4"><span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">Aktif</span></td>
+                        <td class="px-6 py-4 font-mono text-slate-600 dark:text-slate-300">{{ $user->nip ?: '-' }}</td>
+                        <td class="px-6 py-4"><span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200">{{ $user->role }}</span></td>
+                        <td class="px-6 py-4"><span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">{{ $user->status }}</span></td>
                         <td class="px-6 py-4 text-right space-x-1">
                             <button @click="modalOpen = true" class="p-1.5 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg"><span class="material-symbols-outlined text-base">edit</span></button>
                         </td>
                     </tr>
-                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                        <td class="px-6 py-4 flex items-center gap-3">
-                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100" class="w-9 h-9 rounded-full object-cover border border-slate-300 dark:border-slate-700"/>
-                            <div>
-                                <div class="font-bold text-slate-900 dark:text-white">Officer Bambang</div>
-                                <div class="text-xs text-slate-400">bambang@tirtonadi.dephub.go.id</div>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 font-mono text-slate-600 dark:text-slate-300">199105202016021004</td>
-                        <td class="px-6 py-4"><span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">Petugas Pos 1</span></td>
-                        <td class="px-6 py-4"><span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">Aktif</span></td>
-                        <td class="px-6 py-4 text-right space-x-1">
-                            <button @click="modalOpen = true" class="p-1.5 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg"><span class="material-symbols-outlined text-base">edit</span></button>
-                        </td>
-                    </tr>
+                    @empty
+                    <tr><td colspan="5" class="px-6 py-8 text-center text-slate-500">Belum ada pengguna.</td></tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
@@ -69,15 +58,20 @@
                         </button>
                     </div>
 
-                    <form @submit.prevent="modalOpen = false" class="space-y-4">
+                    <form action="{{ route('admin.users.store') }}" method="POST" class="space-y-4">
+                        @csrf
                         <div>
                             <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Nama Petugas</label>
-                            <input type="text" placeholder="Contoh: Officer Eko Prasetyo" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:border-blue-600" required/>
+                            <input type="text" name="name" placeholder="Contoh: Officer Eko Prasetyo" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:border-blue-600" required/>
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Email / NIP</label>
-                            <input type="email" placeholder="petugas@tirtonadi.dephub.go.id" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:border-blue-600" required/>
+                            <input type="email" name="email" placeholder="petugas@tirtonadi.dephub.go.id" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:border-blue-600" required/>
                         </div>
+                        <input type="text" name="nip" placeholder="NIP (opsional)" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-xl text-sm">
+                        <select name="role" class="w-full px-3 py-2 border rounded-xl text-sm"><option value="cs">Customer Service</option><option value="petugas">Petugas</option><option value="super_admin">Super Admin</option></select>
+                        <input type="hidden" name="status" value="aktif">
+                        <input type="password" name="password" placeholder="Password minimal 8 karakter" class="w-full px-3 py-2 border rounded-xl text-sm" required>
 
                         <div class="flex justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
                             <button type="button" @click="modalOpen = false" class="px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300">Batal</button>

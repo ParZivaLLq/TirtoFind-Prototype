@@ -4,7 +4,7 @@
         <div class="flex justify-between items-center bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 soft-shadow">
             <div>
                 <h1 class="text-lg font-bold text-slate-900 dark:text-white">Dokumen Berita Acara Pengembalian Barang (BAPB)</h1>
-                <p class="text-xs text-slate-500 dark:text-slate-400">Nomor Dokumen: <span class="font-mono font-bold text-blue-600 dark:text-blue-400">BAPB/TF/2024/X/0049</span></p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Pilih klaim disetujui untuk mencetak berita acara pengembalian.</p>
             </div>
             <button onclick="window.print()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm cursor-pointer">
                 <span class="material-symbols-outlined text-base">print</span>
@@ -12,6 +12,23 @@
             </button>
         </div>
 
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 soft-shadow overflow-hidden">
+            <div class="p-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
+                <span class="text-xs font-bold text-slate-600 dark:text-slate-300">Klaim Disetujui</span>
+                <form method="GET" class="flex gap-2"><input name="q" value="{{ $queryStr }}" placeholder="Cari klaim/pemohon" class="px-3 py-2 border rounded-lg text-xs"><button class="px-3 py-2 bg-slate-800 text-white rounded-lg text-xs">Cari</button></form>
+            </div>
+            <div class="overflow-x-auto"><table class="w-full text-left text-xs"><thead class="bg-slate-50"><tr><th class="px-4 py-3">Kode</th><th class="px-4 py-3">Pemohon</th><th class="px-4 py-3">Barang</th><th class="px-4 py-3">Tanggal</th><th class="px-4 py-3">Aksi</th></tr></thead><tbody class="divide-y">
+                @forelse ($reports as $report)
+                    <tr><td class="px-4 py-3 font-mono">{{ $report->claim_code }}</td><td class="px-4 py-3">{{ $report->claimant_name }}</td><td class="px-4 py-3">{{ $report->foundItem->title }}</td><td class="px-4 py-3">{{ $report->updated_at->format('d M Y H:i') }}</td><td class="px-4 py-3"><a class="text-blue-600 font-bold" href="{{ route('admin.return-report.print', $report->id) }}">Cetak</a></td></tr>
+                @empty
+                    <tr><td colspan="5" class="px-4 py-6 text-center text-slate-500">Belum ada klaim disetujui.</td></tr>
+                @endforelse
+            </tbody></table></div>
+            <div class="p-4">{{ $reports->links() }}</div>
+        </div>
+
+        {{-- Printable document is generated per approved claim via the Cetak action. --}}
+        @if (false)
         <!-- Official Document Paper Sheet -->
         <div class="bg-white p-8 md:p-12 rounded-2xl border border-slate-300 dark:border-slate-700 shadow-lg text-slate-900 space-y-6">
             <!-- Official Header -->
@@ -87,5 +104,6 @@
                 </div>
             </div>
         </div>
+        @endif
     </div>
 </x-layouts.admin>

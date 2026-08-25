@@ -5,7 +5,7 @@
         <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 soft-shadow">
             <p class="text-[11px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider mb-2">Total Found Items</p>
             <div class="flex items-end justify-between">
-                <h3 class="text-3xl font-extrabold text-slate-900 dark:text-white">4,821</h3>
+                <h3 class="text-3xl font-extrabold text-slate-900 dark:text-white">{{ number_format($stats['total_found']) }}</h3>
                 <span class="text-emerald-700 dark:text-emerald-400 text-xs font-bold flex items-center bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 px-2 py-0.5 rounded-lg">
                     <span class="material-symbols-outlined text-sm mr-0.5">trending_up</span> 12%
                 </span>
@@ -16,7 +16,7 @@
         <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 soft-shadow">
             <p class="text-[11px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider mb-2">Active Lost Reports</p>
             <div class="flex items-end justify-between">
-                <h3 class="text-3xl font-extrabold text-slate-900 dark:text-white">1,248</h3>
+                <h3 class="text-3xl font-extrabold text-slate-900 dark:text-white">{{ number_format($stats['pending_lost']) }}</h3>
                 <span class="text-amber-700 dark:text-amber-400 text-xs font-bold flex items-center bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800 px-2 py-0.5 rounded-lg">
                     <span class="material-symbols-outlined text-sm mr-0.5">trending_down</span> 5%
                 </span>
@@ -27,7 +27,7 @@
         <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 soft-shadow">
             <p class="text-[11px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider mb-2">Pending Claims</p>
             <div class="flex items-end justify-between">
-                <h3 class="text-3xl font-extrabold text-slate-900 dark:text-white">156</h3>
+                <h3 class="text-3xl font-extrabold text-slate-900 dark:text-white">{{ number_format($stats['pending_claims']) }}</h3>
                 <span class="text-red-700 dark:text-red-400 text-xs font-bold flex items-center bg-red-50 dark:bg-red-950/60 border border-red-200 dark:border-red-800 px-2 py-0.5 rounded-lg">
                     <span class="material-symbols-outlined text-sm mr-0.5">priority_high</span> 8 Urgent
                 </span>
@@ -38,7 +38,7 @@
         <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 soft-shadow">
             <p class="text-[11px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider mb-2">Successfully Returned</p>
             <div class="flex items-end justify-between">
-                <h3 class="text-3xl font-extrabold text-slate-900 dark:text-white">3,942</h3>
+                <h3 class="text-3xl font-extrabold text-slate-900 dark:text-white">{{ number_format($stats['claimed_found']) }}</h3>
                 <span class="text-blue-700 dark:text-blue-400 text-xs font-bold flex items-center bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800 px-2 py-0.5 rounded-lg">
                     <span class="material-symbols-outlined text-sm mr-0.5">check_circle</span> 82% Rate
                 </span>
@@ -66,38 +66,18 @@
                         </tr>
                     </thead>
                     <tbody class="text-xs divide-y divide-slate-100 dark:divide-slate-800">
-                        <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
-                            <td class="px-5 py-3.5 font-bold text-slate-900 dark:text-white">Leather Wallet (Black)</td>
-                            <td class="px-5 py-3.5 text-slate-600 dark:text-slate-300">Budi Santoso</td>
-                            <td class="px-5 py-3.5 text-slate-500 dark:text-slate-400">Oct 24, 2024</td>
-                            <td class="px-5 py-3.5">
-                                <span class="px-3 py-1 rounded-full text-[11px] font-bold bg-amber-100/70 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300">Processing</span>
-                            </td>
-                        </tr>
-                        <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
-                            <td class="px-5 py-3.5 font-bold text-slate-900 dark:text-white">iPhone 14 Pro Max</td>
-                            <td class="px-5 py-3.5 text-slate-600 dark:text-slate-300">Siti Aminah</td>
-                            <td class="px-5 py-3.5 text-slate-500 dark:text-slate-400">Oct 23, 2024</td>
-                            <td class="px-5 py-3.5">
-                                <span class="px-3 py-1 rounded-full text-[11px] font-bold bg-emerald-100/70 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300">Verified</span>
-                            </td>
-                        </tr>
-                        <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
-                            <td class="px-5 py-3.5 font-bold text-slate-900 dark:text-white">Samsonite Carry-on</td>
-                            <td class="px-5 py-3.5 text-slate-600 dark:text-slate-300">David Chen</td>
-                            <td class="px-5 py-3.5 text-slate-500 dark:text-slate-400">Oct 23, 2024</td>
-                            <td class="px-5 py-3.5">
-                                <span class="px-3 py-1 rounded-full text-[11px] font-bold bg-amber-100/70 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300">Processing</span>
-                            </td>
-                        </tr>
-                        <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
-                            <td class="px-5 py-3.5 font-bold text-slate-900 dark:text-white">Ray-Ban Sunglasses</td>
-                            <td class="px-5 py-3.5 text-slate-600 dark:text-slate-300">Eko Prasetyo</td>
-                            <td class="px-5 py-3.5 text-slate-500 dark:text-slate-400">Oct 22, 2024</td>
-                            <td class="px-5 py-3.5">
-                                <span class="px-3 py-1 rounded-full text-[11px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">Awaiting Review</span>
-                            </td>
-                        </tr>
+                        @forelse ($recentClaims as $claim)
+                            <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
+                                <td class="px-5 py-3.5 font-bold text-slate-900 dark:text-white">{{ $claim->foundItem?->title ?? '-' }}</td>
+                                <td class="px-5 py-3.5 text-slate-600 dark:text-slate-300">{{ $claim->claimant_name }}</td>
+                                <td class="px-5 py-3.5 text-slate-500 dark:text-slate-400">{{ $claim->created_at?->format('d M Y') }}</td>
+                                <td class="px-5 py-3.5">
+                                    <span class="px-3 py-1 rounded-full text-[11px] font-bold bg-amber-100/70 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300">{{ $claim->status }}</span>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr><td colspan="4" class="px-5 py-8 text-center text-slate-500">Belum ada pengajuan klaim.</td></tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
@@ -106,49 +86,24 @@
         <!-- Right Column: Latest Found Items -->
         <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 soft-shadow flex flex-col overflow-hidden">
             <div class="p-5 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/30">
-                <h3 class="text-base font-bold text-slate-900 dark:text-white">Latest Found Items</h3>
+                <h3 class="text-base font-bold text-slate-900 dark:text-white">Latest Lost Reports</h3>
             </div>
 
             <div class="p-4 space-y-3 flex-1">
-                <!-- Item 1 -->
-                <div class="flex items-center gap-3 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all">
-                    <img class="w-11 h-11 rounded-lg object-cover flex-shrink-0" src="https://images.unsplash.com/photo-1583485088034-697b5bc54ccd?w=150" alt="Toyota Key"/>
-                    <div class="flex-1 min-w-0">
-                        <h4 class="text-xs font-bold text-slate-900 dark:text-white truncate">Toyota Car Keys</h4>
-                        <p class="text-[11px] text-slate-400 truncate">Zone A - Waiting Room</p>
-                    </div>
-                    <span class="text-[10px] text-slate-400 font-medium">2m ago</span>
-                </div>
-
-                <!-- Item 2 -->
-                <div class="flex items-center gap-3 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all">
-                    <img class="w-11 h-11 rounded-lg object-cover flex-shrink-0" src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=150" alt="Backpack"/>
-                    <div class="flex-1 min-w-0">
-                        <h4 class="text-xs font-bold text-slate-900 dark:text-white truncate">Blue Kids Backpack</h4>
-                        <p class="text-[11px] text-slate-400 truncate">Zone C - Food Court</p>
-                    </div>
-                    <span class="text-[10px] text-slate-400 font-medium">15m ago</span>
-                </div>
-
-                <!-- Item 3 -->
-                <div class="flex items-center gap-3 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all">
-                    <img class="w-11 h-11 rounded-lg object-cover flex-shrink-0" src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=150" alt="Rose Gold Watch"/>
-                    <div class="flex-1 min-w-0">
-                        <h4 class="text-xs font-bold text-slate-900 dark:text-white truncate">Rose Gold Watch</h4>
-                        <p class="text-[11px] text-slate-400 truncate">Platform 4</p>
-                    </div>
-                    <span class="text-[10px] text-slate-400 font-medium">1h ago</span>
-                </div>
-
-                <!-- Item 4 -->
-                <div class="flex items-center gap-3 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all">
-                    <img class="w-11 h-11 rounded-lg object-cover flex-shrink-0" src="https://images.unsplash.com/photo-1517420879524-86d64ac2f339?w=150" alt="Black Umbrella"/>
-                    <div class="flex-1 min-w-0">
-                        <h4 class="text-xs font-bold text-slate-900 dark:text-white truncate">Black Umbrella</h4>
-                        <p class="text-[11px] text-slate-400 truncate">Entry Gate 2</p>
-                    </div>
-                    <span class="text-[10px] text-slate-400 font-medium">3h ago</span>
-                </div>
+                @forelse ($recentLost as $report)
+                    <a href="{{ route('admin.lost-reports.show', $report->id) }}" class="block p-3 rounded-xl border border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="min-w-0">
+                                <h4 class="text-xs font-bold text-slate-900 dark:text-white truncate">{{ $report->item_name }}</h4>
+                                <p class="text-[11px] text-slate-400 truncate">{{ $report->report_code }} · {{ $report->reporter_name }}</p>
+                            </div>
+                            <span class="text-[10px] text-slate-400 font-medium whitespace-nowrap">{{ $report->created_at?->format('d M Y') }}</span>
+                        </div>
+                        <span class="inline-block mt-2 text-[10px] font-semibold text-amber-700 dark:text-amber-300">{{ $report->status }}</span>
+                    </a>
+                @empty
+                    <p class="py-8 text-center text-xs text-slate-500">Belum ada laporan kehilangan.</p>
+                @endforelse
             </div>
         </div>
     </div>

@@ -36,10 +36,11 @@ Route::get('/found-items/{id}', [FoundItemController::class, 'show'])->name('ite
 Route::get('/search', SearchController::class)->name('search');
 
 Route::get('/report-lost', [LostReportController::class, 'create'])->name('lost-report');
-Route::post('/report-lost', [LostReportController::class, 'store'])->name('lost-report.store');
+Route::post('/report-lost', [LostReportController::class, 'store'])->middleware('throttle:public-submissions')->name('lost-report.store');
 
 Route::get('/claim/{id?}', [ClaimController::class, 'create'])->name('claim');
-Route::post('/claim/{id?}', [ClaimController::class, 'store'])->name('claim.store');
+Route::post('/claim/{id?}', [ClaimController::class, 'store'])->middleware('throttle:public-submissions')->name('claim.store');
+Route::get('/claim-tracking', [ClaimController::class, 'tracking'])->middleware('throttle:public-tracking')->name('claim.tracking');
 
 Route::get('/contact', ContactController::class)->name('contact');
 
@@ -59,10 +60,11 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 */
 Route::get('/admin', fn() => redirect()->route('login'));
 
-Route::prefix('admin')->name('admin.')->group(function () {
+Route::prefix('admin')->middleware('auth')->name('admin.')->group(function () {
     Route::get('/', fn() => redirect()->route('login'));
-    Route::get('/dashboard', DashboardController::class)->name('dashboard');
+    Route::get('/dashboard', DashboardController::class)->middleware('role:super_admin,cs,petugas')->name('dashboard');
 
+    Route::middleware('role:super_admin,cs,petugas')->group(function () {
     // Found Item Management
     Route::get('/found-items', [AdminFoundItemController::class, 'index'])->name('found-items.index');
     Route::post('/found-items', [AdminFoundItemController::class, 'store'])->name('found-items.store');
@@ -78,6 +80,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/claims', [AdminClaimController::class, 'index'])->name('claims.index');
     Route::post('/claims/{id}/approve', [AdminClaimController::class, 'approve'])->name('claims.approve');
     Route::post('/claims/{id}/reject', [AdminClaimController::class, 'reject'])->name('claims.reject');
+    Route::get('/claims/{id}/document', [AdminClaimController::class, 'document'])->name('claims.document');
 
     // Berita Acara / Return Report
     Route::get('/return-report', [AdminReturnReportController::class, 'index'])->name('return-report.index');
@@ -89,8 +92,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::get('/ai-auto-desc', [AdminAiAutoDescController::class, 'index'])->name('ai-auto-desc.index');
     Route::post('/ai-auto-desc/generate', [AdminAiAutoDescController::class, 'generate'])->name('ai-auto-desc.generate');
+    Route::post('/ai-auto-desc/save', [AdminAiAutoDescController::class, 'save'])->name('ai-auto-desc.save');
+    });
 
     // Category Management
+    Route::middleware('role:super_admin')->group(function () {
     Route::get('/categories', [AdminCategoryController::class, 'index'])->name('categories.index');
     Route::post('/categories', [AdminCategoryController::class, 'store'])->name('categories.store');
     Route::put('/categories/{id}', [AdminCategoryController::class, 'update'])->name('categories.update');
@@ -106,10 +112,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/analytics', [AdminAnalyticsController::class, 'index'])->name('analytics.index');
     Route::get('/analytics/export', [AdminAnalyticsController::class, 'export'])->name('analytics.export');
 
-    // Profile & Settings
-    Route::get('/profile', [AdminProfileController::class, 'index'])->name('profile.index');
-    Route::put('/profile', [AdminProfileController::class, 'update'])->name('profile.update');
-
+    // Settings
     Route::get('/settings', [AdminSettingsController::class, 'index'])->name('settings.index');
     Route::put('/settings', [AdminSettingsController::class, 'update'])->name('settings.update');
+    });
+
+    Route::middleware('role:super_admin,cs,petugas')->group(function () {
+        Route::get('/profile', [AdminProfileController::class, 'index'])->name('profile.index');
+        Route::put('/profile', [AdminProfileController::class, 'update'])->name('profile.update');
+    });
 });

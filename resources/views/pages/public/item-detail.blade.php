@@ -1,67 +1,60 @@
 <x-layouts.guest title="Detail Barang Temuan">
-    <div x-data="{ activeImage: 'https://images.unsplash.com/photo-1627123424574-724758594e93?w=800' }" class="max-w-[1280px] mx-auto px-4 md:px-6 py-8 md:py-12">
+    @php
+        $imageUrl = $item->image_path ?: 'https://images.unsplash.com/photo-1627123424574-724758594e93?w=800';
+        $imageUrl = str_starts_with($imageUrl, 'http') ? $imageUrl : asset(ltrim($imageUrl, '/'));
+    @endphp
+    <div x-data="{ activeImage: '{{ $imageUrl }}' }" class="max-w-[1280px] mx-auto px-4 md:px-6 py-8 md:py-12">
         <!-- Breadcrumbs -->
         <nav class="flex items-center gap-2 text-xs md:text-sm text-slate-500 mb-6">
             <a href="{{ route('home') }}" class="hover:text-blue-600 transition-colors">Beranda</a>
             <span class="material-symbols-outlined text-xs">chevron_right</span>
             <a href="{{ route('found-items') }}" class="hover:text-blue-600 transition-colors">Barang Temuan</a>
             <span class="material-symbols-outlined text-xs">chevron_right</span>
-            <span class="font-bold text-slate-900">Dompet Kulit Pria (Kode: #TF-2024-8912)</span>
+            <span class="font-bold text-slate-900">{{ $item->title }} (Kode: {{ $item->ref_code }})</span>
         </nav>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12">
             <!-- Left Column: Gallery Preview -->
             <div class="lg:col-span-7 space-y-4">
                 <div class="bg-slate-100 rounded-2xl overflow-hidden border border-slate-200 aspect-4/3 relative soft-shadow">
-                    <img :src="activeImage" alt="Foto Barang" class="w-full h-full object-cover transition-all duration-300"/>
+                    <img :src="activeImage" alt="{{ $item->title }}" class="w-full h-full object-cover transition-all duration-300"/>
                     <span class="absolute top-4 right-4 bg-emerald-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-md flex items-center gap-1.5">
                         <span class="w-2 h-2 rounded-full bg-white animate-pulse"></span>
-                        <span>Aman di Brankas Pos 1</span>
+                        <span>{{ $item->storage_location ?: 'Disimpan petugas' }}</span>
                     </span>
                 </div>
 
                 <!-- Thumbnails -->
-                <div class="grid grid-cols-4 gap-3">
-                    <button @click="activeImage = 'https://images.unsplash.com/photo-1627123424574-724758594e93?w=800'" class="rounded-xl overflow-hidden border-2 aspect-square focus:outline-none transition-all" :class="activeImage.includes('1627123424574') ? 'border-blue-600 ring-2 ring-blue-500/20' : 'border-slate-200 opacity-70 hover:opacity-100'">
-                        <img src="https://images.unsplash.com/photo-1627123424574-724758594e93?w=200" class="w-full h-full object-cover"/>
-                    </button>
-                    <button @click="activeImage = 'https://images.unsplash.com/photo-1554415707-6e8cfc93fe23?w=800'" class="rounded-xl overflow-hidden border-2 aspect-square focus:outline-none transition-all" :class="activeImage.includes('1554415707') ? 'border-blue-600 ring-2 ring-blue-500/20' : 'border-slate-200 opacity-70 hover:opacity-100'">
-                        <img src="https://images.unsplash.com/photo-1554415707-6e8cfc93fe23?w=200" class="w-full h-full object-cover"/>
-                    </button>
-                    <button @click="activeImage = 'https://images.unsplash.com/photo-1606813907291-d86efa9b94db?w=800'" class="rounded-xl overflow-hidden border-2 aspect-square focus:outline-none transition-all" :class="activeImage.includes('1606813907291') ? 'border-blue-600 ring-2 ring-blue-500/20' : 'border-slate-200 opacity-70 hover:opacity-100'">
-                        <img src="https://images.unsplash.com/photo-1606813907291-d86efa9b94db?w=200" class="w-full h-full object-cover"/>
-                    </button>
-                </div>
             </div>
 
             <!-- Right Column: Specs & CTA -->
             <div class="lg:col-span-5 space-y-6">
                 <div>
                     <div class="flex items-center gap-2 mb-2">
-                        <span class="px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 text-xs font-bold rounded-full">Tas & Dompet</span>
-                        <span class="text-xs font-mono text-slate-400 font-semibold">Ref: #TF-2024-8912</span>
+                        <span class="px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 text-xs font-bold rounded-full">{{ $item->category?->name ?: 'Lainnya' }}</span>
+                        <span class="text-xs font-mono text-slate-400 font-semibold">Ref: {{ $item->ref_code }}</span>
                     </div>
-                    <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900">Dompet Kulit Pria Imperial Horse</h1>
-                    <p class="text-xs text-slate-500 mt-1">Diserahkan ke Pos Informasi Terminal pada 24 Oktober 2024 oleh Petugas Keamanan</p>
+                    <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900">{{ $item->title }}</h1>
+                    <p class="text-xs text-slate-500 mt-1">Barang ditemukan pada {{ $item->date_found->format('d M Y H:i') }} oleh petugas Terminal Tirtonadi.</p>
                 </div>
 
                 <!-- Info Table Card -->
                 <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-3">
                     <div class="flex justify-between items-center text-xs md:text-sm border-b border-slate-200 pb-2.5">
                         <span class="text-slate-500 flex items-center gap-1.5"><span class="material-symbols-outlined text-base">location_on</span> Lokasi Penemuan</span>
-                        <span class="font-bold text-slate-900">Platform 4 (Peron Bus Intercity)</span>
+                        <span class="font-bold text-slate-900">{{ $item->location_found }}</span>
                     </div>
                     <div class="flex justify-between items-center text-xs md:text-sm border-b border-slate-200 pb-2.5">
                         <span class="text-slate-500 flex items-center gap-1.5"><span class="material-symbols-outlined text-base">calendar_today</span> Waktu WIB</span>
-                        <span class="font-bold text-slate-900">24 Okt 2024, 14:30 WIB</span>
+                        <span class="font-bold text-slate-900">{{ $item->date_found->format('d M Y, H:i') }} WIB</span>
                     </div>
                     <div class="flex justify-between items-center text-xs md:text-sm border-b border-slate-200 pb-2.5">
                         <span class="text-slate-500 flex items-center gap-1.5"><span class="material-symbols-outlined text-base">palette</span> Warna Dominan</span>
-                        <span class="font-bold text-slate-900">Hitam Pekat</span>
+                        <span class="font-bold text-slate-900">{{ $item->color ?: '-' }}</span>
                     </div>
                     <div class="flex justify-between items-center text-xs md:text-sm">
                         <span class="text-slate-500 flex items-center gap-1.5"><span class="material-symbols-outlined text-base">lock</span> Lokasi Simpan</span>
-                        <span class="font-bold text-emerald-700">Brankas Inventaris Pos 1</span>
+                        <span class="font-bold text-emerald-700">{{ $item->storage_location ?: 'Disimpan petugas' }}</span>
                     </div>
                 </div>
 
@@ -69,7 +62,7 @@
                 <div>
                     <h3 class="text-sm font-bold text-slate-900 mb-2">Deskripsi & Ciri Fisik Barang</h3>
                     <p class="text-xs md:text-sm text-slate-600 leading-relaxed">
-                        Dompet lipat dua berbahan kulit asli warna hitam merk Imperial Horse. Di dalamnya terdapat 6 slot kartu identitas, e-money mandiri, serta uang tunai. Pemilik sah dapat melakukan verifikasi klaim dengan menyertakan KTP dan mencocokkan identitas kartu.
+                        {{ $item->description }}
                     </p>
                 </div>
 
@@ -80,7 +73,7 @@
                         <div class="relative">
                             <span class="w-3 h-3 rounded-full bg-blue-600 absolute -left-[31px] top-1 ring-4 ring-white"></span>
                             <h4 class="text-xs font-bold text-slate-900">Barang Ditemukan & Diamankan</h4>
-                            <p class="text-[11px] text-slate-500">24 Oct 2024, 14:30 WIB - Petugas Security Pos 1</p>
+                            <p class="text-[11px] text-slate-500">{{ $item->date_found->format('d M Y, H:i') }} WIB</p>
                         </div>
                         <div class="relative">
                             <span class="w-3 h-3 rounded-full bg-blue-600 absolute -left-[31px] top-1 ring-4 ring-white"></span>

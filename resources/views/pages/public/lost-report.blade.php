@@ -7,7 +7,7 @@
             name: '',
             phone: '',
             item_name: '',
-            category: 'Tas & Dompet',
+            category: '{{ $categories->first()->id ?? '' }}',
             color: '',
             description: '',
             location: 'Platform 4 Bus Intercity',
@@ -123,7 +123,8 @@
 
         <!-- Form Card Container -->
         <div class="w-full bg-white rounded-2xl border border-slate-200 soft-shadow p-6 md:p-8">
-            <form @submit.prevent="submitForm">
+            <form action="{{ route('lost-report.store') }}" method="POST" enctype="multipart/form-data" @submit="if (!validateStep1() || !validateStep2() || !validateStep3()) { $event.preventDefault(); }">
+                @csrf
                 <!-- Step 1: Data Pelapor (Nama & Nomor HP Saja) -->
                 <div x-show="step === 1" class="space-y-6">
                     <div class="border-b border-slate-100 pb-3">
@@ -134,12 +135,17 @@
                     <div class="space-y-4">
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1">Nama Lengkap Pelapor <span class="text-red-500">*</span></label>
-                            <input type="text" x-model="form.name" placeholder="Masukkan nama lengkap Anda" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-500/20 transition-all"/>
+                            <input type="text" name="reporter_name" x-model="form.name" placeholder="Masukkan nama lengkap Anda" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-500/20 transition-all" required/>
                         </div>
 
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1">Nomor WhatsApp / Telepon Aktif <span class="text-red-500">*</span></label>
-                            <input type="tel" x-model="form.phone" placeholder="Contoh: 08123456789" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-500/20 transition-all"/>
+                            <input type="tel" name="reporter_phone" x-model="form.phone" placeholder="Contoh: 08123456789" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-500/20 transition-all" required/>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Nomor Identitas <span class="text-red-500">*</span></label>
+                            <input type="text" name="reporter_id_number" placeholder="Nomor KTP/SIM/Paspor" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-500/20 transition-all" required/>
+                            <input type="hidden" name="reporter_id_type" value="KTP"/>
                         </div>
                     </div>
 
@@ -161,30 +167,27 @@
                     <div class="space-y-4">
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1">Nama / Judul Barang <span class="text-red-500">*</span></label>
-                            <input type="text" x-model="form.item_name" placeholder="Contoh: Dompet Kulit Pria Hitam Imperial Horse" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-600 transition-all"/>
+                            <input type="text" name="item_name" x-model="form.item_name" placeholder="Contoh: Dompet Kulit Pria Hitam Imperial Horse" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-600 transition-all" required/>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs font-bold text-slate-700 mb-1">Kategori Barang</label>
-                                <select x-model="form.category" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-600 bg-white">
-                                    <option value="Tas & Dompet">Tas & Dompet</option>
-                                    <option value="Elektronik & HP">Elektronik & HP</option>
-                                    <option value="Dokumen & ID">Dokumen & ID</option>
-                                    <option value="Aksesoris & Perhiasan">Aksesoris & Perhiasan</option>
-                                    <option value="Kunci & Otomotif">Kunci & Otomotif</option>
-                                    <option value="Lainnya">Lainnya</option>
+                                <select name="category_id" x-model="form.category" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-600 bg-white" required>
+                                    @foreach ($categories as $category)
+                                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-slate-700 mb-1">Warna Dominan</label>
-                                <input type="text" x-model="form.color" placeholder="Hitam, Biru, Cokelat..." class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-600 transition-all"/>
+                                <input type="text" name="color" x-model="form.color" placeholder="Hitam, Biru, Cokelat..." class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-600 transition-all"/>
                             </div>
                         </div>
 
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1">Ciri-Ciri Khusus / Deskripsi Rinci</label>
-                            <textarea x-model="form.description" rows="3" placeholder="Sebutkan ciri khusus (stiker, goresan, merk, isi di dalam dompet/tas, dsb)..." class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-600 transition-all"></textarea>
+                            <textarea name="distinctive_features" x-model="form.description" rows="3" placeholder="Sebutkan ciri khusus (stiker, goresan, merk, isi di dalam dompet/tas, dsb)..." class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-600 transition-all"></textarea>
                         </div>
                     </div>
 
@@ -208,18 +211,11 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs font-bold text-slate-700 mb-1">Perkiraan Lokasi Hilang <span class="text-red-500">*</span></label>
-                                <select x-model="form.location" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-600 bg-white">
-                                    <option value="Platform 4 Bus Intercity">Platform 4 Bus Intercity</option>
-                                    <option value="Ruang Tunggu Zone B">Ruang Tunggu Zone B</option>
-                                    <option value="Area Food Court UMKM">Area Food Court UMKM</option>
-                                    <option value="Pintu Kedatangan Bus">Pintu Kedatangan Bus</option>
-                                    <option value="Area Parkir Selatan">Area Parkir Selatan</option>
-                                    <option value="Area Toilet Utama">Area Toilet Utama</option>
-                                </select>
+                                <input type="text" name="location_lost" x-model="form.location" placeholder="Contoh: Ruang Tunggu Zone B" maxlength="255" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-600 bg-white" required/>
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-slate-700 mb-1">Perkiraan Tanggal & Waktu Hilang <span class="text-red-500">*</span></label>
-                                <input type="datetime-local" x-model="form.time" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-600 bg-white transition-all"/>
+                                <input type="datetime-local" name="date_lost" x-model="form.time" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-600 bg-white transition-all" required/>
                             </div>
                         </div>
 
@@ -227,6 +223,7 @@
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1">Unggah Foto Contoh Barang (Opsional)</label>
                             <div class="border-2 border-dashed border-slate-300 rounded-2xl p-6 text-center hover:border-blue-600 transition-colors cursor-pointer bg-slate-50">
+                                <input type="file" name="image" accept="image/jpeg,image/png,image/webp" class="block w-full text-xs text-slate-500 mb-3"/>
                                 <span class="material-symbols-outlined text-4xl text-blue-600 mb-1">cloud_upload</span>
                                 <p class="text-xs font-bold text-slate-700">Tarik & Lepas Foto di Sini, atau Klik Upload</p>
                                 <p class="text-[11px] text-slate-400 mt-0.5">PNG, JPG, WEBP (Maksimal 5MB)</p>

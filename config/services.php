@@ -20,6 +20,10 @@ return [
         'url' => 'https://openrouter.ai/api/v1/chat/completions',
     ],
 
+    'whatsapp' => [
+        'cs_phone' => env('WHATSAPP_CS_PHONE', '6281234567890'),
+    ],
+
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),
     ],

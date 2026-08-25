@@ -3,8 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\LostReport;
+use App\Models\FoundItem;
+use App\Models\AiMatchingLog;
+use App\Models\ActivityLog;
 use App\Services\AiService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AiMatchingController extends Controller
 {
@@ -17,18 +22,73 @@ class AiMatchingController extends Controller
 
     public function index(Request $request)
     {
-        return view('pages.admin.ai-matching.index');
+        $lostReports = LostReport::with('category')->where('status', '!=', 'Selesai')->latest()->get();
+        $foundItems = FoundItem::with('category')->where('status', 'active')->latest()->get();
+
+        $selectedLostId = $request->integer('lost_report_id') ?: null;
+        $selectedFoundId = $request->integer('found_item_id') ?: null;
+        $runMatch = false;
+        $matchResult = null;
+        $selectedLostReport = null;
+        $selectedFoundItem = null;
+
+        if ($selectedLostId && $selectedFoundId) {
+            $lostReport = $lostReports->firstWhere('id', $selectedLostId);
+            $foundItem = $foundItems->firstWhere('id', $selectedFoundId);
+
+            abort_unless($lostReport && $foundItem, 404);
+            $selectedLostReport = $lostReport;
+            $selectedFoundItem = $foundItem;
+
+            $existingLog = AiMatchingLog::where('lost_report_id', $lostReport->id)
+                ->where('found_item_id', $foundItem->id)
+                ->first();
+
+            if ($request->boolean('scan')) {
+                $lostDesc = "Nama Barang: {$lostReport->item_name}, Kategori: {$lostReport->category?->name}, Warna: {$lostReport->color}, Merek: {$lostReport->brand}, Lokasi Hilang: {$lostReport->location_lost}, Ciri Khusus: {$lostReport->distinctive_features}";
+                $foundDesc = "Nama Barang: {$foundItem->title}, Kategori: {$foundItem->category?->name}, Warna: {$foundItem->color}, Merek: {$foundItem->brand}, Lokasi Temu: {$foundItem->location_found}, Deskripsi: {$foundItem->description}";
+
+                $matchResult = $this->aiService->matchItems($lostDesc, $foundDesc);
+                $runMatch = true;
+
+                if ($matchResult) {
+                    ActivityLog::create([
+                        'user_id' => Auth::id(),
+                        'activity' => 'AI Smart Matching',
+                        'details' => "Mencocokkan manual laporan {$lostReport->report_code} dengan barang temuan {$foundItem->ref_code}. Hasil skor: {$matchResult['score']}%.",
+                    ]);
+
+                    $existingLog = AiMatchingLog::updateOrCreate(
+                        ['lost_report_id' => $lostReport->id, 'found_item_id' => $foundItem->id],
+                        [
+                            'score' => $matchResult['score'],
+                            'reason' => $matchResult['reason'],
+                            'color_match' => $matchResult['color_match'],
+                            'brand_match' => $matchResult['brand_match'],
+                            'location_match' => $matchResult['location_match'],
+                            'time_match' => $matchResult['time_match'],
+                        ]
+                    );
+                }
+            } elseif ($existingLog) {
+                $matchResult = array_merge(['available' => true], $existingLog->only([
+                    'score', 'reason', 'color_match', 'brand_match', 'location_match', 'time_match',
+                ]));
+            }
+        }
+
+        return view('pages.admin.ai-matching.index', compact('lostReports', 'foundItems', 'selectedLostId', 'selectedFoundId', 'selectedLostReport', 'selectedFoundItem', 'matchResult', 'runMatch'));
     }
 
     public function match(Request $request)
     {
-        $lostDesc = $request->input('lost_desc', 'Dompet lipat dua warna hitam kulit, ada kartu e-money mandiri dan KTP atas nama Budi Santoso.');
-        $foundDesc = $request->input('found_desc', 'Dompet kulit pria warna hitam merk Imperial Horse berisi kartu E-Money diserahkan dari Platform 4.');
+        $lostReportId = $request->input('lost_report_id');
+        $foundItemId = $request->input('found_item_id');
 
-        $matchResult = $this->aiService->matchItems($lostDesc, $foundDesc);
-
-        return redirect()->route('admin.ai-matching.index')
-            ->with('matchResult', $matchResult)
-            ->with('success', "Proses AI Smart Matching selesai via OpenRouter. Skor kecocokan: {$matchResult['score']}%.");
+        return redirect()->route('admin.ai-matching.index', [
+            'lost_report_id' => $lostReportId,
+            'found_item_id' => $foundItemId,
+            'scan' => true,
+        ]);
     }
 }

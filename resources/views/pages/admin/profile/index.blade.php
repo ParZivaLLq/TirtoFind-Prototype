@@ -6,7 +6,9 @@
         </div>
 
         <div class="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-2xl border border-slate-200 dark:border-slate-800 soft-shadow space-y-6">
-            <form @submit.prevent="saved = true" class="space-y-6">
+            <form action="{{ route('admin.profile.update') }}" method="POST" class="space-y-6">
+                @csrf
+                @method('PUT')
                 <div class="flex items-center gap-6">
                     <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150" class="w-20 h-20 rounded-full object-cover border-2 border-blue-600 shadow-md"/>
                     <div>
@@ -18,7 +20,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Nama Lengkap</label>
-                        <input type="text" value="Officer Handoko, A.Md.Tra" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:border-blue-600"/>
+                        <input type="text" name="name" value="{{ old('name', $user->name) }}" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:border-blue-600" required/>
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">NIP Petugas</label>
@@ -31,11 +33,12 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Kata Sandi Lama</label>
-                            <input type="password" placeholder="••••••••" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:border-blue-600"/>
+                            <input type="password" name="current_password" placeholder="Password lama" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:border-blue-600"/>
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Kata Sandi Baru</label>
-                            <input type="password" placeholder="••••••••" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:border-blue-600"/>
+                            <input type="password" name="password" placeholder="Password baru" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:border-blue-600"/>
+                            <input type="password" name="password_confirmation" placeholder="Ulangi password baru" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:border-blue-600"/>
                         </div>
                     </div>
                 </div>

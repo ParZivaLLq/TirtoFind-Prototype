@@ -1,5 +1,5 @@
 <x-layouts.admin title="Lost Report Management">
-    <div x-data="{ detailModalOpen: false }" class="space-y-6">
+    <div class="space-y-6">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 soft-shadow">
             <div>
                 <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Manajemen Laporan Kehilangan</h1>
@@ -12,10 +12,25 @@
         </div>
 
         <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 soft-shadow overflow-hidden">
-            <div class="p-4 border-b border-slate-100 dark:border-slate-800 flex flex-wrap gap-3 items-center justify-between">
-                <input type="text" placeholder="Cari nama pelapor atau kata kunci..." class="px-4 py-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-xl text-xs text-slate-900 dark:text-white w-72 focus:outline-none focus:border-blue-600"/>
-                <span class="text-xs text-slate-500 dark:text-slate-400">12 Laporan Kehilangan Aktif</span>
-            </div>
+            <form action="{{ route('admin.lost-reports.index') }}" method="GET" class="p-4 border-b border-slate-100 dark:border-slate-800 flex flex-wrap gap-3 items-center justify-between">
+                <div class="flex flex-wrap gap-3">
+                    <input name="q" value="{{ $queryStr }}" type="text" placeholder="Cari nama, kode, barang, atau lokasi..." class="px-4 py-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-xl text-xs text-slate-900 dark:text-white w-72 focus:outline-none focus:border-blue-600"/>
+                    <select name="category" class="px-3 py-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-xl text-xs text-slate-900 dark:text-white">
+                        <option value="">Semua Kategori</option>
+                        @foreach ($categories as $category)
+                            <option value="{{ $category->name }}" @selected($categoryFilter === $category->name)>{{ $category->name }}</option>
+                        @endforeach
+                    </select>
+                    <select name="status" class="px-3 py-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-xl text-xs text-slate-900 dark:text-white">
+                        <option value="">Semua Status</option>
+                        @foreach (['Menunggu Verifikasi', 'Terverifikasi', 'Selesai'] as $status)
+                            <option value="{{ $status }}" @selected($statusFilter === $status)>{{ $status }}</option>
+                        @endforeach
+                    </select>
+                    <button type="submit" class="px-4 py-2 bg-slate-800 text-white rounded-xl text-xs font-semibold hover:bg-slate-700">Terapkan</button>
+                </div>
+                <span class="text-xs text-slate-500 dark:text-slate-400">{{ $reports->total() }} Laporan</span>
+            </form>
 
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-xs md:text-sm">
@@ -31,53 +46,29 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
-                        <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                            <td class="px-6 py-4 font-mono font-bold text-slate-900 dark:text-white">#REP-2024-9902</td>
-                            <td class="px-6 py-4">
-                                <div class="font-bold text-slate-900 dark:text-white">Budi Santoso</div>
-                                <div class="text-xs text-slate-400">08123456789</div>
-                            </td>
-                            <td class="px-6 py-4 font-medium text-slate-800 dark:text-slate-200">Dompet Kulit Hitam Imperial Horse</td>
-                            <td class="px-6 py-4 text-slate-600 dark:text-slate-300">Platform 4 Bus Intercity</td>
-                            <td class="px-6 py-4 text-slate-500 dark:text-slate-400">24 Oct 2024</td>
-                            <td class="px-6 py-4">
-                                <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800">
-                                    AI Match 94%
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 text-right">
-                                <button @click="detailModalOpen = true" class="px-3 py-1.5 bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 rounded-lg font-bold hover:bg-blue-100 text-xs border border-blue-200 dark:border-blue-800 cursor-pointer">Detail & Match</button>
-                            </td>
-                        </tr>
+                        @forelse ($reports as $report)
+                            @php
+                                $topMatch = $report->aiMatchingLogs->first();
+                                $statusClass = $report->status === 'Terverifikasi' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : ($report->status === 'Selesai' ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-amber-50 text-amber-700 border-amber-200');
+                            @endphp
+                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                <td class="px-6 py-4 font-mono font-bold text-slate-900 dark:text-white">{{ $report->report_code }}</td>
+                                <td class="px-6 py-4"><div class="font-bold text-slate-900 dark:text-white">{{ $report->reporter_name }}</div><div class="text-xs text-slate-400">{{ $report->reporter_phone }}</div></td>
+                                <td class="px-6 py-4 font-medium text-slate-800 dark:text-slate-200">{{ $report->item_name }}</td>
+                                <td class="px-6 py-4 text-slate-600 dark:text-slate-300">{{ $report->location_lost }}</td>
+                                <td class="px-6 py-4 text-slate-500 dark:text-slate-400">{{ $report->date_lost->format('d M Y') }}</td>
+                                <td class="px-6 py-4"><div><span class="px-2.5 py-0.5 rounded-full text-xs font-semibold {{ $statusClass }} border">{{ $report->status }}</span></div><div class="text-xs text-indigo-600 mt-1">{{ $topMatch ? 'AI Match '.$topMatch->score.'%' : 'Belum dipindai' }}</div></td>
+                                <td class="px-6 py-4 text-right"><a href="{{ route('admin.lost-reports.show', $report->id) }}" class="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 rounded-lg font-bold hover:bg-blue-100 text-xs border border-blue-200 dark:border-blue-800"><span class="material-symbols-outlined text-sm">fact_check</span>Detail & Verifikasi</a></td>
+                            </tr>
+                        @empty
+                            <tr><td colspan="7" class="px-6 py-12 text-center text-sm text-slate-500">Belum ada laporan kehilangan.</td></tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
-        </div>
-
-        <!-- Detail Modal -->
-        <div x-show="detailModalOpen" style="display: none;" class="fixed inset-0 z-50 overflow-y-auto">
-            <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs" @click="detailModalOpen = false"></div>
-            <div class="flex min-h-full items-center justify-center p-4">
-                <div class="relative w-full max-w-xl bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 p-6 space-y-4 z-10">
-                    <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-3">
-                        <h3 class="font-bold text-slate-900 dark:text-white">Detail Laporan Kehilangan #REP-9902</h3>
-                        <button @click="detailModalOpen = false" class="text-slate-400">
-                            <span class="material-symbols-outlined">close</span>
-                        </button>
-                    </div>
-                    <div class="space-y-2 text-xs text-slate-600 dark:text-slate-300">
-                        <div><strong class="text-slate-900 dark:text-white">Pelapor:</strong> Budi Santoso (NIK: 337201xxxxxxxxx)</div>
-                        <div><strong class="text-slate-900 dark:text-white">Telepon:</strong> 08123456789</div>
-                        <div><strong class="text-slate-900 dark:text-white">Deskripsi:</strong> Dompet kulit hitam berisi KTP dan e-money mandiri.</div>
-                        <div class="p-3 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-800 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 rounded-xl font-medium mt-2">
-                            ✨ OpenRouter Vision AI menemukan 1 kecocokan 94% dengan Barang Temuan #TF-2024-8912!
-                        </div>
-                    </div>
-                    <div class="flex justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
-                        <button @click="detailModalOpen = false" class="px-4 py-2 bg-slate-100 dark:bg-slate-800 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300">Tutup</button>
-                        <a href="{{ route('admin.ai-matching.index') }}" class="px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold hover:bg-indigo-700">Buka AI Matcher Console</a>
-                    </div>
-                </div>
+            <div class="p-4 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center text-xs text-slate-500 dark:text-slate-400">
+                <span>Menampilkan {{ $reports->firstItem() ?: 0 }} - {{ $reports->lastItem() ?: 0 }} dari {{ $reports->total() }} laporan</span>
+                <span>{{ $reports->appends(request()->query())->links() }}</span>
             </div>
         </div>
     </div>
