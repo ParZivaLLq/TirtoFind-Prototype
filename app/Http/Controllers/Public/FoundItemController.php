@@ -16,25 +16,14 @@ class FoundItemController extends Controller
     {
         $queryStr = $request->input('q');
         $categorySlug = $request->input('category', 'all');
+        $location = $request->input('location', 'all');
+        $date = $request->input('date');
 
-        $itemsQuery = FoundItem::with('category')->where('status', 'active');
+        $items = FoundItem::with('category')
+            ->search($queryStr, $categorySlug, $location, $date)
+            ->orderBy('date_found', 'desc')
+            ->get();
 
-        if ($queryStr) {
-            $itemsQuery->where(function($q) use ($queryStr) {
-                $q->where('title', 'like', "%{$queryStr}%")
-                  ->orWhere('description', 'like', "%{$queryStr}%")
-                  ->orWhere('ref_code', 'like', "%{$queryStr}%")
-                  ->orWhere('location_found', 'like', "%{$queryStr}%");
-            });
-        }
-
-        if ($categorySlug !== 'all' && !empty($categorySlug)) {
-            $itemsQuery->whereHas('category', function($q) use ($categorySlug) {
-                $q->where('slug', $categorySlug)->orWhere('name', $categorySlug);
-            });
-        }
-
-        $items = $itemsQuery->orderBy('date_found', 'desc')->get();
         $categories = Category::all();
 
         return view('pages.public.found-items', compact('items', 'categories', 'queryStr', 'categorySlug'));

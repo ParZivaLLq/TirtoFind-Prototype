@@ -125,8 +125,13 @@ class ClaimController extends Controller
 
     public function tracking(Request $request)
     {
-        $data = $request->validate(['claim_code' => ['required', 'string', 'max:50']]);
-        $claim = Claim::with('foundItem')->where('claim_code', $data['claim_code'])->first();
+        $claim = null;
+
+        if ($request->filled('claim_code')) {
+            $claim = Claim::with('foundItem')
+                ->where('claim_code', trim($request->input('claim_code')))
+                ->first();
+        }
 
         return view('pages.public.claim-tracking', compact('claim'));
     }

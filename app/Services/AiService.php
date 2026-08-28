@@ -41,6 +41,7 @@ class AiService
                     ['role' => 'user', 'content' => $prompt],
                 ],
                 'temperature' => 0.4,
+                'max_tokens' => 600,
             ]);
 
             if ($response->successful()) {
@@ -147,6 +148,7 @@ class AiService
                     ]],
                 ],
                 'temperature' => 0.4,
+                'max_tokens' => 600,
             ]);
 
             return $response->successful() ? ($response->json('choices.0.message.content') ?? null) : null;
@@ -164,34 +166,103 @@ class AiService
         $prompt = "Bandingkan dua deskripsi barang berikut dan analisis kecocokannya:\n" .
             "Laporan Kehilangan: \"{$lostDescription}\"\n" .
             "Barang Temuan: \"{$foundDescription}\"\n\n" .
-            "Berikan respon JSON murni dengan format:\n" .
+            "Berikan respon JSON murni dengan format (isi angka nyata, bukan contoh):\n" .
             "{\n" .
-            "  \"score\": 94,\n" .
+            "  \"score\": <total_skor_0_sampai_100>,\n" .
             "  \"reason\": \"Alasan singkat pencocokan dalam 1 kalimat Bahasa Indonesia\",\n" .
-            "  \"color_match\": 100,\n" .
-            "  \"brand_match\": 95,\n" .
-            "  \"location_match\": 90,\n" .
-            "  \"time_match\": 92\n" .
+            "  \"color_match\": <skor_0_sampai_100>,\n" .
+            "  \"brand_match\": <skor_0_sampai_100>,\n" .
+            "  \"location_match\": <skor_0_sampai_100>,\n" .
+            "  \"time_match\": <skor_0_sampai_100>\n" .
             "}";
 
-        $aiResult = $this->askAi($prompt, "Anda adalah sistem Vision AI pencocok barang hilang TirtoFind.");
+        $aiResult = $this->askAi($prompt, "Anda adalah sistem Vision AI pencocok barang hilang TirtoFind. Berikan skor kecocokan yang akurat berdasarkan kesamaan nama barang, warna, merek, lokasi, dan waktu. Jangan gunakan nilai contoh seperti 94, 100, 95, 90, 92.");
 
         if ($aiResult) {
             $json = json_decode($this->cleanJsonResponse($aiResult), true);
-            if (isset($json['score'])) {
+            if (isset($json['score']) && is_numeric($json['score'])) {
                 return [
                     'available' => true,
                     'score' => (int) $json['score'],
                     'reason' => $json['reason'] ?? 'Cocok berdasarkan analisis deskripsi visual dan atribut lokasi.',
-                    'color_match' => $json['color_match'] ?? 100,
-                    'brand_match' => $json['brand_match'] ?? 95,
-                    'location_match' => $json['location_match'] ?? 90,
-                    'time_match' => $json['time_match'] ?? 92,
+                    'color_match' => (int) ($json['color_match'] ?? 0),
+                    'brand_match' => (int) ($json['brand_match'] ?? 0),
+                    'location_match' => (int) ($json['location_match'] ?? 0),
+                    'time_match' => (int) ($json['time_match'] ?? 0),
                 ];
             }
         }
 
-        return null;
+        // --- Algorithmic fallback when API key is empty or API fails ---
+        return $this->algorithmicMatch($lostDescription, $foundDescription);
+    }
+
+    /**
+     * Fallback: keyword-based similarity scoring without AI.
+     */
+    protected function algorithmicMatch(string $lostDesc, string $foundDesc): array
+    {
+        $lostWords = array_filter(preg_split('/[\s,;]+/', mb_strtolower($lostDesc)));
+        $foundWords = array_filter(preg_split('/[\s,;]+/', mb_strtolower($foundDesc)));
+
+        $stopwords = ['barang', 'nama', 'kategori', 'warna', 'merek', 'lokasi', 'hilang', 'temu', 'deskripsi', 'ciri', 'khusus', 'dan', 'atau', 'yang', 'di', 'ke', 'dari', 'tidak', 'ada'];
+        $lostWords = array_values(array_diff($lostWords, $stopwords));
+        $foundWords = array_values(array_diff($foundWords, $stopwords));
+
+        $commonWords = count(array_intersect($lostWords, $foundWords));
+        $totalWords = max(count($lostWords), count($foundWords), 1);
+        $overlapRatio = min(100, (int) round(($commonWords / $totalWords) * 100));
+
+        // Extract specific fields
+        $colorScore = $this->extractFieldScore($lostDesc, $foundDesc, 'Warna');
+        $brandScore = $this->extractFieldScore($lostDesc, $foundDesc, 'Merek');
+        $locationScore = $this->extractFieldScore($lostDesc, $foundDesc, 'Lokasi');
+
+        $score = (int) round(($overlapRatio * 0.4) + ($colorScore * 0.2) + ($brandScore * 0.2) + ($locationScore * 0.1) + 10);
+        $score = min(95, max(5, $score));
+
+        $reasons = [];
+        if ($colorScore > 60) $reasons[] = 'warna cocok';
+        if ($brandScore > 60) $reasons[] = 'merek sesuai';
+        if ($locationScore > 60) $reasons[] = 'lokasi berdekatan';
+        $reasonText = count($reasons) > 0
+            ? 'Analisis algoritmik mendeteksi kesamaan: ' . implode(', ', $reasons) . '.'
+            : 'Kesamaan terbatas berdasarkan analisis kata kunci deskripsi.';
+
+        return [
+            'available' => true,
+            'score' => $score,
+            'reason' => $reasonText . ' (Aktifkan OpenRouter API key untuk analisis AI yang lebih akurat.)',
+            'color_match' => $colorScore,
+            'brand_match' => $brandScore,
+            'location_match' => $locationScore,
+            'time_match' => max(0, min(100, $overlapRatio + 10)),
+        ];
+    }
+
+    /**
+     * Extract and compare a specific field value between two descriptions.
+     */
+    protected function extractFieldScore(string $lostDesc, string $foundDesc, string $field): int
+    {
+        preg_match('/' . preg_quote($field, '/') . '[:\s]+([^,\n]+)/ui', $lostDesc, $lostMatch);
+        preg_match('/' . preg_quote($field, '/') . '[:\s]+([^,\n]+)/ui', $foundDesc, $foundMatch);
+
+        $lostVal = mb_strtolower(trim($lostMatch[1] ?? ''));
+        $foundVal = mb_strtolower(trim($foundMatch[1] ?? ''));
+
+        if (empty($lostVal) || empty($foundVal) || $lostVal === '-' || $foundVal === '-') {
+            return 50; // neutral when field not available
+        }
+        if ($lostVal === $foundVal) return 100;
+        if (str_contains($foundVal, $lostVal) || str_contains($lostVal, $foundVal)) return 80;
+
+        // Word overlap between field values
+        $lWords = array_filter(preg_split('/\s+/', $lostVal));
+        $fWords = array_filter(preg_split('/\s+/', $foundVal));
+        $common = count(array_intersect($lWords, $fWords));
+        $total = max(count($lWords), count($fWords), 1);
+        return min(75, (int) round(($common / $total) * 100));
     }
 
     /**

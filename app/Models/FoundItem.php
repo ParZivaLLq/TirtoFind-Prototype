@@ -27,6 +27,41 @@ class FoundItem extends Model
         'date_found' => 'datetime',
     ];
 
+    /**
+     * Reusable Scope for Searching and Filtering Found Items.
+     */
+    public function scopeSearch($query, ?string $q = null, ?string $category = null, ?string $location = null, ?string $date = null)
+    {
+        $query->where('status', 'active');
+
+        if (!empty($q)) {
+            $query->where(function($sub) use ($q) {
+                $sub->where('title', 'like', "%{$q}%")
+                    ->orWhere('description', 'like', "%{$q}%")
+                    ->orWhere('ref_code', 'like', "%{$q}%")
+                    ->orWhere('color', 'like', "%{$q}%")
+                    ->orWhere('brand', 'like', "%{$q}%")
+                    ->orWhere('location_found', 'like', "%{$q}%");
+            });
+        }
+
+        if (!empty($category) && $category !== 'all') {
+            $query->whereHas('category', function($sub) use ($category) {
+                $sub->where('slug', $category)->orWhere('name', $category);
+            });
+        }
+
+        if (!empty($location) && $location !== 'all') {
+            $query->where('location_found', 'like', "%{$location}%");
+        }
+
+        if (!empty($date)) {
+            $query->whereDate('date_found', $date);
+        }
+
+        return $query;
+    }
+
     public function category()
     {
         return $this->belongsTo(Category::class);

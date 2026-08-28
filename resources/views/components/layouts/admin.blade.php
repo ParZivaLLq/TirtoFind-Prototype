@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id" class="h-full">
+<html lang="id" class="h-full bg-slate-50 dark:bg-slate-950">
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -54,7 +54,7 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body x-data="{ sidebarOpen: true }" class="font-sans antialiased bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-full flex transition-colors duration-200">
+<body x-data="{ sidebarOpen: true }" class="font-sans antialiased bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen flex transition-colors duration-300">
     
     <!-- Admin Sidebar -->
     <x-sidebar />
@@ -71,12 +71,12 @@
          class="fixed inset-0 bg-slate-900/50 z-30 lg:hidden"></div>
 
     <!-- Main Content Container -->
-    <div class="flex-1 flex flex-col min-w-0 lg:pl-64 transition-all duration-300">
+    <div class="flex-1 flex flex-col min-w-0 lg:pl-64 transition-all duration-300 bg-slate-50 dark:bg-slate-950">
         <!-- Topbar -->
         <x-topbar :title="$title ?? 'Admin Console'" />
 
         <!-- Main Workspace Area -->
-        <main class="flex-1 p-4 md:p-6 lg:p-8 max-w-[1280px] mx-auto w-full space-y-6">
+        <main class="flex-1 p-4 md:p-6 lg:p-8 max-w-[1280px] mx-auto w-full space-y-6 bg-slate-50 dark:bg-slate-950">
             {{ $slot }}
         </main>
 

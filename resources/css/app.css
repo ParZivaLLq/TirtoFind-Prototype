@@ -39,6 +39,56 @@
     --font-sans: 'Inter', system-ui, sans-serif;
 }
 
+/* Global Reset & Typography Baseline */
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+}
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    line-height: 1.3;
+}
+
+p {
+    line-height: 1.6;
+}
+
+/* Light mode defaults */
+:root:not(.dark) body {
+    color: #0f172a;
+    background-color: #ffffff;
+}
+
+:root:not(.dark) h1,
+:root:not(.dark) h2,
+:root:not(.dark) h3,
+:root:not(.dark) h4,
+:root:not(.dark) h5,
+:root:not(.dark) h6 {
+    color: #0f172a;
+}
+
+/* Dark mode overrides for html/body */
+.dark body {
+    color: #f1f5f9;
+    background-color: #020617;
+}
+
+.dark h1,
+.dark h2,
+.dark h3,
+.dark h4,
+.dark h5,
+.dark h6 {
+    color: #f8fafc;
+}
+
 /* Custom CSS Classes */
 .soft-shadow {
     box-shadow: 0px 4px 20px rgba(15, 23, 42, 0.06);
@@ -53,20 +103,20 @@
 
 .text-label-sm {
     font-size: 12px;
-    line-height: 16px;
+    line-height: 18px;
     font-weight: 600;
     letter-spacing: 0.05em;
 }
 
 .text-label-md {
     font-size: 14px;
-    line-height: 20px;
+    line-height: 22px;
     font-weight: 500;
 }
 
 .text-body-md {
     font-size: 16px;
-    line-height: 24px;
+    line-height: 26px;
     font-weight: 400;
 }
 
