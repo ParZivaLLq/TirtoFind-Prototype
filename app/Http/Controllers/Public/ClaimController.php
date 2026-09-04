@@ -64,7 +64,11 @@ class ClaimController extends Controller
             // Check lost report code if provided
             $lostReport = null;
             if ($request->lost_report_code) {
-                $lostReport = LostReport::where('report_code', $request->lost_report_code)->first();
+                $cleanReportCode = trim($request->lost_report_code);
+                $formattedReportCode = str_starts_with($cleanReportCode, '#') ? $cleanReportCode : '#' . $cleanReportCode;
+                $lostReport = LostReport::where('report_code', $cleanReportCode)
+                    ->orWhere('report_code', $formattedReportCode)
+                    ->first();
             }
 
             // Generate claim code: #CL-YYYY-XXXX
@@ -96,11 +100,15 @@ class ClaimController extends Controller
             DB::commit();
 
             if ($claim->claimant_email) {
-                $claim->notify(new ClaimSubmittedNotification);
+                try {
+                    $claim->notify(new ClaimSubmittedNotification);
+                } catch (\Exception $e) {
+                    Log::warning('ClaimSubmittedNotification failed: ' . $e->getMessage());
+                }
             }
 
             // Generate WhatsApp click-to-chat URL
-            $csPhone = (string) config('services.whatsapp.cs_phone');
+            $csPhone = (string) config('services.whatsapp.cs_phone', '6281234567890');
             $message = "Halo Helpdesk Lost & Found Terminal Tirtonadi,\n\n" .
                        "Saya ingin melakukan konfirmasi pengajuan klaim barang temuan:\n" .
                        "- Kode Klaim: {$claimCode}\n" .
@@ -125,14 +133,42 @@ class ClaimController extends Controller
 
     public function tracking(Request $request)
     {
-        $claim = null;
+        $claims = collect();
+        $rawSearchKey = (string) $request->input('claim_code');
+        $searchKey = trim($rawSearchKey);
 
-        if ($request->filled('claim_code')) {
-            $claim = Claim::with('foundItem')
-                ->where('claim_code', trim($request->input('claim_code')))
-                ->first();
+        if ($searchKey !== '') {
+            $upperSearch = strtoupper($searchKey);
+
+            // Format variations (e.g. "CL-2026-0001" => "#CL-2026-0001", "2026-0001" => "#CL-2026-0001")
+            $formattedClaimCode = str_starts_with($upperSearch, '#')
+                ? $upperSearch
+                : (str_starts_with($upperSearch, 'CL-') ? '#' . $upperSearch : '#CL-' . $upperSearch);
+
+            $formattedLostCode = str_starts_with($upperSearch, '#')
+                ? $upperSearch
+                : (str_starts_with($upperSearch, 'LR-') ? '#' . $upperSearch : '#LR-' . $upperSearch);
+
+            $claims = Claim::with(['foundItem.category', 'lostReport'])
+                ->where(function ($q) use ($searchKey, $upperSearch, $formattedClaimCode, $formattedLostCode) {
+                    $q->where('claim_code', $searchKey)
+                      ->orWhere('claim_code', $upperSearch)
+                      ->orWhere('claim_code', $formattedClaimCode)
+                      ->orWhere('claim_code', 'LIKE', '%' . $searchKey . '%')
+                      ->orWhere('claimant_phone', 'LIKE', '%' . $searchKey . '%')
+                      ->orWhere('claimant_email', 'LIKE', '%' . $searchKey . '%')
+                      ->orWhere('claimant_id_number', $searchKey)
+                      ->orWhereHas('lostReport', function ($lq) use ($searchKey, $formattedLostCode) {
+                          $lq->where('report_code', $searchKey)
+                             ->orWhere('report_code', $formattedLostCode);
+                      });
+                })
+                ->orderBy('created_at', 'desc')
+                ->get();
         }
 
-        return view('pages.public.claim-tracking', compact('claim'));
+        $claim = $claims->first();
+
+        return view('pages.public.claim-tracking', compact('claims', 'claim', 'searchKey'));
     }
 }

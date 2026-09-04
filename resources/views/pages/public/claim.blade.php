@@ -1,5 +1,5 @@
 <x-layouts.guest title="Form Klaim Barang">
-    <div x-data="{ success: false }" class="max-w-2xl mx-auto px-4 md:px-6 py-6 md:py-10">
+    <div class="max-w-2xl mx-auto px-4 md:px-6 py-6 md:py-10">
         <!-- Header -->
         <div class="text-center mb-6 max-w-xl mx-auto">
             <span class="px-2.5 py-0.5 bg-emerald-100/80 text-emerald-800 text-[11px] font-bold rounded-full uppercase tracking-wider border border-emerald-200">Verifikasi Hak Milik</span>
@@ -8,6 +8,51 @@
                 Unggah bukti kepemilikan sah untuk memverifikasi barang temuan.
             </p>
         </div>
+
+        @if(session('success'))
+            <!-- Success Confirmation Card -->
+            <div class="bg-emerald-50/90 border border-emerald-200 rounded-2xl p-6 mb-6 soft-shadow text-center space-y-4">
+                <div class="w-14 h-14 bg-emerald-600 text-white rounded-full flex items-center justify-center mx-auto shadow-sm">
+                    <span class="material-symbols-outlined text-3xl">task_alt</span>
+                </div>
+                <div>
+                    <h2 class="text-lg md:text-xl font-extrabold text-slate-900">Permohonan Klaim Berhasil Dikirim!</h2>
+                    <p class="text-xs md:text-sm text-slate-600 mt-1">Tim verifikator Terminal Tirtonadi akan memeriksa permohonan Anda dalam 1x24 jam.</p>
+                </div>
+
+                @if(session('claimCode'))
+                    <div class="bg-white border border-emerald-200 rounded-xl p-4 max-w-md mx-auto space-y-1">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Kode Tiket Klaim Anda</span>
+                        <div class="text-xl md:text-2xl font-mono font-black text-emerald-700 select-all">
+                            {{ session('claimCode') }}
+                        </div>
+                        <p class="text-[11px] text-slate-500">Simpan nomor tiket ini untuk mengecek progres verifikasi.</p>
+                    </div>
+                @endif
+
+                <div class="flex flex-col sm:flex-row gap-3 justify-center pt-2">
+                    @if(session('claimCode'))
+                        <a href="{{ route('claim.tracking', ['claim_code' => session('claimCode')]) }}" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs md:text-sm transition-all shadow-xs flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined text-base">analytics</span>
+                            <span>Lacak Status Klaim</span>
+                        </a>
+                    @endif
+                    @if(session('waUrl'))
+                        <a href="{{ session('waUrl') }}" target="_blank" rel="noopener noreferrer" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs md:text-sm transition-all shadow-xs flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined text-base">chat</span>
+                            <span>Konfirmasi Helpdesk WA</span>
+                        </a>
+                    @endif
+                </div>
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="bg-red-50 border border-red-200 text-red-700 p-4 rounded-xl text-xs font-semibold mb-6 flex items-center gap-2">
+                <span class="material-symbols-outlined text-base">error</span>
+                <span>{{ session('error') }}</span>
+            </div>
+        @endif
 
         <!-- Target Item Preview Box -->
         @php
@@ -65,17 +110,11 @@
 
                     <div>
                         <label class="block text-xs font-bold text-slate-700 mb-1">Catatan Ciri Khusus Tambahan</label>
-                        <textarea name="distinctive_features" rows="3" placeholder="Sebutkan ciri khusus tersembunyi yang hanya diketahui pemilik..." class="w-full px-3.5 py-2 border border-slate-200 rounded-xl text-xs md:text-sm focus:outline-none focus:border-blue-600"></textarea>
+                        <textarea name="distinctive_features" rows="3" placeholder="Sebutkan ciri khusus tersembunyi yang hanya diketahui pemilik..." class="w-full px-3.5 py-2 border border-slate-200 rounded-xl text-xs md:text-sm focus:outline-none focus:border-blue-600">{{ old('distinctive_features') }}</textarea>
                         <input type="hidden" name="relationship" value="Pemilik">
                         <input type="hidden" name="reason" value="Pengajuan klaim melalui formulir resmi TirtoFind">
                         <input type="hidden" name="lost_report_code" value="{{ old('lost_report_code') }}">
                     </div>
-                </div>
-
-                <!-- Success Alert -->
-                <div x-show="success" class="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl text-xs space-y-1">
-                    <div class="font-bold text-xs md:text-sm flex items-center gap-1.5"><span class="material-symbols-outlined text-base">check_circle</span> Pengajuan Klaim Berhasil Dikirim!</div>
-                    <p>Tim verifikator Terminal Tirtonadi akan memeriksa berkas Anda dalam 1x24 jam.</p>
                 </div>
 
                 <div class="pt-3 border-t border-slate-100">
