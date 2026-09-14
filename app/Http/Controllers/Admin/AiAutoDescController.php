@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Category;
-use App\Models\AiDescriptionLog;
-use App\Models\FoundItem;
 use App\Models\ActivityLog;
+use App\Models\AiDescriptionLog;
+use App\Models\Category;
+use App\Models\FoundItem;
 use App\Services\AiService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -25,8 +25,9 @@ class AiAutoDescController extends Controller
         $categories = Category::all();
         $itemId = $request->integer('id') ?: ($request->integer('found_item_id') ?: ($request->integer('item_id') ?: session('found_item_id')));
         $draftItem = $itemId ? FoundItem::with('category')->find($itemId) : null;
-        
+
         $itemsList = FoundItem::with('category')->latest()->get();
+
         return view('pages.admin.ai-auto-desc.index', compact('categories', 'draftItem', 'itemsList'));
     }
 
@@ -53,13 +54,13 @@ class AiAutoDescController extends Controller
         $style = $data['style'];
 
         $existingItem = null;
-        if (!empty($data['found_item_id'])) {
+        if (! empty($data['found_item_id'])) {
             $existingItem = FoundItem::find($data['found_item_id']);
         }
 
         $imagePath = $existingItem?->image_path;
         if ($request->hasFile('image')) {
-            $imagePath = '/storage/' . $request->file('image')->store('found-items', 'public');
+            $imagePath = '/storage/'.$request->file('image')->store('found-items', 'public');
         }
 
         $result = $this->aiService->generateAutoDescription(
@@ -72,9 +73,9 @@ class AiAutoDescController extends Controller
             (string) ($data['brand'] ?? '')
         );
 
-        $finalTitle = !empty($result['catalog_title']) ? $result['catalog_title'] : $title;
-        $finalColor = !empty($color) ? $color : ($result['detected_color'] !== '-' ? $result['detected_color'] : null);
-        $finalBrand = !empty($data['brand']) ? $data['brand'] : ($result['detected_brand'] !== '-' ? $result['detected_brand'] : null);
+        $finalTitle = ! empty($result['catalog_title']) ? $result['catalog_title'] : $title;
+        $finalColor = ! empty($color) ? $color : ($result['detected_color'] !== '-' ? $result['detected_color'] : null);
+        $finalBrand = ! empty($data['brand']) ? $data['brand'] : ($result['detected_brand'] !== '-' ? $result['detected_brand'] : null);
 
         if ($existingItem) {
             $foundItem = $existingItem;
@@ -93,7 +94,7 @@ class AiAutoDescController extends Controller
             $latestItem = FoundItem::latest('id')->first();
             $nextNumber = $latestItem ? $latestItem->id + 1 : 1;
             $foundItem = FoundItem::create([
-                'ref_code' => '#TF-' . date('Y') . '-' . str_pad($nextNumber, 4, '0', STR_PAD_LEFT),
+                'ref_code' => '#TF-'.date('Y').'-'.str_pad($nextNumber, 4, '0', STR_PAD_LEFT),
                 'title' => $finalTitle,
                 'category_id' => $categoryId,
                 'description' => $result['description'],
@@ -155,4 +156,3 @@ class AiAutoDescController extends Controller
             ->with('success', "Deskripsi barang {$item->ref_code} berhasil disimpan ke katalog.");
     }
 }
-

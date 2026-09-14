@@ -13,6 +13,7 @@ class SettingsController extends Controller
     public function index(Request $request)
     {
         $settings = Setting::pluck('value', 'key')->all();
+
         return view('pages.admin.settings.index', compact('settings'));
     }
 

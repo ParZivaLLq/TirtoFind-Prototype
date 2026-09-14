@@ -2,13 +2,12 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
+use App\Models\AiMatchingLog;
 use App\Models\Category;
 use App\Models\FoundItem;
 use App\Models\LostReport;
-use App\Models\AiMatchingLog;
+use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {

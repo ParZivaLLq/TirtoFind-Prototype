@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\ActivityLog;
 
 class LoginController extends Controller
 {
@@ -17,6 +17,7 @@ class LoginController extends Controller
         if (Auth::check()) {
             return redirect()->route('admin.dashboard');
         }
+
         return view('pages.auth.login');
     }
 
@@ -34,9 +35,10 @@ class LoginController extends Controller
 
         if (Auth::attempt($credentials, $remember)) {
             $user = Auth::user();
-            
+
             if ($user->status !== 'aktif') {
                 Auth::logout();
+
                 return back()->with('error', 'Akun Anda dinonaktifkan oleh administrator.');
             }
 

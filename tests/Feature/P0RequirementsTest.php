@@ -2,11 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Jobs\MatchLostReportJob;
 use App\Models\Category;
 use App\Models\FoundItem;
 use App\Models\LostReport;
 use App\Models\User;
-use App\Jobs\MatchLostReportJob;
 use App\Services\AiService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Config;

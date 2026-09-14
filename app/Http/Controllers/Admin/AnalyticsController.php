@@ -4,13 +4,14 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
+use App\Models\AiMatchingLog;
 use App\Models\Claim;
 use App\Models\FoundItem;
 use App\Models\LostReport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AnalyticsController extends Controller
 {
@@ -35,7 +36,7 @@ class AnalyticsController extends Controller
             'claims_verified' => (clone $claims)->where('status', 'Disetujui')->count(),
             'claims_pending' => (clone $claims)->where('status', 'Menunggu Verifikasi')->count(),
             'reports_total' => $reports->count(),
-            'match_average' => round((float) \App\Models\AiMatchingLog::query()
+            'match_average' => round((float) AiMatchingLog::query()
                 ->when($from, fn ($query) => $query->whereDate('created_at', '>=', $from))
                 ->when($to, fn ($query) => $query->whereDate('created_at', '<=', $to))
                 ->avg('score'), 1),
@@ -62,6 +63,6 @@ class AnalyticsController extends Controller
                 fputcsv($output, [$claim->claim_code, $claim->claimant_name, $claim->foundItem?->title, $claim->status, $claim->created_at?->toDateTimeString()]);
             }
             fclose($output);
-        }, 'tirtofind-claims-' . now()->format('Ymd-His') . '.csv', ['Content-Type' => 'text/csv']);
+        }, 'tirtofind-claims-'.now()->format('Ymd-His').'.csv', ['Content-Type' => 'text/csv']);
     }
 }

@@ -16,13 +16,13 @@ class ReturnReportController extends Controller
             ->where('status', 'Disetujui');
 
         if ($queryStr) {
-            $query->where(function($q) use ($queryStr) {
+            $query->where(function ($q) use ($queryStr) {
                 $q->where('claimant_name', 'like', "%{$queryStr}%")
-                  ->orWhere('claim_code', 'like', "%{$queryStr}%")
-                  ->orWhereHas('foundItem', function($subQ) use ($queryStr) {
-                      $subQ->where('title', 'like', "%{$queryStr}%")
-                           ->orWhere('ref_code', 'like', "%{$queryStr}%");
-                  });
+                    ->orWhere('claim_code', 'like', "%{$queryStr}%")
+                    ->orWhereHas('foundItem', function ($subQ) use ($queryStr) {
+                        $subQ->where('title', 'like', "%{$queryStr}%")
+                            ->orWhere('ref_code', 'like', "%{$queryStr}%");
+                    });
             });
         }
 

@@ -24,7 +24,7 @@ class LostReport extends Model
         'date_lost',
         'distinctive_features',
         'image_path',
-        'status'
+        'status',
     ];
 
     protected $casts = [

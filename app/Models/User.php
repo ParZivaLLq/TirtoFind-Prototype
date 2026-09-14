@@ -29,6 +29,7 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
     /**
      * Check if the user has any of the given roles.
      */

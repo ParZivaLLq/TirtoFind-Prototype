@@ -18,7 +18,7 @@ class ClaimController extends Controller
      */
     public function create($id = null)
     {
-        if (!$id) {
+        if (! $id) {
             return redirect()->route('found-items')->with('error', 'Silakan pilih barang temuan yang ingin diklaim terlebih dahulu.');
         }
 
@@ -36,7 +36,7 @@ class ClaimController extends Controller
      */
     public function store(Request $request, $id = null)
     {
-        if (!$id) {
+        if (! $id) {
             $id = $request->input('found_item_id');
         }
 
@@ -65,7 +65,7 @@ class ClaimController extends Controller
             $lostReport = null;
             if ($request->lost_report_code) {
                 $cleanReportCode = trim($request->lost_report_code);
-                $formattedReportCode = str_starts_with($cleanReportCode, '#') ? $cleanReportCode : '#' . $cleanReportCode;
+                $formattedReportCode = str_starts_with($cleanReportCode, '#') ? $cleanReportCode : '#'.$cleanReportCode;
                 $lostReport = LostReport::where('report_code', $cleanReportCode)
                     ->orWhere('report_code', $formattedReportCode)
                     ->first();
@@ -74,7 +74,7 @@ class ClaimController extends Controller
             // Generate claim code: #CL-YYYY-XXXX
             $latestClaim = Claim::latest('id')->first();
             $nextNumber = $latestClaim ? ($latestClaim->id + 1) : 1;
-            $claimCode = '#CL-' . date('Y') . '-' . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
+            $claimCode = '#CL-'.date('Y').'-'.str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
 
             // Upload file
             $documentPath = null;
@@ -103,21 +103,21 @@ class ClaimController extends Controller
                 try {
                     $claim->notify(new ClaimSubmittedNotification);
                 } catch (\Exception $e) {
-                    Log::warning('ClaimSubmittedNotification failed: ' . $e->getMessage());
+                    Log::warning('ClaimSubmittedNotification failed: '.$e->getMessage());
                 }
             }
 
             // Generate WhatsApp click-to-chat URL
             $csPhone = (string) config('services.whatsapp.cs_phone', '6281234567890');
-            $message = "Halo Helpdesk Lost & Found Terminal Tirtonadi,\n\n" .
-                       "Saya ingin melakukan konfirmasi pengajuan klaim barang temuan:\n" .
-                       "- Kode Klaim: {$claimCode}\n" .
-                       "- Nama Pemohon: {$request->claimant_name}\n" .
-                       "- Nama Barang: {$item->title}\n" .
-                       "- Kode Ref Barang: {$item->ref_code}\n\n" .
-                       "Mohon bantuannya untuk melakukan verifikasi berkas. Terima kasih.";
+            $message = "Halo Helpdesk Lost & Found Terminal Tirtonadi,\n\n".
+                       "Saya ingin melakukan konfirmasi pengajuan klaim barang temuan:\n".
+                       "- Kode Klaim: {$claimCode}\n".
+                       "- Nama Pemohon: {$request->claimant_name}\n".
+                       "- Nama Barang: {$item->title}\n".
+                       "- Kode Ref Barang: {$item->ref_code}\n\n".
+                       'Mohon bantuannya untuk melakukan verifikasi berkas. Terima kasih.';
 
-            $waUrl = "https://wa.me/{$csPhone}?text=" . urlencode($message);
+            $waUrl = "https://wa.me/{$csPhone}?text=".urlencode($message);
 
             return redirect()->route('claim', $item->id)
                 ->with('success', "Permohonan klaim berhasil dikirim dengan Kode Tiket: {$claimCode}.")
@@ -126,7 +126,8 @@ class ClaimController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Claim Store Error: ' . $e->getMessage());
+            Log::error('Claim Store Error: '.$e->getMessage());
+
             return back()->with('error', 'Terjadi kesalahan saat mengirim pengajuan klaim. Silakan coba kembali.')->withInput();
         }
     }
@@ -145,26 +146,26 @@ class ClaimController extends Controller
             // Format variations (e.g. "CL-2026-0001" => "#CL-2026-0001", "LR-2026-0004" => "#LR-2026-0004")
             $formattedClaimCode = str_starts_with($upperSearch, '#')
                 ? $upperSearch
-                : (str_starts_with($upperSearch, 'CL-') ? '#' . $upperSearch : '#CL-' . $upperSearch);
+                : (str_starts_with($upperSearch, 'CL-') ? '#'.$upperSearch : '#CL-'.$upperSearch);
 
             $formattedLostCode = str_starts_with($upperSearch, '#')
                 ? $upperSearch
-                : (str_starts_with($upperSearch, 'LR-') ? '#' . $upperSearch : '#LR-' . $upperSearch);
+                : (str_starts_with($upperSearch, 'LR-') ? '#'.$upperSearch : '#LR-'.$upperSearch);
 
             // 1. Search Claims
             $claims = Claim::with(['foundItem.category', 'lostReport'])
                 ->where(function ($q) use ($searchKey, $upperSearch, $formattedClaimCode, $formattedLostCode) {
                     $q->where('claim_code', $searchKey)
-                      ->orWhere('claim_code', $upperSearch)
-                      ->orWhere('claim_code', $formattedClaimCode)
-                      ->orWhere('claim_code', 'LIKE', '%' . $searchKey . '%')
-                      ->orWhere('claimant_phone', 'LIKE', '%' . $searchKey . '%')
-                      ->orWhere('claimant_email', 'LIKE', '%' . $searchKey . '%')
-                      ->orWhere('claimant_id_number', $searchKey)
-                      ->orWhereHas('lostReport', function ($lq) use ($searchKey, $formattedLostCode) {
-                          $lq->where('report_code', $searchKey)
-                             ->orWhere('report_code', $formattedLostCode);
-                      });
+                        ->orWhere('claim_code', $upperSearch)
+                        ->orWhere('claim_code', $formattedClaimCode)
+                        ->orWhere('claim_code', 'LIKE', '%'.$searchKey.'%')
+                        ->orWhere('claimant_phone', 'LIKE', '%'.$searchKey.'%')
+                        ->orWhere('claimant_email', 'LIKE', '%'.$searchKey.'%')
+                        ->orWhere('claimant_id_number', $searchKey)
+                        ->orWhereHas('lostReport', function ($lq) use ($searchKey, $formattedLostCode) {
+                            $lq->where('report_code', $searchKey)
+                                ->orWhere('report_code', $formattedLostCode);
+                        });
                 })
                 ->orderBy('created_at', 'desc')
                 ->get();
@@ -176,19 +177,19 @@ class ClaimController extends Controller
                 'claims.foundItem',
                 'aiMatchingLogs' => function ($q) {
                     $q->orderBy('score', 'desc')->with('foundItem.category');
-                }
+                },
             ])
-            ->where(function ($q) use ($searchKey, $upperSearch, $formattedLostCode, $cleanIg) {
-                $q->where('report_code', $searchKey)
-                  ->orWhere('report_code', $upperSearch)
-                  ->orWhere('report_code', $formattedLostCode)
-                  ->orWhere('report_code', 'LIKE', '%' . $searchKey . '%')
-                  ->orWhere('reporter_phone', 'LIKE', '%' . $searchKey . '%')
-                  ->orWhere('reporter_instagram', 'LIKE', '%' . $cleanIg . '%')
-                  ->orWhere('reporter_id_number', $searchKey);
-            })
-            ->orderBy('created_at', 'desc')
-            ->get();
+                ->where(function ($q) use ($searchKey, $upperSearch, $formattedLostCode, $cleanIg) {
+                    $q->where('report_code', $searchKey)
+                        ->orWhere('report_code', $upperSearch)
+                        ->orWhere('report_code', $formattedLostCode)
+                        ->orWhere('report_code', 'LIKE', '%'.$searchKey.'%')
+                        ->orWhere('reporter_phone', 'LIKE', '%'.$searchKey.'%')
+                        ->orWhere('reporter_instagram', 'LIKE', '%'.$cleanIg.'%')
+                        ->orWhere('reporter_id_number', $searchKey);
+                })
+                ->orderBy('created_at', 'desc')
+                ->get();
         }
 
         $selectedType = $request->input('type'); // 'claim' or 'lost_report'
@@ -204,7 +205,7 @@ class ClaimController extends Controller
         }
 
         // Default fallbacks if nothing explicitly selected
-        if (!$claim && !$lostReport) {
+        if (! $claim && ! $lostReport) {
             $upperSearchKey = strtoupper($searchKey);
             if (str_starts_with($upperSearchKey, '#LR-') || str_starts_with($upperSearchKey, 'LR-') || ($lostReports->isNotEmpty() && $claims->isEmpty())) {
                 $lostReport = $lostReports->first();

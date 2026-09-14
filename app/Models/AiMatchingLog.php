@@ -17,7 +17,7 @@ class AiMatchingLog extends Model
         'color_match',
         'brand_match',
         'location_match',
-        'time_match'
+        'time_match',
     ];
 
     public function lostReport()

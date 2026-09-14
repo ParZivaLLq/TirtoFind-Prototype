@@ -23,7 +23,7 @@ class ProfileController extends Controller
 
         $user = $request->user();
         $user->name = $data['name'];
-        if (!empty($data['password'])) {
+        if (! empty($data['password'])) {
             $user->password = Hash::make($data['password']);
         }
         $user->save();

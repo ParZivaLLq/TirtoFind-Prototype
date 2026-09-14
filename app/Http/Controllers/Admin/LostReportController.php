@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\LostReport;
-use App\Models\Category;
-use App\Models\AiMatchingLog;
 use App\Models\ActivityLog;
+use App\Models\AiMatchingLog;
+use App\Models\Category;
+use App\Models\LostReport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -23,16 +23,16 @@ class LostReportController extends Controller
         }]);
 
         if ($queryStr) {
-            $query->where(function($q) use ($queryStr) {
+            $query->where(function ($q) use ($queryStr) {
                 $q->where('reporter_name', 'like', "%{$queryStr}%")
-                  ->orWhere('report_code', 'like', "%{$queryStr}%")
-                  ->orWhere('item_name', 'like', "%{$queryStr}%")
-                  ->orWhere('location_lost', 'like', "%{$queryStr}%");
+                    ->orWhere('report_code', 'like', "%{$queryStr}%")
+                    ->orWhere('item_name', 'like', "%{$queryStr}%")
+                    ->orWhere('location_lost', 'like', "%{$queryStr}%");
             });
         }
 
         if ($categoryFilter) {
-            $query->whereHas('category', function($q) use ($categoryFilter) {
+            $query->whereHas('category', function ($q) use ($categoryFilter) {
                 $q->where('name', $categoryFilter);
             });
         }
@@ -50,7 +50,7 @@ class LostReportController extends Controller
     public function show(int $id)
     {
         $report = LostReport::with('category')->findOrFail($id);
-        
+
         $matches = AiMatchingLog::with('foundItem.category')
             ->where('lost_report_id', $id)
             ->orderBy('score', 'desc')

@@ -22,7 +22,7 @@ class Claim extends Model
         'reason',
         'distinctive_features',
         'supporting_document_path',
-        'status'
+        'status',
     ];
 
     public function foundItem()
@@ -61,8 +61,7 @@ class Claim extends Model
             'Permohonan Terkirim',
             'Verifikasi Berkas',
             'Keputusan Klaim',
-            'Penyerahan Barang'
+            'Penyerahan Barang',
         ];
     }
 }
-

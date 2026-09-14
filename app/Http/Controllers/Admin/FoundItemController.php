@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\FoundItem;
-use App\Models\Category;
 use App\Models\ActivityLog;
+use App\Models\Category;
+use App\Models\FoundItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -22,16 +22,16 @@ class FoundItemController extends Controller
         $query = FoundItem::with('category');
 
         if ($queryStr) {
-            $query->where(function($q) use ($queryStr) {
+            $query->where(function ($q) use ($queryStr) {
                 $q->where('title', 'like', "%{$queryStr}%")
-                  ->orWhere('ref_code', 'like', "%{$queryStr}%")
-                  ->orWhere('location_found', 'like', "%{$queryStr}%")
-                  ->orWhere('description', 'like', "%{$queryStr}%");
+                    ->orWhere('ref_code', 'like', "%{$queryStr}%")
+                    ->orWhere('location_found', 'like', "%{$queryStr}%")
+                    ->orWhere('description', 'like', "%{$queryStr}%");
             });
         }
 
         if ($categoryFilter) {
-            $query->whereHas('category', function($q) use ($categoryFilter) {
+            $query->whereHas('category', function ($q) use ($categoryFilter) {
                 $q->where('name', $categoryFilter);
             });
         }
@@ -74,7 +74,7 @@ class FoundItemController extends Controller
         // Generate Ref Code: #TF-YYYY-XXXX
         $latestItem = FoundItem::latest('id')->first();
         $nextNumber = $latestItem ? ($latestItem->id + 1) : 1;
-        $refCode = '#TF-' . date('Y') . '-' . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
+        $refCode = '#TF-'.date('Y').'-'.str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
 
         $item = FoundItem::create([
             'ref_code' => $refCode,
@@ -86,7 +86,7 @@ class FoundItemController extends Controller
             'brand' => $request->brand,
             'storage_location' => $request->storage_location,
             'description' => $request->description,
-            'image_path' => $imagePath ? '/storage/' . $imagePath : 'https://images.unsplash.com/photo-1627123424574-724758594e93?w=800',
+            'image_path' => $imagePath ? '/storage/'.$imagePath : 'https://images.unsplash.com/photo-1627123424574-724758594e93?w=800',
             'status' => 'active',
         ]);
 
@@ -124,7 +124,7 @@ class FoundItemController extends Controller
                 Storage::disk('public')->delete($oldPath);
             }
             $newFile = $request->file('image')->store('found-items', 'public');
-            $imagePath = '/storage/' . $newFile;
+            $imagePath = '/storage/'.$newFile;
         }
 
         $item->update([

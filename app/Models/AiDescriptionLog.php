@@ -12,7 +12,7 @@ class AiDescriptionLog extends Model
     protected $fillable = [
         'found_item_id',
         'prompt',
-        'response'
+        'response',
     ];
 
     public function foundItem()

@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
-use App\Models\FoundItem;
 use App\Models\Category;
+use App\Models\FoundItem;
 use Illuminate\Http\Request;
 
 class SearchController extends Controller

@@ -3,11 +3,9 @@
 namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
-use App\Models\LostReport;
-use App\Models\Category;
-use App\Models\FoundItem;
-use App\Models\AiMatchingLog;
 use App\Jobs\MatchLostReportJob;
+use App\Models\Category;
+use App\Models\LostReport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -20,6 +18,7 @@ class LostReportController extends Controller
     public function create()
     {
         $categories = Category::all();
+
         return view('pages.public.lost-report', compact('categories'));
     }
 
@@ -55,7 +54,7 @@ class LostReportController extends Controller
             // Generate report code: #LR-YYYY-XXXX
             $latestReport = LostReport::latest('id')->first();
             $nextNumber = $latestReport ? ($latestReport->id + 1) : 1;
-            $reportCode = '#LR-' . date('Y') . '-' . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
+            $reportCode = '#LR-'.date('Y').'-'.str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
 
             $lostReport = LostReport::create([
                 'report_code' => $reportCode,
@@ -71,7 +70,7 @@ class LostReportController extends Controller
                 'location_lost' => $request->location_lost,
                 'date_lost' => $request->date_lost,
                 'distinctive_features' => $request->distinctive_features,
-                'image_path' => $imagePath ? '/storage/' . $imagePath : null,
+                'image_path' => $imagePath ? '/storage/'.$imagePath : null,
                 'status' => 'Menunggu Verifikasi',
             ]);
 
@@ -84,7 +83,8 @@ class LostReportController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Lost Report Store Error: ' . $e->getMessage());
+            Log::error('Lost Report Store Error: '.$e->getMessage());
+
             return back()->with('error', 'Terjadi kesalahan saat menyimpan laporan. Silakan coba beberapa saat lagi.')->withInput();
         }
     }

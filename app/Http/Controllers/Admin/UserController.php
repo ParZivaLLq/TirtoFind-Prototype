@@ -14,6 +14,7 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $users = User::orderBy('name')->get();
+
         return view('pages.admin.users.index', compact('users'));
     }
 
@@ -30,6 +31,7 @@ class UserController extends Controller
         $data['password'] = Hash::make($data['password']);
         $user = User::create($data);
         ActivityLog::create(['user_id' => Auth::id(), 'activity' => 'Tambah Pengguna', 'details' => "Menambahkan pengguna {$user->email}."]);
+
         return redirect()->route('admin.users.index')->with('success', 'Petugas admin baru berhasil ditambahkan.');
     }
 
@@ -38,19 +40,20 @@ class UserController extends Controller
         $user = User::findOrFail($id);
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', 'unique:users,email,' . $id],
-            'nip' => ['nullable', 'string', 'max:50', 'unique:users,nip,' . $id],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email,'.$id],
+            'nip' => ['nullable', 'string', 'max:50', 'unique:users,nip,'.$id],
             'role' => ['required', 'in:super_admin,cs,petugas'],
             'status' => ['required', 'in:aktif,nonaktif'],
             'password' => ['nullable', 'string', 'min:8'],
         ]);
-        if (!empty($data['password'])) {
+        if (! empty($data['password'])) {
             $data['password'] = Hash::make($data['password']);
         } else {
             unset($data['password']);
         }
         $user->update($data);
         ActivityLog::create(['user_id' => Auth::id(), 'activity' => 'Edit Pengguna', 'details' => "Mengubah pengguna {$user->email}."]);
+
         return redirect()->route('admin.users.index')->with('success', 'Data petugas admin diperbarui.');
     }
 
@@ -61,6 +64,7 @@ class UserController extends Controller
         $email = $user->email;
         $user->delete();
         ActivityLog::create(['user_id' => Auth::id(), 'activity' => 'Hapus Pengguna', 'details' => "Menghapus pengguna {$email}."]);
+
         return redirect()->route('admin.users.index')->with('success', 'Petugas admin dihapus.');
     }
 }

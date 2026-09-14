@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Category;
 use App\Models\ActivityLog;
+use App\Models\Category;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
@@ -16,6 +16,7 @@ class CategoryController extends Controller
         $categories = Category::withCount(['foundItems', 'lostReports'])
             ->orderBy('name', 'asc')
             ->get();
+
         return view('pages.admin.categories.index', compact('categories'));
     }
 
@@ -44,7 +45,7 @@ class CategoryController extends Controller
         $category = Category::findOrFail($id);
 
         $request->validate([
-            'name' => ['required', 'string', 'max:255', 'unique:categories,name,' . $id],
+            'name' => ['required', 'string', 'max:255', 'unique:categories,name,'.$id],
         ]);
 
         $oldName = $category->name;

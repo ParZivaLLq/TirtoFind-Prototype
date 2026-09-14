@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use App\Models\Claim;
 use App\Models\FoundItem;
-use App\Models\ActivityLog;
+use App\Notifications\ClaimStatusUpdatedNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use App\Notifications\ClaimStatusUpdatedNotification;
 
 class ClaimController extends Controller
 {
@@ -22,10 +22,10 @@ class ClaimController extends Controller
         $query = Claim::with(['foundItem.category', 'lostReport']);
 
         if ($queryStr) {
-            $query->where(function($q) use ($queryStr) {
+            $query->where(function ($q) use ($queryStr) {
                 $q->where('claimant_name', 'like', "%{$queryStr}%")
-                  ->orWhere('claim_code', 'like', "%{$queryStr}%")
-                  ->orWhere('claimant_phone', 'like', "%{$queryStr}%");
+                    ->orWhere('claim_code', 'like', "%{$queryStr}%")
+                    ->orWhere('claimant_phone', 'like', "%{$queryStr}%");
             });
         }
 
@@ -41,6 +41,7 @@ class ClaimController extends Controller
             $claim = Claim::with('foundItem')->lockForUpdate()->findOrFail($id);
             if ($claim->status !== 'Menunggu Verifikasi' || $claim->foundItem->status !== 'active') {
                 DB::rollBack();
+
                 return redirect()->route('admin.claims.index')->with('error', 'Transisi klaim tidak valid atau barang sudah diproses.');
             }
             $oldStatus = $claim->status;
@@ -67,7 +68,8 @@ class ClaimController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Claim Approve Error: ' . $e->getMessage());
+            Log::error('Claim Approve Error: '.$e->getMessage());
+
             return redirect()->route('admin.claims.index')->with('error', 'Terjadi kesalahan saat menyetujui klaim.');
         }
     }
@@ -95,7 +97,8 @@ class ClaimController extends Controller
             return redirect()->route('admin.claims.index')->with('success', "Klaim {$claim->claim_code} berhasil ditolak.");
 
         } catch (\Exception $e) {
-            Log::error('Claim Reject Error: ' . $e->getMessage());
+            Log::error('Claim Reject Error: '.$e->getMessage());
+
             return redirect()->route('admin.claims.index')->with('error', 'Terjadi kesalahan saat menolak klaim.');
         }
     }

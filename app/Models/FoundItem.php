@@ -20,7 +20,7 @@ class FoundItem extends Model
         'date_found',
         'storage_location',
         'image_path',
-        'status'
+        'status',
     ];
 
     protected $casts = [
@@ -34,8 +34,8 @@ class FoundItem extends Model
     {
         $query->where('status', 'active');
 
-        if (!empty($q)) {
-            $query->where(function($sub) use ($q) {
+        if (! empty($q)) {
+            $query->where(function ($sub) use ($q) {
                 $sub->where('title', 'like', "%{$q}%")
                     ->orWhere('description', 'like', "%{$q}%")
                     ->orWhere('ref_code', 'like', "%{$q}%")
@@ -45,17 +45,17 @@ class FoundItem extends Model
             });
         }
 
-        if (!empty($category) && $category !== 'all') {
-            $query->whereHas('category', function($sub) use ($category) {
+        if (! empty($category) && $category !== 'all') {
+            $query->whereHas('category', function ($sub) use ($category) {
                 $sub->where('slug', $category)->orWhere('name', $category);
             });
         }
 
-        if (!empty($location) && $location !== 'all') {
+        if (! empty($location) && $location !== 'all') {
             $query->where('location_found', 'like', "%{$location}%");
         }
 
-        if (!empty($date)) {
+        if (! empty($date)) {
             $query->whereDate('date_found', $date);
         }
 

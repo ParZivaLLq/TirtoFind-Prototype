@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
-use App\Models\FoundItem;
 use App\Models\Category;
+use App\Models\FoundItem;
 use Illuminate\Http\Request;
 
 class FoundItemController extends Controller
@@ -35,6 +35,7 @@ class FoundItemController extends Controller
     public function show(int $id)
     {
         $item = FoundItem::with('category')->findOrFail($id);
+
         return view('pages.public.item-detail', compact('item', 'id'));
     }
 }

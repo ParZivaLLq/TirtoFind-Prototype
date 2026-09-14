@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Category;
+use App\Models\LostReport;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -67,7 +68,7 @@ class LostReportTest extends TestCase
 
         $this->assertDatabaseCount('lost_reports', 1);
 
-        $report = \App\Models\LostReport::first();
+        $report = LostReport::first();
         $this->assertStringStartsWith('#LR-', $report->report_code);
     }
 

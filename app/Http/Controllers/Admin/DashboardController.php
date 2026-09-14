@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
+use App\Models\Claim;
 use App\Models\FoundItem;
 use App\Models\LostReport;
-use App\Models\Claim;
-use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
