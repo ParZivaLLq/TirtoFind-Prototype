@@ -1,256 +1,535 @@
-<x-layouts.guest title="Lacak Status Klaim">
-    <main class="max-w-3xl mx-auto px-4 md:px-6 py-8 md:py-12">
+<x-layouts.guest title="Lacak Status Laporan & Klaim">
+    <div class="max-w-3xl mx-auto px-4 md:px-6 py-6 md:py-10">
         <!-- Header -->
-        <div class="text-center mb-8">
-            <span class="px-3 py-1 bg-blue-100/90 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300 text-[11px] font-bold rounded-full uppercase tracking-wider border border-blue-200 dark:border-blue-800">Tracking System</span>
-            <h1 class="text-2xl md:text-4xl font-extrabold text-slate-900 dark:text-white mt-3">Lacak Status Klaim</h1>
-            <p class="text-xs md:text-sm text-slate-600 dark:text-slate-400 mt-1.5 max-w-lg mx-auto">
-                Masukkan Kode Tiket Klaim (contoh: <code class="bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded font-mono text-blue-600 dark:text-blue-400">#CL-2026-0001</code> atau <code class="bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded font-mono text-blue-600 dark:text-blue-400">CL-2026-0001</code>), Nomor WhatsApp, atau Email Anda.
+        <div class="text-center mb-8 max-w-xl mx-auto">
+            <span class="px-2.5 py-0.5 bg-blue-100/80 text-blue-800 text-[11px] font-bold rounded-full uppercase tracking-wider border border-blue-200">Pelacakan Real-time</span>
+            <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 mt-2">Lacak Status Laporan & Klaim</h1>
+            <p class="text-xs md:text-sm text-slate-600 mt-1">
+                Masukkan Kode Tiket Klaim (#CL-), Kode Laporan Kehilangan (#LR-), Nomor HP, atau Email untuk mengecek perkembangan verifikasi barang Anda.
             </p>
         </div>
 
         <!-- Search Form Card -->
-        <div class="bg-white dark:bg-slate-900 p-2 md:p-3 border border-slate-200/80 dark:border-slate-800 rounded-2xl soft-shadow mb-8">
-            <form method="GET" action="{{ route('claim.tracking') }}" class="flex flex-col sm:flex-row gap-2">
+        <div class="bg-white rounded-2xl border border-slate-200/80 soft-shadow p-4 md:p-6 mb-8">
+            <form method="GET" action="{{ route('claim.tracking') }}" class="flex flex-col sm:flex-row gap-2.5">
                 <div class="relative flex-1">
                     <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xl">search</span>
                     <input 
                         type="text" 
                         name="claim_code" 
-                        value="{{ $searchKey ?? request('claim_code') }}" 
+                        value="{{ request('claim_code', $searchKey) }}" 
                         required 
-                        class="w-full pl-11 pr-4 py-3 bg-transparent border-none focus:outline-none focus:ring-0 text-xs md:text-sm text-slate-900 dark:text-white placeholder:text-slate-400"
-                        placeholder="Masukkan Kode Tiket (#CL-2026-XXXX) atau Nomor WhatsApp..."
+                        placeholder="Masukkan Kode Tiket (#CL- / #LR-), No. HP, atau Instagram" 
+                        class="w-full pl-11 pr-4 py-3 border border-slate-200 rounded-xl text-xs md:text-sm focus:outline-none focus:border-blue-600 transition-colors"
                     >
                 </div>
-                <button type="submit" class="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs md:text-sm font-bold transition-all shadow-xs flex items-center justify-center gap-2 cursor-pointer">
-                    <span class="material-symbols-outlined text-lg">travel_explore</span>
-                    <span>Lacak Tiket</span>
+                <button type="submit" class="px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs md:text-sm transition-all shadow-xs flex items-center justify-center gap-2 cursor-pointer flex-shrink-0">
+                    <span class="material-symbols-outlined text-base">analytics</span>
+                    <span>Lacak Status</span>
                 </button>
             </form>
+            <div class="mt-3 flex items-center gap-2 text-[11px] text-slate-500 overflow-x-auto pb-1">
+                <span class="font-medium text-slate-400">Contoh format:</span>
+                <a href="{{ route('claim.tracking', ['claim_code' => '#CL-2026-0001']) }}" class="px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded font-mono font-medium transition-colors">#CL-2026-0001</a>
+                <span class="text-slate-300">•</span>
+                <a href="{{ route('claim.tracking', ['claim_code' => '#LR-2026-0004']) }}" class="px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded font-mono font-medium transition-colors">#LR-2026-0004</a>
+                <span class="text-slate-300">•</span>
+                <span class="text-slate-400">Dapat menggunakan No. WhatsApp atau Instagram</span>
+            </div>
         </div>
 
-        <!-- Results Section -->
-        @if(!empty($searchKey))
+        @if(request()->has('claim_code') || $searchKey !== '')
             @php
-                $matchingClaims = isset($claims) && $claims->count() > 0 ? $claims : ($claim ? collect([$claim]) : collect());
+                $totalResults = ($claims->count() ?? 0) + ($lostReports->count() ?? 0);
             @endphp
 
-            @if($matchingClaims->count() > 0)
-                <div class="space-y-6">
-                    <div class="flex items-center justify-between">
-                        <h2 class="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                            Ditemukan {{ $matchingClaims->count() }} Hasil Permohonan Klaim
-                        </h2>
+            @if($totalResults > 0)
+                <!-- Multiple Results Selector (if search returned > 1 item) -->
+                @if($totalResults > 1)
+                    <div class="mb-6 bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
+                        <p class="text-xs font-bold text-slate-700 mb-2">Ditemukan {{ $totalResults }} data terkait pencarian ini:</p>
+                        <div class="flex flex-wrap gap-2">
+                            @foreach($claims as $itemClaim)
+                                @php
+                                    $isSelected = ($claim && $claim->id === $itemClaim->id && request('type', 'claim') === 'claim');
+                                @endphp
+                                <a href="{{ route('claim.tracking', ['claim_code' => $searchKey, 'type' => 'claim', 'selected_id' => $itemClaim->id]) }}" 
+                                   class="px-3 py-1.5 rounded-xl text-xs font-medium border transition-all flex items-center gap-2 {{ $isSelected ? 'bg-blue-600 text-white border-blue-600 font-bold shadow-xs' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100' }}">
+                                    <span class="px-1.5 py-0.5 bg-blue-100 text-blue-800 text-[10px] rounded font-bold uppercase">Klaim</span>
+                                    <span class="font-mono">{{ $itemClaim->claim_code }}</span>
+                                </a>
+                            @endforeach
+
+                            @foreach($lostReports as $itemReport)
+                                @php
+                                    $isSelected = ($lostReport && $lostReport->id === $itemReport->id && (request('type') === 'lost_report' || (!$claim && $lostReport)));
+                                @endphp
+                                <a href="{{ route('claim.tracking', ['claim_code' => $searchKey, 'type' => 'lost_report', 'selected_id' => $itemReport->id]) }}" 
+                                   class="px-3 py-1.5 rounded-xl text-xs font-medium border transition-all flex items-center gap-2 {{ $isSelected ? 'bg-amber-600 text-white border-amber-600 font-bold shadow-xs' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100' }}">
+                                    <span class="px-1.5 py-0.5 bg-amber-100 text-amber-800 text-[10px] rounded font-bold uppercase">Laporan</span>
+                                    <span class="font-mono">{{ $itemReport->report_code }}</span>
+                                    <span class="text-[10px] opacity-80">({{ Str::limit($itemReport->item_name, 15) }})</span>
+                                </a>
+                            @endforeach
+                        </div>
                     </div>
+                @endif
 
-                    @foreach($matchingClaims as $itemClaim)
-                        @php
-                            $foundItem = $itemClaim->foundItem;
-                            $csPhone = (string) config('services.whatsapp.cs_phone', '6281234567890');
-                            $waMessage = "Halo Helpdesk Lost & Found Terminal Tirtonadi,\n\nSaya ingin menanyakan status permohonan klaim saya dengan Kode Tiket: {$itemClaim->claim_code}. Mohon infonya. Terima kasih.";
-                            $waUrl = "https://wa.me/{$csPhone}?text=" . urlencode($waMessage);
+                <!-- Render Lost Report Card if Lost Report active -->
+                @if(($lostReport && request('type') === 'lost_report') || ($lostReport && !$claim))
+                    <div class="bg-white rounded-2xl border border-slate-200/80 soft-shadow overflow-hidden mb-8">
+                        <!-- Top Status Header -->
+                        <div class="p-5 md:p-6 bg-slate-900 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div class="space-y-1">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Laporan Kehilangan</span>
+                                    <span class="text-[10px] px-2 py-0.5 bg-slate-800 text-slate-300 rounded font-mono">{{ $lostReport->created_at?->translatedFormat('d M Y, H:i') }}</span>
+                                </div>
+                                <h2 class="text-xl md:text-2xl font-mono font-black text-amber-400 flex items-center gap-2">
+                                    <span>{{ $lostReport->report_code }}</span>
+                                </h2>
+                            </div>
+                            <div>
+                                @php
+                                    $reportBadgeClass = match($lostReport->status) {
+                                        'Terverifikasi' => 'bg-blue-500/20 text-blue-300 border-blue-500/40',
+                                        'Selesai' => 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40',
+                                        default => 'bg-amber-500/20 text-amber-300 border-amber-500/40',
+                                    };
+                                    $reportIconName = match($lostReport->status) {
+                                        'Terverifikasi' => 'verified',
+                                        'Selesai' => 'task_alt',
+                                        default => 'hourglass_top',
+                                    };
+                                @endphp
+                                <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold border {{ $reportBadgeClass }}">
+                                    <span class="material-symbols-outlined text-base">{{ $reportIconName }}</span>
+                                    <span>{{ $lostReport->status }}</span>
+                                </span>
+                            </div>
+                        </div>
 
-                            // Image preview
-                            $imageUrl = $foundItem?->image_path ?: 'https://images.unsplash.com/photo-1627123424574-724758594e93?w=400';
-                            $imageUrl = str_starts_with($imageUrl, 'http') ? $imageUrl : asset(ltrim($imageUrl, '/'));
-                        @endphp
-
-                        <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-5 md:p-6 soft-shadow space-y-6">
-                            <!-- Card Header & Status Badge -->
-                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-4">
-                                <div>
-                                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Kode Tiket Klaim</span>
-                                    <div class="flex items-center gap-2 mt-0.5">
-                                        <h3 class="text-lg md:text-xl font-mono font-extrabold text-slate-900 dark:text-white">{{ $itemClaim->claim_code }}</h3>
+                        <!-- Content Details & Reported Item Info -->
+                        <div class="p-5 md:p-6 space-y-6">
+                            <!-- Reported Item Details Box -->
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/80 space-y-3">
+                                <div class="flex items-start gap-4">
+                                    @if($lostReport->image_path)
+                                        <img src="{{ asset(ltrim($lostReport->image_path, '/')) }}" alt="{{ $lostReport->item_name }}" class="w-16 h-16 object-cover rounded-xl border border-slate-200 flex-shrink-0"/>
+                                    @else
+                                        <div class="w-14 h-14 bg-amber-100/80 text-amber-700 rounded-xl border border-amber-200 flex items-center justify-center flex-shrink-0">
+                                            <span class="material-symbols-outlined text-2xl">search_hands_free</span>
+                                        </div>
+                                    @endif
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-[10px] font-bold text-amber-700 uppercase tracking-wider bg-amber-100 px-2 py-0.5 rounded border border-amber-200">
+                                                {{ $lostReport->category?->name ?? 'Barang Hilang' }}
+                                            </span>
+                                            <span class="text-xs text-slate-400 font-medium">• {{ $lostReport->date_lost?->translatedFormat('d M Y') }}</span>
+                                        </div>
+                                        <h3 class="text-base font-extrabold text-slate-900 mt-1 truncate">{{ $lostReport->item_name }}</h3>
+                                        <p class="text-xs text-slate-600 mt-0.5">
+                                            <span class="font-semibold text-slate-700">Pelapor:</span> {{ $lostReport->reporter_name }} ({{ $lostReport->reporter_phone }})
+                                        </p>
                                     </div>
                                 </div>
 
-                                <div>
-                                    @if($itemClaim->status === 'Disetujui')
-                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 text-xs font-bold border border-emerald-200 dark:border-emerald-800">
-                                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
-                                            <span>Klaim Disetujui (Siap Diambil)</span>
-                                        </span>
-                                    @elseif($itemClaim->status === 'Ditolak')
-                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-100 dark:bg-rose-950/80 text-rose-800 dark:text-rose-300 text-xs font-bold border border-rose-200 dark:border-rose-800">
-                                            <span class="w-2 h-2 rounded-full bg-rose-500"></span>
-                                            <span>Klaim Ditolak</span>
-                                        </span>
-                                    @else
-                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 text-xs font-bold border border-amber-200 dark:border-amber-800">
-                                            <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
-                                            <span>Sedang Diverifikasi Petugas</span>
-                                        </span>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs pt-2 border-t border-slate-200/60 text-slate-600">
+                                    <div><span class="font-bold text-slate-700">Lokasi Hilang:</span> {{ $lostReport->location_lost }}</div>
+                                    <div><span class="font-bold text-slate-700">Warna / Merek:</span> {{ $lostReport->color ?? '-' }} / {{ $lostReport->brand ?? '-' }}</div>
+                                    @if($lostReport->distinctive_features)
+                                        <div class="sm:col-span-2"><span class="font-bold text-slate-700">Ciri Khusus:</span> {{ $lostReport->distinctive_features }}</div>
                                     @endif
                                 </div>
                             </div>
 
-                            <!-- Progress Stepper / Timeline -->
-                            <div class="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4 border border-slate-200/60 dark:border-slate-800">
-                                <h4 class="text-xs font-bold text-slate-700 dark:text-slate-300 mb-4 flex items-center gap-1.5">
-                                    <span class="material-symbols-outlined text-base text-blue-600 dark:text-blue-400">potted_plant</span>
-                                    <span>Tahapan Progres Verifikasi</span>
-                                </h4>
+                            <!-- Stepper Progress Timeline for Lost Report -->
+                            <div class="space-y-3 pt-1">
+                                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Tahapan Proses Laporan Kehilangan</h3>
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                    @php
+                                        $reportStepIndex = match($lostReport->status) {
+                                            'Selesai' => 3,
+                                            'Terverifikasi' => 2,
+                                            default => 1,
+                                        };
+                                    @endphp
 
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 relative">
                                     <!-- Step 1 -->
-                                    <div class="flex items-start gap-3">
-                                        <div class="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs font-bold flex-shrink-0 shadow-xs">
+                                    <div class="p-3 rounded-xl border flex items-center gap-3 {{ $reportStepIndex >= 1 ? 'bg-emerald-50/60 border-emerald-200 text-emerald-900' : 'bg-slate-50 border-slate-200 text-slate-400' }}">
+                                        <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 {{ $reportStepIndex >= 1 ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-500' }}">
                                             <span class="material-symbols-outlined text-sm">check</span>
                                         </div>
                                         <div>
-                                            <p class="text-xs font-bold text-slate-900 dark:text-white">1. Permohonan Dikirim</p>
-                                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
-                                                {{ $itemClaim->created_at ? $itemClaim->created_at->translatedFormat('d M Y, H:i') : '-' }} WIB
-                                            </p>
+                                            <p class="text-xs font-bold leading-tight">Laporan Masuk</p>
+                                            <p class="text-[10px] mt-0.5 opacity-80">Terdaftar di sistem</p>
                                         </div>
                                     </div>
 
                                     <!-- Step 2 -->
-                                    <div class="flex items-start gap-3">
-                                        @if($itemClaim->status === 'Menunggu Verifikasi')
-                                            <div class="w-8 h-8 rounded-full bg-amber-500 text-white flex items-center justify-center text-xs font-bold flex-shrink-0 shadow-xs ring-4 ring-amber-100 dark:ring-amber-900/40">
-                                                <span class="material-symbols-outlined text-sm animate-spin">sync</span>
-                                            </div>
-                                            <div>
-                                                <p class="text-xs font-bold text-amber-700 dark:text-amber-400">2. Verifikasi Berkas & Ciri</p>
-                                                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Proses validasi identitas & ciri barang</p>
-                                            </div>
-                                        @else
-                                            <div class="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs font-bold flex-shrink-0 shadow-xs">
-                                                <span class="material-symbols-outlined text-sm">check</span>
-                                            </div>
-                                            <div>
-                                                <p class="text-xs font-bold text-slate-900 dark:text-white">2. Verifikasi Selesai</p>
-                                                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Pemeriksaan bukti kepemilikan rampung</p>
-                                            </div>
-                                        @endif
+                                    <div class="p-3 rounded-xl border flex items-center gap-3 {{ $reportStepIndex >= 2 ? 'bg-emerald-50/60 border-emerald-200 text-emerald-900' : ($reportStepIndex === 1 ? 'bg-amber-50 border-amber-300 text-amber-900 ring-2 ring-amber-500/20' : 'bg-slate-50 border-slate-200 text-slate-400') }}">
+                                        <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 {{ $reportStepIndex >= 2 ? 'bg-emerald-600 text-white' : ($reportStepIndex === 1 ? 'bg-amber-600 text-white' : 'bg-slate-200 text-slate-500') }}">
+                                            @if($reportStepIndex >= 2) <span class="material-symbols-outlined text-sm">check</span> @else 2 @endif
+                                        </div>
+                                        <div>
+                                            <p class="text-xs font-bold leading-tight">Smart AI Scan & Verifikasi</p>
+                                            <p class="text-[10px] mt-0.5 opacity-80">Pencocokan sistem</p>
+                                        </div>
                                     </div>
 
                                     <!-- Step 3 -->
-                                    <div class="flex items-start gap-3">
-                                        @if($itemClaim->status === 'Disetujui')
-                                            <div class="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs font-bold flex-shrink-0 shadow-xs">
-                                                <span class="material-symbols-outlined text-sm">inventory_2</span>
-                                            </div>
-                                            <div>
-                                                <p class="text-xs font-bold text-emerald-700 dark:text-emerald-400">3. Barang Siap Diambil</p>
-                                                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Tunjukkan KTP & Tiket ke Pos Infomasi</p>
-                                            </div>
-                                        @elseif($itemClaim->status === 'Ditolak')
-                                            <div class="w-8 h-8 rounded-full bg-rose-600 text-white flex items-center justify-center text-xs font-bold flex-shrink-0 shadow-xs">
-                                                <span class="material-symbols-outlined text-sm">close</span>
-                                            </div>
-                                            <div>
-                                                <p class="text-xs font-bold text-rose-700 dark:text-rose-400">3. Klaim Ditolak</p>
-                                                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Bukti/ciri tidak sesuai spesifikasi</p>
-                                            </div>
-                                        @else
-                                            <div class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400 flex items-center justify-center text-xs font-bold flex-shrink-0">
-                                                <span>3</span>
-                                            </div>
-                                            <div>
-                                                <p class="text-xs font-bold text-slate-400 dark:text-slate-500">3. Keputusan & Pengambilan</p>
-                                                <p class="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">Menunggu hasil verifikasi</p>
-                                            </div>
-                                        @endif
+                                    <div class="p-3 rounded-xl border flex items-center gap-3 {{ $reportStepIndex >= 3 ? 'bg-emerald-50/60 border-emerald-200 text-emerald-900' : 'bg-slate-50 border-slate-200 text-slate-400' }}">
+                                        <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 {{ $reportStepIndex >= 3 ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-500' }}">
+                                            @if($reportStepIndex >= 3) <span class="material-symbols-outlined text-sm">check</span> @else 3 @endif
+                                        </div>
+                                        <div>
+                                            <p class="text-xs font-bold leading-tight">Barang Diklaim / Selesai</p>
+                                            <p class="text-[10px] mt-0.5 opacity-80">Pengembalian ke pemilik</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Found Item & Claimant Detail Grid -->
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <!-- Found Item Box -->
-                                <div class="border border-slate-200/80 dark:border-slate-800 rounded-xl p-3.5 flex gap-3 items-center bg-slate-50/50 dark:bg-slate-800/30">
-                                    <img src="{{ $imageUrl }}" alt="{{ $foundItem?->title ?? 'Barang' }}" class="w-16 h-16 object-cover rounded-lg border border-slate-200 dark:border-slate-700 flex-shrink-0"/>
-                                    <div class="text-xs space-y-1">
-                                        <span class="text-[10px] font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">Barang Temuan</span>
-                                        <h5 class="font-bold text-slate-900 dark:text-white line-clamp-1">{{ $foundItem?->title ?? 'Barang Tidak Ditemukan' }}</h5>
-                                        <p class="text-slate-500 dark:text-slate-400 text-[11px]">
-                                            Kode Ref: <span class="font-mono font-medium text-slate-700 dark:text-slate-300">{{ $foundItem?->ref_code ?? '-' }}</span>
-                                        </p>
-                                        @if($foundItem?->storage_location)
-                                            <p class="text-slate-600 dark:text-slate-300 text-[11px]">
-                                                Pos Simpan: <strong class="text-emerald-600 dark:text-emerald-400">{{ $foundItem->storage_location }}</strong>
-                                            </p>
-                                        @endif
-                                    </div>
-                                </div>
+                            <!-- AI Matching Results Section -->
+                            @php
+                                $matchedLogs = $lostReport->aiMatchingLogs ?? collect();
+                            @endphp
 
-                                <!-- Claimant Info Box -->
-                                <div class="border border-slate-200/80 dark:border-slate-800 rounded-xl p-3.5 text-xs space-y-1.5 bg-slate-50/50 dark:bg-slate-800/30">
-                                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Data Pemohon</span>
-                                    <div class="font-bold text-slate-900 dark:text-white">{{ $itemClaim->claimant_name }}</div>
-                                    <div class="text-slate-500 dark:text-slate-400 text-[11px]">No. WhatsApp: {{ $itemClaim->claimant_phone }}</div>
-                                    @if($itemClaim->claimant_email)
-                                        <div class="text-slate-500 dark:text-slate-400 text-[11px]">Email: {{ $itemClaim->claimant_email }}</div>
+                            <div class="pt-3 border-t border-slate-100">
+                                <div class="flex items-center justify-between mb-3">
+                                    <div class="flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-indigo-600 text-xl">psychology</span>
+                                        <h3 class="text-sm font-extrabold text-slate-900">Hasil Pemindaian Smart AI Match</h3>
+                                    </div>
+                                    @if($matchedLogs->isNotEmpty())
+                                        <span class="px-2.5 py-0.5 bg-indigo-100 text-indigo-800 text-[11px] font-bold rounded-full border border-indigo-200">
+                                            {{ $matchedLogs->count() }} Barang Ditemukan
+                                        </span>
                                     @endif
-                                    <div class="text-slate-500 dark:text-slate-400 text-[11px]">Status Hubungan: {{ $itemClaim->relationship }}</div>
                                 </div>
+
+                                @if($matchedLogs->isNotEmpty())
+                                    <div class="space-y-3">
+                                        @foreach($matchedLogs as $log)
+                                            @if($log->foundItem)
+                                                @php
+                                                    $foundItem = $log->foundItem;
+                                                    $matchScore = $log->score;
+                                                    $scoreBadgeColor = $matchScore >= 75 ? 'bg-emerald-100 text-emerald-800 border-emerald-300' : ($matchScore >= 50 ? 'bg-amber-100 text-amber-800 border-amber-300' : 'bg-slate-100 text-slate-700 border-slate-200');
+                                                    $foundImg = $foundItem->image_path ?: 'https://images.unsplash.com/photo-1627123424574-724758594e93?w=300';
+                                                    $foundImg = str_starts_with($foundImg, 'http') ? $foundImg : asset(ltrim($foundImg, '/'));
+                                                @endphp
+                                                <div class="bg-gradient-to-r from-slate-50 to-indigo-50/40 p-4 rounded-xl border border-indigo-100/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs hover:border-indigo-200 transition-all">
+                                                    <div class="flex items-center gap-3 flex-1 min-w-0">
+                                                        <img src="{{ $foundImg }}" alt="{{ $foundItem->title }}" class="w-16 h-16 object-cover rounded-xl border border-slate-200 flex-shrink-0"/>
+                                                        <div class="min-w-0 flex-1">
+                                                            <div class="flex items-center gap-2">
+                                                                <span class="px-2 py-0.5 text-[10px] font-bold uppercase rounded border {{ $scoreBadgeColor }} flex items-center gap-1">
+                                                                    <span class="material-symbols-outlined text-xs">auto_awesome</span>
+                                                                    <span>{{ $matchScore }}% Match</span>
+                                                                </span>
+                                                                <span class="text-[11px] font-mono text-slate-400 font-semibold">{{ $foundItem->ref_code }}</span>
+                                                            </div>
+                                                            <h4 class="text-sm font-extrabold text-slate-900 mt-1 truncate">{{ $foundItem->title }}</h4>
+                                                            <p class="text-xs text-slate-500 truncate">
+                                                                Ditemukan di: <span class="font-medium text-slate-700">{{ $foundItem->location_found }}</span>
+                                                                @if($foundItem->description)
+                                                                    • {{ Str::limit($foundItem->description, 45) }}
+                                                                @endif
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex items-center gap-2 w-full sm:w-auto flex-shrink-0 justify-end">
+                                                        <a href="{{ route('item-detail', $foundItem->id) }}" target="_blank" class="px-3 py-2 bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-colors flex items-center gap-1">
+                                                            <span>Lihat Detail</span>
+                                                        </a>
+                                                        <a href="{{ route('claim', ['id' => $foundItem->id, 'lost_report_code' => $lostReport->report_code]) }}" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-colors shadow-xs flex items-center gap-1.5">
+                                                            <span class="material-symbols-outlined text-base">verified_user</span>
+                                                            <span>Klaim Barang Ini</span>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            @endif
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 text-center text-xs text-slate-500">
+                                        <span class="material-symbols-outlined text-slate-400 text-2xl mb-1">hourglass_empty</span>
+                                        <p class="font-semibold text-slate-700">Pencarian Smart AI Masih Berjalan</p>
+                                        <p class="text-[11px] text-slate-500 mt-0.5">Sistem secara otomatis akan memberitahu Anda jika ditemukan barang temuan yang cocok di area Terminal Tirtonadi.</p>
+                                    </div>
+                                @endif
                             </div>
 
-                            <!-- Footer Actions -->
-                            <div class="flex flex-col sm:flex-row justify-between items-center gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
-                                <div class="text-xs text-slate-500 dark:text-slate-400 text-center sm:text-left">
-                                    Ada pertanyaan terkait klaim ini? Hubungi Petugas Helpdesk Terminal Tirtonadi.
+                            <!-- Attached Claims -->
+                            @if($lostReport->claims && $lostReport->claims->isNotEmpty())
+                                <div class="pt-3 border-t border-slate-100 space-y-2">
+                                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Pengajuan Klaim Terkait Laporan Ini</h3>
+                                    <div class="space-y-2">
+                                        @foreach($lostReport->claims as $attClaim)
+                                            <div class="p-3 bg-blue-50/60 rounded-xl border border-blue-100 flex items-center justify-between text-xs">
+                                                <div class="flex items-center gap-2">
+                                                    <span class="material-symbols-outlined text-blue-600 text-sm">confirmation_number</span>
+                                                    <span class="font-mono font-bold text-slate-900">{{ $attClaim->claim_code }}</span>
+                                                    <span class="text-slate-500">({{ $attClaim->foundItem?->title ?? 'Barang' }})</span>
+                                                </div>
+                                                <a href="{{ route('claim.tracking', ['claim_code' => $attClaim->claim_code, 'type' => 'claim', 'selected_id' => $attClaim->id]) }}" class="text-blue-600 font-bold hover:underline flex items-center gap-1 text-[11px]">
+                                                    <span>Lacak Tiket Klaim</span>
+                                                    <span class="material-symbols-outlined text-xs">arrow_forward</span>
+                                                </a>
+                                            </div>
+                                        @endforeach
+                                    </div>
                                 </div>
+                            @endif
 
-                                <a href="{{ $waUrl }}" target="_blank" rel="noopener noreferrer" class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all shadow-xs flex items-center gap-2 cursor-pointer w-full sm:w-auto justify-center">
+                            <!-- WhatsApp Contact Helpdesk -->
+                            <div class="border-t border-slate-100 pt-4 flex flex-col sm:flex-row items-center justify-between gap-3 bg-amber-50/50 p-4 rounded-xl border border-amber-100">
+                                <div class="text-xs text-amber-900">
+                                    <p class="font-bold">Ada pertanyaan mengenai Laporan Kehilangan {{ $lostReport->report_code }}?</p>
+                                    <p class="text-[11px] text-amber-700 mt-0.5">Petugas Pos Lost & Found Siap membantu mengecek secara fisik barang Anda.</p>
+                                </div>
+                                @php
+                                    $lrMsg = "Halo Kak CS TirtoFind Terminal Tirtonadi 👋✨\n\nSaya mau menanyakan update Laporan Kehilangan saya nih:\n• Kode Laporan: {$lostReport->report_code}\n• Nama Pelapor: {$lostReport->reporter_name}\n• Barang Hilang: {$lostReport->item_name}\n\nMohon bantuannya Kak untuk diproses. Terima kasih! 🙏";
+                                    $waReportUrl = "https://wa.me/{$csPhone}?text=" . urlencode($lrMsg);
+                                @endphp
+                                <a href="{{ $waReportUrl }}" target="_blank" rel="noopener noreferrer" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition-all flex items-center gap-1.5 flex-shrink-0">
                                     <span class="material-symbols-outlined text-base">chat</span>
-                                    <span>Tanyakan via WhatsApp</span>
+                                    <span>Tanya CS WhatsApp</span>
                                 </a>
                             </div>
                         </div>
-                    @endforeach
-                </div>
+                    </div>
+                @elseif($claim)
+                    <!-- Main Claim Detail Card -->
+                    <div class="bg-white rounded-2xl border border-slate-200/80 soft-shadow overflow-hidden mb-8">
+                        <!-- Top Status Header -->
+                        <div class="p-5 md:p-6 bg-slate-900 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div class="space-y-1">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Tiket Klaim</span>
+                                    <span class="text-[10px] px-2 py-0.5 bg-slate-800 text-slate-300 rounded font-mono">{{ $claim->created_at?->translatedFormat('d M Y, H:i') }}</span>
+                                </div>
+                                <h2 class="text-xl md:text-2xl font-mono font-black text-emerald-400 flex items-center gap-2">
+                                    <span>{{ $claim->claim_code }}</span>
+                                </h2>
+                            </div>
+                            <div>
+                                @php
+                                    $badgeClass = match($claim->status) {
+                                        'Disetujui' => 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40',
+                                        'Ditolak' => 'bg-red-500/20 text-red-300 border-red-500/40',
+                                        default => 'bg-amber-500/20 text-amber-300 border-amber-500/40',
+                                    };
+                                    $iconName = match($claim->status) {
+                                        'Disetujui' => 'check_circle',
+                                        'Ditolak' => 'cancel',
+                                        default => 'hourglass_top',
+                                    };
+                                @endphp
+                                <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold border {{ $badgeClass }}">
+                                    <span class="material-symbols-outlined text-base">{{ $iconName }}</span>
+                                    <span>{{ $claim->status }}</span>
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Content Details & Item Info -->
+                        <div class="p-5 md:p-6 space-y-6">
+                            <!-- Target Item Info Box -->
+                            @if($claim->foundItem)
+                                @php
+                                    $imageUrl = $claim->foundItem->image_path ?: 'https://images.unsplash.com/photo-1627123424574-724758594e93?w=300';
+                                    $imageUrl = str_starts_with($imageUrl, 'http') ? $imageUrl : asset(ltrim($imageUrl, '/'));
+                                @endphp
+                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/80 flex items-center gap-4">
+                                    <img src="{{ $imageUrl }}" alt="{{ $claim->foundItem->title }}" class="w-16 h-16 object-cover rounded-xl border border-slate-200 flex-shrink-0"/>
+                                    <div class="flex-1 min-w-0">
+                                        <span class="text-[10px] font-bold text-blue-600 uppercase tracking-wider">Barang Diklaim</span>
+                                        <h3 class="text-sm font-bold text-slate-900 truncate">{{ $claim->foundItem->title }}</h3>
+                                        <p class="text-xs text-slate-500 truncate">Ref: <span class="font-mono font-semibold">{{ $claim->foundItem->ref_code }}</span> • Ditemukan di {{ $claim->foundItem->location_found }}</p>
+                                    </div>
+                                    <a href="{{ route('item-detail', $claim->foundItem->id) }}" target="_blank" class="px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 text-xs font-bold rounded-lg transition-colors flex items-center gap-1 flex-shrink-0">
+                                        <span>Lihat</span>
+                                        <span class="material-symbols-outlined text-xs">open_in_new</span>
+                                    </a>
+                                </div>
+                            @endif
+
+                            <!-- Status Explanation Alert -->
+                            <div class="p-4 rounded-xl text-xs md:text-sm leading-relaxed border {{ $claim->status === 'Disetujui' ? 'bg-emerald-50 text-emerald-900 border-emerald-200' : ($claim->status === 'Ditolak' ? 'bg-red-50 text-red-900 border-red-200' : 'bg-amber-50 text-amber-900 border-amber-200') }}">
+                                <div class="font-bold mb-1 flex items-center gap-1.5">
+                                    <span class="material-symbols-outlined text-base">info</span>
+                                    <span>Keterangan Status Verifikasi:</span>
+                                </div>
+                                <p>{{ $claim->statusMessage() }}</p>
+                            </div>
+
+                            <!-- Stepper Progress Timeline -->
+                            <div class="space-y-3 pt-2">
+                                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Progres Verifikasi Tiket</h3>
+                                <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                                    @php
+                                        $steps = $claim->statusSteps();
+                                        $currentStepIndex = match($claim->status) {
+                                            'Disetujui' => 2, // Reached Decision (Approved)
+                                            'Ditolak' => 2,   // Reached Decision (Rejected)
+                                            default => 1,     // In Verification
+                                        };
+                                    @endphp
+
+                                    @foreach($steps as $idx => $stepName)
+                                        @php
+                                            $isCompleted = $idx < $currentStepIndex || ($idx === 2 && $claim->status === 'Disetujui');
+                                            $isCurrent = $idx === $currentStepIndex && $claim->status === 'Menunggu Verifikasi';
+                                            $isRejectedStep = $idx === 2 && $claim->status === 'Ditolak';
+                                        @endphp
+                                        <div class="p-3 rounded-xl border flex sm:flex-col items-center sm:items-start gap-3 transition-all {{ $isCompleted ? 'bg-emerald-50/60 border-emerald-200 text-emerald-900' : ($isRejectedStep ? 'bg-red-50/60 border-red-200 text-red-900' : ($isCurrent ? 'bg-blue-50 border-blue-300 text-blue-900 ring-2 ring-blue-500/20' : 'bg-slate-50 border-slate-200 text-slate-400')) }}">
+                                            <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 {{ $isCompleted ? 'bg-emerald-600 text-white' : ($isRejectedStep ? 'bg-red-600 text-white' : ($isCurrent ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-500')) }}">
+                                                @if($isCompleted)
+                                                    <span class="material-symbols-outlined text-sm">check</span>
+                                                @elseif($isRejectedStep)
+                                                    <span class="material-symbols-outlined text-sm">close</span>
+                                                @else
+                                                    {{ $idx + 1 }}
+                                                @endif
+                                            </div>
+                                            <div>
+                                                <p class="text-xs font-bold leading-tight">{{ $stepName }}</p>
+                                                <p class="text-[10px] mt-0.5 opacity-80">
+                                                    @if($idx === 0) Data diterima
+                                                    @elseif($idx === 1) Pemeriksaan ciri
+                                                    @elseif($idx === 2) {{ $claim->status }}
+                                                    @elseif($idx === 3) Pos Tirtonadi
+                                                    @endif
+                                                </p>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            <!-- Contextual Actions & WhatsApp Appointment Generator -->
+                            @if($claim->status === 'Disetujui')
+                                <div class="border-t border-slate-100 pt-5 space-y-4">
+                                    <div>
+                                        <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+                                            <span class="material-symbols-outlined text-emerald-600">event_available</span>
+                                            <span>Jadwalkan Pengambilan Barang di Pos</span>
+                                        </h3>
+                                        <p class="text-xs text-slate-500 mt-0.5">Pilih tanggal dan jam rencana kedatangan Anda ke Pos Lost & Found Terminal Tirtonadi.</p>
+                                    </div>
+
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200/80">
+                                        <div>
+                                            <label class="block text-xs font-bold text-slate-700 mb-1">Rencana Tanggal Pengambilan</label>
+                                            <input id="pickup-date" type="date" min="{{ now()->format('Y-m-d') }}" value="{{ now()->format('Y-m-d') }}" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs md:text-sm bg-white focus:outline-none focus:border-emerald-600">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-bold text-slate-700 mb-1">Rencana Jam Pengambilan</label>
+                                            <input id="pickup-time" type="time" value="10:00" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs md:text-sm bg-white focus:outline-none focus:border-emerald-600">
+                                        </div>
+                                    </div>
+
+                                    @php
+                                        $initialMsg = "Halo Kak CS TirtoFind Terminal Tirtonadi 👋✨\n\nSaya mau konfirmasi rencana jadwal pengambilan barang yang sudah disetujui nih:\n• Kode Klaim: {$claim->claim_code}\n• Nama Pemohon: {$claim->claimant_name}\n• Barang: " . ($claim->foundItem?->title ?? 'Barang Temuan') . "\n• Rencana Pengambilan: " . now()->format('d M Y') . " (Jam 10:00 WIB) ⏰\n\nMohon bantuannya ya Kak. Terima kasih banyak! 😊🙏";
+                                        $waInitialUrl = "https://wa.me/{$csPhone}?text=" . urlencode($initialMsg);
+                                    @endphp
+
+                                    <div class="flex flex-col sm:flex-row gap-3 pt-1">
+                                        <a id="schedule-link" href="{{ $waInitialUrl }}" target="_blank" rel="noopener noreferrer" class="px-5 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs md:text-sm transition-all shadow-xs flex items-center justify-center gap-2 flex-1">
+                                            <span class="material-symbols-outlined text-base">chat</span>
+                                            <span>Konfirmasi Jadwal via WhatsApp CS</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            @elseif($claim->status === 'Ditolak')
+                                <div class="border-t border-slate-100 pt-4 flex flex-col sm:flex-row items-center justify-between gap-3 bg-red-50/50 p-4 rounded-xl border border-red-100">
+                                    <div class="text-xs text-red-900">
+                                        <p class="font-bold">Butuh klarifikasi mengenai penolakan klaim ini?</p>
+                                        <p class="text-[11px] text-red-700 mt-0.5">Hubungi Petugas Helpdesk untuk menyampaikan dokumen tambahan atau info ciri khusus lainnya.</p>
+                                    </div>
+                                    @php
+                                        $rejectMsg = "Halo Kak CS TirtoFind 👋\n\nSaya mau minta bantuan & penjelasan mengenai status klaim saya yang ditolak nih:\n• Kode Klaim: {$claim->claim_code}\n• Nama: {$claim->claimant_name}\n\nSaya ada info / bukti tambahan yang ingin disampaikan Kak. Mohon bantuannya ya. Terima kasih! 🙏";
+                                        $waRejectUrl = "https://wa.me/{$csPhone}?text=" . urlencode($rejectMsg);
+                                    @endphp
+                                    <a href="{{ $waRejectUrl }}" target="_blank" rel="noopener noreferrer" class="px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl text-xs transition-all flex items-center gap-1.5 flex-shrink-0">
+                                        <span class="material-symbols-outlined text-base">chat</span>
+                                        <span>Hubungi Helpdesk WA</span>
+                                    </a>
+                                </div>
+                            @else
+                                <div class="border-t border-slate-100 pt-4 flex flex-col sm:flex-row items-center justify-between gap-3 bg-blue-50/50 p-4 rounded-xl border border-blue-100">
+                                    <div class="text-xs text-blue-900">
+                                        <p class="font-bold">Permohonan klaim Anda sedang diproses</p>
+                                        <p class="text-[11px] text-blue-700 mt-0.5">Proses verifikasi membutuhkan waktu maksimal 1x24 jam kerja.</p>
+                                    </div>
+                                    @php
+                                        $pendingMsg = "Halo Kak CS TirtoFind 👋✨\n\nSaya mau menanyakan progres verifikasi klaim barang saya nih Kak:\n• Kode Klaim: {$claim->claim_code}\n• Nama: {$claim->claimant_name}\n\nKira-kira sudah sejauh mana ya Kak statusnya? Terima kasih banyak! 😊";
+                                        $waPendingUrl = "https://wa.me/{$csPhone}?text=" . urlencode($pendingMsg);
+                                    @endphp
+                                    <a href="{{ $waPendingUrl }}" target="_blank" rel="noopener noreferrer" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition-all flex items-center gap-1.5 flex-shrink-0">
+                                        <span class="material-symbols-outlined text-base">chat</span>
+                                        <span>Tanya CS WhatsApp</span>
+                                    </a>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                @endif
             @else
-                <!-- Empty State / Not Found -->
-                <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-8 text-center soft-shadow space-y-4 max-w-lg mx-auto">
-                    <div class="w-16 h-16 bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 rounded-full flex items-center justify-center mx-auto">
+                <!-- Not Found State -->
+                <div class="bg-white rounded-2xl border border-slate-200/80 p-8 text-center space-y-4 soft-shadow">
+                    <div class="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto border border-red-100">
                         <span class="material-symbols-outlined text-3xl">search_off</span>
                     </div>
-
-                    <div>
-                        <h3 class="text-lg font-extrabold text-slate-900 dark:text-white">Kode Tiket / Data Klaim Tidak Ditemukan</h3>
-                        <p class="text-xs md:text-sm text-slate-500 dark:text-slate-400 mt-1">
-                            Tidak ditemukan klaim aktif untuk kata kunci: <strong class="text-slate-800 dark:text-slate-200 font-mono">"{{ $searchKey }}"</strong>
+                    <div class="max-w-md mx-auto">
+                        <h2 class="text-base md:text-lg font-extrabold text-slate-900">Data Tiket / Laporan Tidak Ditemukan</h2>
+                        <p class="text-xs md:text-sm text-slate-500 mt-1">
+                            Kode tiket <span class="font-mono font-bold text-slate-700">"{{ request('claim_code', $searchKey) }}"</span> tidak terdaftar di sistem kami.
                         </p>
                     </div>
-
-                    <div class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-xl text-xs text-slate-600 dark:text-slate-300 text-left space-y-2 border border-slate-200/60 dark:border-slate-800">
-                        <div class="font-bold text-slate-800 dark:text-slate-200">Tips Pencarian:</div>
-                        <ul class="list-disc pl-4 space-y-1 text-[11px] text-slate-500 dark:text-slate-400">
-                            <li>Pastikan Kode Tiket lengkap (Contoh: <code class="font-mono text-blue-600 dark:text-blue-400">#CL-2026-0001</code> atau <code class="font-mono text-blue-600 dark:text-blue-400">CL-2026-0001</code>).</li>
-                            <li>Coba cari menggunakan <strong>Nomor WhatsApp</strong> yang Anda daftarkan saat klaim.</li>
-                            <li>Jika Anda mendaftarkan laporan kehilangan, Anda bisa mencoba kode laporan (<code class="font-mono text-blue-600 dark:text-blue-400">#LR-2026-XXXX</code>).</li>
-                        </ul>
-                    </div>
-
-                    <div class="flex flex-col sm:flex-row gap-3 justify-center pt-2">
-                        <a href="{{ route('found-items') }}" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-2">
-                            <span class="material-symbols-outlined text-base">search</span>
-                            <span>Cari Barang Temuan</span>
+                    <div class="pt-2 flex flex-col sm:flex-row gap-2.5 justify-center">
+                        <a href="{{ route('found-items') }}" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-colors">
+                            Cari Barang Temuan
                         </a>
-                        <a href="{{ route('contact') }}" class="px-5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all flex items-center justify-center gap-2">
-                            <span class="material-symbols-outlined text-base">support_agent</span>
-                            <span>Pos Informasi Helpdesk</span>
+                        <a href="{{ route('lost-report') }}" class="px-4 py-2.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold transition-colors">
+                            Buat Laporan Kehilangan
+                        </a>
+                        <a href="{{ route('contact') }}" class="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-colors">
+                            Hubungi Pos Informasi
                         </a>
                     </div>
                 </div>
             @endif
-        @else
-            <!-- Initial Search View Guide -->
-            <div class="bg-blue-50/60 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900/40 rounded-2xl p-6 text-center space-y-3">
-                <div class="w-12 h-12 bg-blue-600 text-white rounded-2xl flex items-center justify-center mx-auto shadow-xs">
-                    <span class="material-symbols-outlined text-2xl">manage_search</span>
-                </div>
-                <h3 class="text-sm font-bold text-slate-900 dark:text-white">Bagaimana cara melacak klaim Anda?</h3>
-                <p class="text-xs text-slate-600 dark:text-slate-400 max-w-md mx-auto">
-                    Ketik nomor tiket klaim yang Anda dapatkan setelah mengisi formulir klaim barang temuan. Tim Helpdesk Terminal Tirtonadi akan memperbarui status klaim Anda secara realtime.
-                </p>
-            </div>
         @endif
-    </main>
-</x-layouts.guest>
+    </div>
 
+    @if (isset($claim) && $claim?->status === 'Disetujui')
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const dateInput = document.getElementById('pickup-date');
+                const timeInput = document.getElementById('pickup-time');
+                const scheduleLink = document.getElementById('schedule-link');
+                
+                if (dateInput && timeInput && scheduleLink) {
+                    const csPhone = @json($csPhone ?? '6281234567890');
+                    const claimCode = @json($claim->claim_code);
+                    const claimantName = @json($claim->claimant_name);
+                    const itemTitle = @json($claim->foundItem?->title ?? 'Barang Temuan');
+
+                    const updateScheduleLink = () => {
+                        const date = dateInput.value || '-';
+                        const time = timeInput.value || '-';
+                        const message = `Halo CS TirtoFind Terminal Tirtonadi,\n\nSaya ingin mengonfirmasi jadwal pengambilan barang yang telah disetujui:\n- Kode Tiket Klaim: ${claimCode}\n- Nama Pemohon: ${claimantName}\n- Barang: ${itemTitle}\n- Tanggal Pengambilan: ${date}\n- Jam Rencana: ${time} WIB\n\nMohon konfirmasi ketersediaannya. Terima kasih.`;
+                        scheduleLink.href = `https://wa.me/${csPhone}?text=${encodeURIComponent(message)}`;
+                    };
+
+                    dateInput.addEventListener('change', updateScheduleLink);
+                    timeInput.addEventListener('change', updateScheduleLink);
+                }
+            });
+        </script>
+    @endif
+</x-layouts.guest>

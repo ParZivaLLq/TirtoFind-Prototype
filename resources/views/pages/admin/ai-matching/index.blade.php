@@ -121,6 +121,15 @@
                         <div class="flex gap-2"><span class="font-bold text-slate-900 dark:text-white w-28 shrink-0">Merek:</span><span>{{ $selectedLostReport->brand ?: '-' }}</span></div>
                         <div class="flex gap-2"><span class="font-bold text-slate-900 dark:text-white w-28 shrink-0">Lokasi Hilang:</span><span>{{ $selectedLostReport->location_lost }}</span></div>
                         <div class="flex gap-2"><span class="font-bold text-slate-900 dark:text-white w-28 shrink-0">Waktu:</span><span>{{ $selectedLostReport->date_lost?->format('d M Y H:i') ?? '-' }}</span></div>
+                        @if($selectedLostReport->reporter_instagram)
+                            <div class="flex gap-2">
+                                <span class="font-bold text-slate-900 dark:text-white w-28 shrink-0">Instagram:</span>
+                                <a href="https://ig.me/m/{{ ltrim($selectedLostReport->reporter_instagram, '@') }}" target="_blank" rel="noopener noreferrer" class="text-pink-600 dark:text-pink-400 font-semibold hover:underline inline-flex items-center gap-1">
+                                    <span>@ {{ ltrim($selectedLostReport->reporter_instagram, '@') }}</span>
+                                    <span class="material-symbols-outlined text-xs">open_in_new</span>
+                                </a>
+                            </div>
+                        @endif
                         @if($selectedLostReport->distinctive_features)
                             <div class="flex gap-2"><span class="font-bold text-slate-900 dark:text-white w-28 shrink-0">Ciri Khusus:</span><span>{{ $selectedLostReport->distinctive_features }}</span></div>
                         @endif
@@ -157,6 +166,36 @@
             </div>
 
             @if ($matchResult)
+            @php
+                $rawPhone = $selectedLostReport->reporter_phone ?? '';
+                $cleanPhone = preg_replace('/[^0-9]/', '', $rawPhone);
+                if (str_starts_with($cleanPhone, '0')) {
+                    $cleanPhone = '62' . substr($cleanPhone, 1);
+                }
+                
+                $waText = "Halo Kak *" . ($selectedLostReport->reporter_name ?? 'Pelapor') . "*! 👋✨\n\n"
+                    . "Kabar baik! Tim *Pos Lost & Found Terminal Tirtonadi Surakarta* telah menemukan barang yang terindikasi cocok dengan barang milik Kakak yang dilaporkan hilang. 📦🎉\n\n"
+                    . "📋 *Referensi Laporan Kakak:*\n"
+                    . "• Kode Laporan: " . ($selectedLostReport->report_code ?? '-') . "\n"
+                    . "• Barang Hilang: " . ($selectedLostReport->item_name ?? '-') . "\n\n"
+                    . "📦 *Detail Barang Temuan di Pos:*\n"
+                    . "• Kode Barang: " . ($selectedFoundItem->ref_code ?? '-') . "\n"
+                    . "• Nama Barang: " . ($selectedFoundItem->title ?? '-') . "\n"
+                    . "• Lokasi Temu: " . ($selectedFoundItem->location_found ?? '-') . " 📍\n"
+                    . "• Tanggal Temu: " . ($selectedFoundItem->date_found?->format('d M Y') ?? '-') . " 📅\n\n"
+                    . "Silakan mampir ke *Pos Informasi & Lost Found Terminal Tirtonadi* (Gedung Utama Lantai 1) untuk verifikasi dan pengambilan barang ya Kak! 🏢\n\n"
+                    . "Jangan lupa membawa Kartu Identitas (KTP/SIM) saat verifikasi. Jika ada pertanyaan, Kakak bisa langsung membalas pesan ini. 😊🙏\n\n"
+                    . "Salam hangat,\n"
+                    . "*Tim Petugas Lost & Found Terminal Tirtonadi* 🚌💙";
+                    
+                $encodedText = urlencode($waText);
+                $waAppUrl = "whatsapp://send?phone=" . $cleanPhone . "&text=" . $encodedText;
+                $waWebUrl = "https://web.whatsapp.com/send?phone=" . $cleanPhone . "&text=" . $encodedText;
+
+                $igHandle = ltrim(trim($selectedLostReport->reporter_instagram ?? ''), '@');
+                $igUrl = $igHandle ? "https://ig.me/m/" . urlencode($igHandle) : null;
+            @endphp
+
             <!-- AI Feature Breakdown Matrix -->
             <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 soft-shadow space-y-5">
                 <h3 class="text-sm font-bold text-slate-900 dark:text-white">Analisis Kriteria AI NLP Breakdown</h3>
@@ -185,17 +224,55 @@
                 <!-- Action Bar -->
                 <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row justify-between items-center gap-4">
                     <div class="text-xs text-slate-500 dark:text-slate-400">
-                        Rekomendasi AI: <strong class="{{ $score >= 75 ? 'text-emerald-700 dark:text-emerald-400' : 'text-amber-700 dark:text-amber-400' }} font-bold">{{ $score >= 75 ? 'Tinjau dan konfirmasi kecocokan' : 'Lakukan verifikasi manual terlebih dahulu' }}</strong>
+                        Rekomendasi AI: 
+                        <strong class="{{ $score >= 85 ? 'text-emerald-600 dark:text-emerald-400' : ($score >= 50 ? 'text-amber-600 dark:text-amber-400' : 'text-red-500') }} font-bold">
+                            @if($score >= 85)
+                                Auto-Match (Kecocokan Sangat Tinggi)
+                            @elseif($score >= 50)
+                                Manual Verification Needed (Verifikasi Manual Dulu)
+                            @elseif($score >= 1)
+                                Low Match / Review (Kecocokan Sangat Rendah)
+                            @else
+                                Reject (Diskualifikasi Mutlak - Tidak Cocok)
+                            @endif
+                        </strong>
                     </div>
-                    <button type="button" @click="waSent = true" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-md flex items-center gap-2 cursor-pointer transition-all">
-                        <span class="material-symbols-outlined text-base">send</span>
-                        <span>Konfirmasi Match & Kirim Notifikasi WA</span>
-                    </button>
+
+                    @if($score >= 50)
+                        <div class="flex flex-wrap items-center gap-2">
+                            <!-- Direct WhatsApp App Protocol -->
+                            <a href="{{ $waAppUrl }}" @click="waSent = true" class="px-5 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md flex items-center gap-2 cursor-pointer transition-all hover:scale-105 active:scale-95">
+                                <span class="material-symbols-outlined text-base">chat</span>
+                                <span>Buka Aplikasi WA ({{ $score }}%)</span>
+                            </a>
+
+                            <!-- Fallback WhatsApp Web Link -->
+                            <a href="{{ $waWebUrl }}" target="_blank" rel="noopener noreferrer" @click="waSent = true" class="px-3.5 py-3 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold text-xs rounded-xl transition-all flex items-center gap-1.5" title="Buka via WhatsApp Web">
+                                <span class="material-symbols-outlined text-xs">open_in_new</span>
+                                <span>WA Web</span>
+                            </a>
+
+                            @if($igUrl)
+                                <!-- Direct Instagram DM Link -->
+                                <button type="button" onclick="copyAndOpenIg('{{ $igUrl }}', {{ json_encode($waText) }})" @click="waSent = true" class="px-4 py-3 rounded-xl text-xs font-bold text-white shadow-md flex items-center gap-2 cursor-pointer transition-all hover:scale-105 active:scale-95" style="background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color: #ffffff !important;" title="Kirim Instagram Direct Message ke @{{ $igHandle }}">
+                                    <svg class="w-4 h-4 fill-current shrink-0 text-white" viewBox="0 0 24 24">
+                                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                                    </svg>
+                                    <span>DM IG ({{ '@' . $igHandle }})</span>
+                                </button>
+                            @endif
+                        </div>
+                    @else
+                        <div class="px-4 py-2 bg-red-50 dark:bg-red-950/60 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800 rounded-xl text-xs font-semibold flex items-center gap-1.5">
+                            <span class="material-symbols-outlined text-base text-red-500">block</span>
+                            <span>Aksi Cepat WA Dinonaktifkan (Skor < 50%)</span>
+                        </div>
+                    @endif
                 </div>
 
                 <div x-show="waSent" x-cloak class="p-4 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 rounded-xl text-xs font-semibold flex items-center gap-2">
                     <span class="material-symbols-outlined text-base">check_circle</span>
-                    <span>Notifikasi akan diproses untuk {{ $selectedLostReport->reporter_name }} ({{ $selectedLostReport->reporter_phone }}).</span>
+                    <span>Notifikasi match {{ $score }}% dikirim ke {{ $selectedLostReport->reporter_name }} ({{ $selectedLostReport->reporter_phone }}).</span>
                 </div>
             </div>
             @endif
@@ -208,4 +285,29 @@
             </div>
         @endif
     </div>
+
+    <script>
+        function copyAndOpenIg(url, text) {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(function() {
+                    alert('📋 Template pesan notifikasi berhasil DISALIN ke clipboard!\n\nSilakan PASTE (Ctrl+V) di kolom chat Instagram DM yang baru saja terbuka. 😊');
+                }).catch(function() {
+                    fallbackCopy(text);
+                });
+            } else {
+                fallbackCopy(text);
+            }
+            window.open(url, '_blank');
+        }
+
+        function fallbackCopy(text) {
+            var el = document.createElement('textarea');
+            el.value = text;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            alert('📋 Template pesan notifikasi berhasil DISALIN ke clipboard!\n\nSilakan PASTE (Ctrl+V) di kolom chat Instagram DM yang baru saja terbuka. 😊');
+        }
+    </script>
 </x-layouts.admin>

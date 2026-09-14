@@ -133,14 +133,16 @@ class ClaimController extends Controller
 
     public function tracking(Request $request)
     {
-        $claims = collect();
         $rawSearchKey = (string) $request->input('claim_code');
         $searchKey = trim($rawSearchKey);
+
+        $claims = collect();
+        $lostReports = collect();
 
         if ($searchKey !== '') {
             $upperSearch = strtoupper($searchKey);
 
-            // Format variations (e.g. "CL-2026-0001" => "#CL-2026-0001", "2026-0001" => "#CL-2026-0001")
+            // Format variations (e.g. "CL-2026-0001" => "#CL-2026-0001", "LR-2026-0004" => "#LR-2026-0004")
             $formattedClaimCode = str_starts_with($upperSearch, '#')
                 ? $upperSearch
                 : (str_starts_with($upperSearch, 'CL-') ? '#' . $upperSearch : '#CL-' . $upperSearch);
@@ -149,6 +151,7 @@ class ClaimController extends Controller
                 ? $upperSearch
                 : (str_starts_with($upperSearch, 'LR-') ? '#' . $upperSearch : '#LR-' . $upperSearch);
 
+            // 1. Search Claims
             $claims = Claim::with(['foundItem.category', 'lostReport'])
                 ->where(function ($q) use ($searchKey, $upperSearch, $formattedClaimCode, $formattedLostCode) {
                     $q->where('claim_code', $searchKey)
@@ -165,10 +168,62 @@ class ClaimController extends Controller
                 })
                 ->orderBy('created_at', 'desc')
                 ->get();
+
+            // 2. Search Lost Reports
+            $cleanIg = ltrim($searchKey, '@');
+            $lostReports = LostReport::with([
+                'category',
+                'claims.foundItem',
+                'aiMatchingLogs' => function ($q) {
+                    $q->orderBy('score', 'desc')->with('foundItem.category');
+                }
+            ])
+            ->where(function ($q) use ($searchKey, $upperSearch, $formattedLostCode, $cleanIg) {
+                $q->where('report_code', $searchKey)
+                  ->orWhere('report_code', $upperSearch)
+                  ->orWhere('report_code', $formattedLostCode)
+                  ->orWhere('report_code', 'LIKE', '%' . $searchKey . '%')
+                  ->orWhere('reporter_phone', 'LIKE', '%' . $searchKey . '%')
+                  ->orWhere('reporter_instagram', 'LIKE', '%' . $cleanIg . '%')
+                  ->orWhere('reporter_id_number', $searchKey);
+            })
+            ->orderBy('created_at', 'desc')
+            ->get();
         }
 
-        $claim = $claims->first();
+        $selectedType = $request->input('type'); // 'claim' or 'lost_report'
+        $selectedId = $request->input('selected_id');
 
-        return view('pages.public.claim-tracking', compact('claims', 'claim', 'searchKey'));
+        $claim = null;
+        $lostReport = null;
+
+        if ($selectedType === 'lost_report' && $selectedId) {
+            $lostReport = $lostReports->firstWhere('id', $selectedId);
+        } elseif ($selectedType === 'claim' && $selectedId) {
+            $claim = $claims->firstWhere('id', $selectedId);
+        }
+
+        // Default fallbacks if nothing explicitly selected
+        if (!$claim && !$lostReport) {
+            $upperSearchKey = strtoupper($searchKey);
+            if (str_starts_with($upperSearchKey, '#LR-') || str_starts_with($upperSearchKey, 'LR-') || ($lostReports->isNotEmpty() && $claims->isEmpty())) {
+                $lostReport = $lostReports->first();
+                $claim = $claims->first();
+            } else {
+                $claim = $claims->first();
+                $lostReport = $lostReports->first();
+            }
+        }
+
+        $csPhone = (string) config('services.whatsapp.cs_phone', '6281234567890');
+
+        return view('pages.public.claim-tracking', compact(
+            'claims',
+            'claim',
+            'lostReports',
+            'lostReport',
+            'searchKey',
+            'csPhone'
+        ));
     }
 }

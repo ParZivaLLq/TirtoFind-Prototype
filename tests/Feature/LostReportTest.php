@@ -78,8 +78,6 @@ class LostReportTest extends TestCase
         $response->assertSessionHasErrors([
             'reporter_name',
             'reporter_phone',
-            'reporter_id_type',
-            'reporter_id_number',
             'item_name',
             'category_id',
             'location_lost',

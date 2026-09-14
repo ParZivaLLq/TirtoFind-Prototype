@@ -14,6 +14,7 @@ class LostReport extends Model
         'category_id',
         'reporter_name',
         'reporter_phone',
+        'reporter_instagram',
         'reporter_id_type',
         'reporter_id_number',
         'item_name',

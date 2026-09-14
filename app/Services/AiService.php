@@ -58,37 +58,54 @@ class AiService
     }
 
     /**
-     * Auto generate catalog description using OpenRouter.
+     * Auto generate catalog description using OpenRouter Vision Cataloging Engine.
      */
     public function generateAutoDescription(string $title, string $category, string $color = '', string $style = 'Standar Katalog TirtoFind', ?string $imagePath = null, string $existingDescription = '', string $brand = ''): array
     {
-        $prompt = "Buatkan deskripsi katalogisasi resmi barang temuan untuk sistem TirtoFind Terminal Tirtonadi Surakarta.\n" .
-            "Nama Barang: {$title}\n" .
-            "Kategori: {$category}\n" .
-            "Warna: {$color}\n" .
-            "Merek: {$brand}\n" .
-            "Ciri/deskripsi yang sudah dicatat petugas: {$existingDescription}\n" .
-            "Gaya Format: {$style}\n\n" .
-            "Berikan respon JSON murni dengan format:\n" .
+        $systemPrompt = "Anda adalah \"Vision Cataloging Engine\" untuk sistem Lost and Found kelas enterprise TirtoFind Terminal Tirtonadi. Tugas Anda adalah menganalisis data masukan pengguna (yang dapat berupa teks parsial dan/atau gambar/foto barang) untuk menormalisasi atribut dan menghasilkan deskripsi katalog yang profesional.\n\n" .
+            "1. ATURAN ANALISIS & EKSTRAKSI MULTIMODAL\n" .
+            "- Analisis Gambar (jika tersedia): Perhatikan bentuk fisik, warna dominan, logo/merek, kondisi fisik (lecet/mulus), dan detail unik pada foto.\n" .
+            "- Validasi Silang Teks & Gambar: Jika input teks menyebutkan \"Samsung\" tetapi foto menunjukkan logo \"Apple\", prioritaskan bukti visual dari gambar atau gabungkan secara logis (misal: casing atau perangkat).\n" .
+            "- Koreksi & Standardisasi: Bersihkan typo, standarisasikan nama merek, dan tentukan Kategori yang paling akurat dari daftar kategori standar sistem.\n\n" .
+            "2. GAYA FORMAT DESKRIPSI (BERDASARKAN PILIHAN USER)\n" .
+            "Sesuaikan format paragraf hasil deskripsi (professional_description) dengan opsi gaya format yang dipilih:\n" .
+            "- Jika \"Standar Katalog TirtoFind\": Gunakan format formal, terstruktur, menyebutkan jenis barang, warna, merek, kondisi fisik, dan ciri khas secara padat dalam 1-2 paragraf.\n" .
+            "- Jika gaya lain: Sesuaikan dengan nada profesional, deskriptif, dan ready-to-publish.\n\n" .
+            "3. FORMAT OUTPUT JSON MURNI\n" .
+            "Keluarkan respons HANYA dalam format JSON valid berikut (tanpa teks pembuka atau penutup):\n" .
             "{\n" .
-            "  \"description\": \"Teks deskripsi lengkap dan rapi dalam Bahasa Indonesia\",\n" .
-            "  \"detected_category\": \"{$category}\",\n" .
-            "  \"detected_color\": \"{$color}\",\n" .
-            "  \"detected_brand\": \"Merek terdeteksi atau N/A\"\n" .
+            "  \"catalog_title\": \"[Judul katalog yang rapi dan deskriptif, contoh: Dompet Kulit Eiger Coklat Tua]\",\n" .
+            "  \"extracted_category\": \"[Kategori final yang paling sesuai, misal: Tas & Dompet, Elektronik & HP, dll]\",\n" .
+            "  \"extracted_color\": \"[Warna utama yang terdeteksi secara akurat, misal: Coklat Tua, Biru Metallic]\",\n" .
+            "  \"extracted_brand\": \"[Merek/Brand yang terdeteksi, atau '-' jika tidak ada]\",\n" .
+            "  \"professional_description\": \"[Teks deskripsi lengkap hasil sintesis teks dan gambar yang rapi, profesional, dan siap masuk database katalog]\"\n" .
             "}";
 
-        $aiResult = $this->askAiWithImage($prompt, "Anda adalah sistem Vision AI cataloging engine TirtoFind. Gunakan gambar sebagai referensi, tetapi jangan mengarang atribut yang tidak terlihat.", $imagePath);
+        $prompt = "Analisis dan buatkan deskripsi katalog barang temuan berdasarkan masukan berikut:\n" .
+            "- Input Nama Barang: {$title}\n" .
+            "- Input Kategori: {$category}\n" .
+            "- Input Warna: " . ($color ?: '-') . "\n" .
+            "- Input Merek: " . ($brand ?: '-') . "\n" .
+            "- Catatan Ciri Khusus / Deskripsi: " . ($existingDescription ?: '-') . "\n" .
+            "- Gaya Format: {$style}";
+
+        $aiResult = $this->askAiWithImage($prompt, $systemPrompt, $imagePath);
 
         if ($aiResult) {
             $json = json_decode($this->cleanJsonResponse($aiResult), true);
-            if (is_array($json) && !empty(trim((string) ($json['description'] ?? '')))) {
-                return [
-                    'available' => true,
-                    'description' => trim($json['description']),
-                    'detected_category' => $json['detected_category'] ?? $category,
-                    'detected_color' => $json['detected_color'] ?? $color,
-                    'detected_brand' => $json['detected_brand'] ?? ($brand ?: '-'),
-                ];
+            if (is_array($json)) {
+                $description = trim((string) ($json['professional_description'] ?? ($json['description'] ?? '')));
+                if (!empty($description)) {
+                    return [
+                        'available' => true,
+                        'catalog_title' => $json['catalog_title'] ?? $title,
+                        'description' => $description,
+                        'professional_description' => $description,
+                        'detected_category' => $json['extracted_category'] ?? ($json['detected_category'] ?? $category),
+                        'detected_color' => $json['extracted_color'] ?? ($json['detected_color'] ?? $color),
+                        'detected_brand' => $json['extracted_brand'] ?? ($json['detected_brand'] ?? ($brand ?: '-')),
+                    ];
+                }
             }
         }
 
@@ -106,9 +123,11 @@ class AiService
 
         return [
             'available' => false,
+            'catalog_title' => $title,
             'description' => $fallback,
+            'professional_description' => $fallback,
             'detected_category' => $category,
-            'detected_color' => $color,
+            'detected_color' => $color ?: '-',
             'detected_brand' => $brand ?: '-',
         ];
     }
@@ -160,23 +179,41 @@ class AiService
 
     /**
      * Calculate AI Smart Matching confidence percentage between lost report & found item.
+     * Uses strict Core Matching Kernel evaluation.
      */
     public function matchItems(string $lostDescription, string $foundDescription): ?array
     {
-        $prompt = "Bandingkan dua deskripsi barang berikut dan analisis kecocokannya:\n" .
-            "Laporan Kehilangan: \"{$lostDescription}\"\n" .
-            "Barang Temuan: \"{$foundDescription}\"\n\n" .
-            "Berikan respon JSON murni dengan format (isi angka nyata, bukan contoh):\n" .
+        $systemPrompt = "Anda adalah Core Matching Kernel untuk sistem Lost and Found tingkat enterprise TirtoFind Terminal Tirtonadi. Tugas Anda adalah melakukan evaluasi silang secara sangat ketat antara Laporan Kehilangan dan Laporan Temuan. Anda dilarang memberikan skor toleransi atau asal tebak jika logika dasar tidak terpenuhi.\n\n" .
+            "1. TAHAP 1: ZERO-TOLERANCE HARD FILTERS (KONDISI DISKUALIFIKASI MUTLAK)\n" .
+            "Evaluasi dua kondisi ini terlebih dahulu. Jika salah satu kondisi di bawah TRUE, match_score WAJIB 0, recommendation WAJIB 'Reject':\n" .
+            "a) Anomali Waktu: Apakah [Waktu Temu] terjadi SEBELUM [Waktu Hilang]? Jika Ya -> DISKUALIFIKASI (skor 0).\n" .
+            "b) Konflik Kategori Mutlak: Apakah Kategori Utama objek berada di domain yang mustahil sama? (misal: Elektronik/HP vs Dompet/Pakaian/Tas). Jika Ya -> DISKUALIFIKASI (skor 0).\n\n" .
+            "2. TAHAP 2: MATRIKS BOBOT PARAMETER & PENALTI (Hanya jika lolos Tahap 1)\n" .
+            "- Kategori & Sub-Kategori (Bobot Maks: 25%): 25% jika identik persis, 10% jika 1 kategori umum tp sub-kategori meragukan, 0% jika berbeda.\n" .
+            "- Atribut Visual Utama - Warna & Merek (Bobot Maks: 30%): Merek spesifik dan berbeda (misal Eiger vs Exsport, Samsung vs iPhone) -> PENALTI MUTLAK (skor merek = 0). Warna bertolak belakang mutlak (misal Biru vs Merah/Abu) -> PENALTI MUTLAK (skor warna = 0). Warna cocok parsial -> nilai proporsional (max 15%).\n" .
+            "- Atribut Spesifik / Ciri Unik (Bobot Maks: 20%): Cocok spesifik (IMEI, nama pemilik, wallpaper, goresan unik) = 20%. Tidak ada ciri unik = 0%.\n" .
+            "- Kedekatan Lokasi Spasial (Bobot Maks: 15%): Lokasi sama/gate berdekatan = 15%, 1 area besar beda zona = 5%, beda lokasi jauh = 0%.\n" .
+            "- Jarak Waktu / Temporal (Bobot Maks: 10%): Waktu temu <3 jam setelah hilang = 10%, <24 jam = 5%, >3 hari = 0%.\n\n" .
+            "3. TAHAP 3: REKOMENDASI\n" .
+            "- Skor 85-100: Auto-Match\n" .
+            "- Skor 50-84: Manual Verification Needed\n" .
+            "- Skor 1-49: Low Match / Review\n" .
+            "- Skor 0: Reject\n\n" .
+            "Berikan respon JSON murni:\n" .
             "{\n" .
             "  \"score\": <total_skor_0_sampai_100>,\n" .
-            "  \"reason\": \"Alasan singkat pencocokan dalam 1 kalimat Bahasa Indonesia\",\n" .
-            "  \"color_match\": <skor_0_sampai_100>,\n" .
-            "  \"brand_match\": <skor_0_sampai_100>,\n" .
-            "  \"location_match\": <skor_0_sampai_100>,\n" .
-            "  \"time_match\": <skor_0_sampai_100>\n" .
+            "  \"reason\": \"Alasan evaluasi dalam 1 kalimat Bahasa Indonesia\",\n" .
+            "  \"color_match\": <skor_warna_0_sampai_100>,\n" .
+            "  \"brand_match\": <skor_merek_0_sampai_100>,\n" .
+            "  \"location_match\": <skor_lokasi_0_sampai_100>,\n" .
+            "  \"time_match\": <skor_waktu_0_sampai_100>\n" .
             "}";
 
-        $aiResult = $this->askAi($prompt, "Anda adalah sistem Vision AI pencocok barang hilang TirtoFind. Berikan skor kecocokan yang akurat berdasarkan kesamaan nama barang, warna, merek, lokasi, dan waktu. Jangan gunakan nilai contoh seperti 94, 100, 95, 90, 92.");
+        $prompt = "Bandingkan dua data berikut:\n" .
+            "Laporan Kehilangan: \"{$lostDescription}\"\n" .
+            "Barang Temuan: \"{$foundDescription}\"";
+
+        $aiResult = $this->askAi($prompt, $systemPrompt);
 
         if ($aiResult) {
             $json = json_decode($this->cleanJsonResponse($aiResult), true);
@@ -184,7 +221,7 @@ class AiService
                 return [
                     'available' => true,
                     'score' => (int) $json['score'],
-                    'reason' => $json['reason'] ?? 'Cocok berdasarkan analisis deskripsi visual dan atribut lokasi.',
+                    'reason' => $json['reason'] ?? 'Evaluasi berbasis Core Matching Kernel.',
                     'color_match' => (int) ($json['color_match'] ?? 0),
                     'brand_match' => (int) ($json['brand_match'] ?? 0),
                     'location_match' => (int) ($json['location_match'] ?? 0),
@@ -198,71 +235,159 @@ class AiService
     }
 
     /**
-     * Fallback: keyword-based similarity scoring without AI.
+     * Fallback: Strict Core Matching Kernel Algorithmic Evaluation.
      */
     protected function algorithmicMatch(string $lostDesc, string $foundDesc): array
     {
-        $lostWords = array_filter(preg_split('/[\s,;]+/', mb_strtolower($lostDesc)));
-        $foundWords = array_filter(preg_split('/[\s,;]+/', mb_strtolower($foundDesc)));
+        // 1. HARD FILTERS (ZERO-TOLERANCE)
+        $lostCategory = $this->extractValue($lostDesc, 'Kategori');
+        $foundCategory = $this->extractValue($foundDesc, 'Kategori');
+        
+        $lostDateStr = $this->extractValue($lostDesc, 'Waktu') ?: $this->extractValue($lostDesc, 'Tanggal');
+        $foundDateStr = $this->extractValue($foundDesc, 'Ditemukan') ?: $this->extractValue($foundDesc, 'Waktu');
 
-        $stopwords = ['barang', 'nama', 'kategori', 'warna', 'merek', 'lokasi', 'hilang', 'temu', 'deskripsi', 'ciri', 'khusus', 'dan', 'atau', 'yang', 'di', 'ke', 'dari', 'tidak', 'ada'];
-        $lostWords = array_values(array_diff($lostWords, $stopwords));
-        $foundWords = array_values(array_diff($foundWords, $stopwords));
+        // Check Hard Filter 1: Category Conflict (e.g. Elektronik vs Tas & Dompet)
+        if ($lostCategory && $foundCategory && $lostCategory !== '-' && $foundCategory !== '-') {
+            if (mb_strtolower($lostCategory) !== mb_strtolower($foundCategory)) {
+                return [
+                    'available' => true,
+                    'score' => 0,
+                    'reason' => "DISKUALIFIKASI MUTLAK: Konflik Kategori Utama ('{$lostCategory}' vs '{$foundCategory}').",
+                    'color_match' => 0,
+                    'brand_match' => 0,
+                    'location_match' => 0,
+                    'time_match' => 0,
+                ];
+            }
+        }
 
-        $commonWords = count(array_intersect($lostWords, $foundWords));
-        $totalWords = max(count($lostWords), count($foundWords), 1);
-        $overlapRatio = min(100, (int) round(($commonWords / $totalWords) * 100));
+        // Check Hard Filter 2: Chronological Paradox (Found BEFORE Lost)
+        if ($lostDateStr && $foundDateStr) {
+            try {
+                $lostTime = \Carbon\Carbon::parse($lostDateStr);
+                $foundTime = \Carbon\Carbon::parse($foundDateStr);
+                
+                // If item found strictly before lost date (difference > 1 hour margin for clock inaccuracy)
+                if ($foundTime->lt($lostTime->subHour())) {
+                    return [
+                        'available' => true,
+                        'score' => 0,
+                        'reason' => "DISKUALIFIKASI MUTLAK: Anomali Waktu! Barang ditemukan ({$foundTime->format('d M Y')}) SEBELUM tanggal dilaporkan hilang ({$lostTime->format('d M Y')}).",
+                        'color_match' => 0,
+                        'brand_match' => 0,
+                        'location_match' => 0,
+                        'time_match' => 0,
+                    ];
+                }
+            } catch (\Exception $e) {
+                // Ignore parse errors in fallback
+            }
+        }
 
-        // Extract specific fields
-        $colorScore = $this->extractFieldScore($lostDesc, $foundDesc, 'Warna');
-        $brandScore = $this->extractFieldScore($lostDesc, $foundDesc, 'Merek');
-        $locationScore = $this->extractFieldScore($lostDesc, $foundDesc, 'Lokasi');
+        // 2. WEIGHT MATRIX CALCULATION (If Hard Filters passed)
+        // A. Category (Max 25%)
+        $catScore = ($lostCategory && $foundCategory && mb_strtolower($lostCategory) === mb_strtolower($foundCategory)) ? 25 : 10;
 
-        $score = (int) round(($overlapRatio * 0.4) + ($colorScore * 0.2) + ($brandScore * 0.2) + ($locationScore * 0.1) + 10);
-        $score = min(95, max(5, $score));
+        // B. Visual Attributes - Color & Brand (Max 30%)
+        $lostColor = mb_strtolower($this->extractValue($lostDesc, 'Warna'));
+        $foundColor = mb_strtolower($this->extractValue($foundDesc, 'Warna'));
+        $lostBrand = mb_strtolower($this->extractValue($lostDesc, 'Merek'));
+        $foundBrand = mb_strtolower($this->extractValue($foundDesc, 'Merek'));
 
-        $reasons = [];
-        if ($colorScore > 60) $reasons[] = 'warna cocok';
-        if ($brandScore > 60) $reasons[] = 'merek sesuai';
-        if ($locationScore > 60) $reasons[] = 'lokasi berdekatan';
-        $reasonText = count($reasons) > 0
-            ? 'Analisis algoritmik mendeteksi kesamaan: ' . implode(', ', $reasons) . '.'
-            : 'Kesamaan terbatas berdasarkan analisis kata kunci deskripsi.';
+        $colorScore = 0;
+        if (!empty($lostColor) && !empty($foundColor) && $lostColor !== '-' && $foundColor !== '-') {
+            if ($lostColor === $foundColor) {
+                $colorScore = 15;
+            } elseif (str_contains($foundColor, $lostColor) || str_contains($lostColor, $foundColor)) {
+                $colorScore = 10;
+            } else {
+                // Mutually exclusive color penalty
+                $colorScore = 0;
+            }
+        } else {
+            $colorScore = 5; // Neutral
+        }
+
+        $brandScore = 0;
+        if (!empty($lostBrand) && !empty($foundBrand) && $lostBrand !== '-' && $foundBrand !== '-') {
+            if ($lostBrand === $foundBrand) {
+                $brandScore = 15;
+            } else {
+                // Conflicting brands penalty
+                $brandScore = 0;
+            }
+        } else {
+            $brandScore = 5; // Neutral
+        }
+        $visualScore = $colorScore + $brandScore;
+
+        // C. Specific Unique Features (Max 20%)
+        $lostFeature = mb_strtolower($this->extractValue($lostDesc, 'Ciri Khusus') ?: $this->extractValue($lostDesc, 'Deskripsi'));
+        $foundFeature = mb_strtolower($this->extractValue($foundDesc, 'Deskripsi') ?: $this->extractValue($foundDesc, 'Ciri Khusus'));
+        $uniqueScore = 0;
+        if ($lostFeature && $foundFeature && $lostFeature !== '-' && $foundFeature !== '-') {
+            if (str_contains($foundFeature, $lostFeature) || str_contains($lostFeature, $foundFeature)) {
+                $uniqueScore = 20;
+            } else {
+                $lWords = array_filter(preg_split('/\s+/', $lostFeature));
+                $fWords = array_filter(preg_split('/\s+/', $foundFeature));
+                $common = count(array_intersect($lWords, $fWords));
+                $uniqueScore = $common > 0 ? min(15, $common * 5) : 0;
+            }
+        }
+
+        // D. Location Proximity (Max 15%)
+        $lostLoc = mb_strtolower($this->extractValue($lostDesc, 'Lokasi Hilang') ?: $this->extractValue($lostDesc, 'Lokasi'));
+        $foundLoc = mb_strtolower($this->extractValue($foundDesc, 'Lokasi Temu') ?: $this->extractValue($foundDesc, 'Lokasi'));
+        $locationScore = 0;
+        if ($lostLoc && $foundLoc && $lostLoc !== '-' && $foundLoc !== '-') {
+            if ($lostLoc === $foundLoc) {
+                $locationScore = 15;
+            } elseif (str_contains($foundLoc, $lostLoc) || str_contains($lostLoc, $foundLoc)) {
+                $locationScore = 10;
+            } else {
+                $locationScore = 5;
+            }
+        }
+
+        // E. Temporal Distance (Max 10%)
+        $timeScore = 5;
+        if (isset($lostTime) && isset($foundTime)) {
+            $diffHours = $lostTime->diffInHours($foundTime, false);
+            if ($diffHours >= 0 && $diffHours <= 3) {
+                $timeScore = 10;
+            } elseif ($diffHours > 3 && $diffHours <= 24) {
+                $timeScore = 5;
+            } else {
+                $timeScore = 0;
+            }
+        }
+
+        $totalScore = (int) round($catScore + $visualScore + $uniqueScore + $locationScore + $timeScore);
+        $totalScore = max(0, min(100, $totalScore));
+
+        $reason = "Kategori sama ({$catScore}%), visual ({$visualScore}%), lokasi ({$locationScore}%), waktu ({$timeScore}%).";
 
         return [
             'available' => true,
-            'score' => $score,
-            'reason' => $reasonText . ' (Aktifkan OpenRouter API key untuk analisis AI yang lebih akurat.)',
-            'color_match' => $colorScore,
-            'brand_match' => $brandScore,
-            'location_match' => $locationScore,
-            'time_match' => max(0, min(100, $overlapRatio + 10)),
+            'score' => $totalScore,
+            'reason' => "Core Kernel: {$reason}",
+            'color_match' => (int) round(($colorScore / 15) * 100),
+            'brand_match' => (int) round(($brandScore / 15) * 100),
+            'location_match' => (int) round(($locationScore / 15) * 100),
+            'time_match' => (int) round(($timeScore / 10) * 100),
         ];
     }
 
     /**
-     * Extract and compare a specific field value between two descriptions.
+     * Extract field value from structured string format "Key: Value".
      */
-    protected function extractFieldScore(string $lostDesc, string $foundDesc, string $field): int
+    protected function extractValue(string $text, string $key): string
     {
-        preg_match('/' . preg_quote($field, '/') . '[:\s]+([^,\n]+)/ui', $lostDesc, $lostMatch);
-        preg_match('/' . preg_quote($field, '/') . '[:\s]+([^,\n]+)/ui', $foundDesc, $foundMatch);
-
-        $lostVal = mb_strtolower(trim($lostMatch[1] ?? ''));
-        $foundVal = mb_strtolower(trim($foundMatch[1] ?? ''));
-
-        if (empty($lostVal) || empty($foundVal) || $lostVal === '-' || $foundVal === '-') {
-            return 50; // neutral when field not available
+        if (preg_match('/' . preg_quote($key, '/') . '[:\s]+([^,\n]+)/ui', $text, $matches)) {
+            return trim($matches[1]);
         }
-        if ($lostVal === $foundVal) return 100;
-        if (str_contains($foundVal, $lostVal) || str_contains($lostVal, $foundVal)) return 80;
-
-        // Word overlap between field values
-        $lWords = array_filter(preg_split('/\s+/', $lostVal));
-        $fWords = array_filter(preg_split('/\s+/', $foundVal));
-        $common = count(array_intersect($lWords, $fWords));
-        $total = max(count($lWords), count($fWords), 1);
-        return min(75, (int) round(($common / $total) * 100));
+        return '';
     }
 
     /**

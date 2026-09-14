@@ -53,7 +53,19 @@
                             @endphp
                             <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                                 <td class="px-6 py-4 font-mono font-bold text-slate-900 dark:text-white">{{ $report->report_code }}</td>
-                                <td class="px-6 py-4"><div class="font-bold text-slate-900 dark:text-white">{{ $report->reporter_name }}</div><div class="text-xs text-slate-400">{{ $report->reporter_phone }}</div></td>
+                                <td class="px-6 py-4">
+                                    <div class="font-bold text-slate-900 dark:text-white">{{ $report->reporter_name }}</div>
+                                    <div class="text-xs text-slate-400 flex flex-wrap items-center gap-1.5 mt-0.5">
+                                        <span>{{ $report->reporter_phone }}</span>
+                                        @if($report->reporter_instagram)
+                                            <span class="text-slate-300">•</span>
+                                            <a href="https://ig.me/m/{{ ltrim($report->reporter_instagram, '@') }}" target="_blank" rel="noopener noreferrer" class="text-pink-600 dark:text-pink-400 font-semibold hover:underline inline-flex items-center gap-0.5" title="Chat via Instagram DM">
+                                                <span>@ {{ ltrim($report->reporter_instagram, '@') }}</span>
+                                                <span class="material-symbols-outlined text-[10px]">open_in_new</span>
+                                            </a>
+                                        @endif
+                                    </div>
+                                </td>
                                 <td class="px-6 py-4 font-medium text-slate-800 dark:text-slate-200">{{ $report->item_name }}</td>
                                 <td class="px-6 py-4 text-slate-600 dark:text-slate-300">{{ $report->location_lost }}</td>
                                 <td class="px-6 py-4 text-slate-500 dark:text-slate-400">{{ $report->date_lost->format('d M Y') }}</td>

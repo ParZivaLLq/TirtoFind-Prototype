@@ -124,7 +124,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Lokasi Penemuan</label>
-                                <input type="text" name="location_found" placeholder="Platform 2 Terminal" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:border-blue-600" required/>
+                                <input type="text" name="location_found" list="tirtonadi-locations" placeholder="Pilih atau ketik lokasi di Terminal Tirtonadi..." class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:border-blue-600" required/>
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Tanggal Ditemukan</label>
@@ -174,7 +174,7 @@
                             <select name="category_id" x-model="selectedItem.category_id" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-xl text-sm" required>
                                 @foreach ($categories as $category)<option value="{{ $category->id }}">{{ $category->name }}</option>@endforeach
                             </select>
-                            <input type="text" name="location_found" x-model="selectedItem.location_found" placeholder="Lokasi Penemuan" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-xl text-sm" required/>
+                            <input type="text" name="location_found" x-model="selectedItem.location_found" list="tirtonadi-locations" placeholder="Lokasi Penemuan" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-xl text-sm" required/>
                             <input type="datetime-local" name="date_found" x-bind:value="selectedItem.date_found ? selectedItem.date_found.replace(' ', 'T').slice(0, 16) : ''" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-xl text-sm" required/>
                             <input type="text" name="color" x-model="selectedItem.color" placeholder="Warna" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-xl text-sm"/>
                             <input type="text" name="brand" x-model="selectedItem.brand" placeholder="Merek" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-xl text-sm"/>
@@ -215,4 +215,23 @@
             </div>
         </div>
     </div>
+
+    <!-- Datalist untuk Lokasi Akurat Terminal Tirtonadi -->
+    <datalist id="tirtonadi-locations">
+        <option value="Peron Pintu Timur - Jalur Bus AKAP (Antar Kota Antar Provinsi)"></option>
+        <option value="Peron Pintu Barat - Jalur Bus AKDP (Antar Kota Dalam Provinsi)"></option>
+        <option value="Halte Batik Solo Trans (BST) & Trans Jateng"></option>
+        <option value="Area Sub-Terminal & Angkutan Pedesaan"></option>
+        <option value="Gedung Utama Lt. 1 - Ruang Tunggu Utama (AC)"></option>
+        <option value="Gedung Utama Lt. 1 - Hall Kedatangan / Keberangkatan"></option>
+        <option value="Gedung Utama Lt. 1 - Area Loket Tiket Bus"></option>
+        <option value="Gedung Utama Lt. 1 - Pos Informasi & Lost Found"></option>
+        <option value="Gedung Utama Lt. 2 - Convention Hall Tirtonadi"></option>
+        <option value="Gedung Utama Lt. 2 - Food Court & Area Pujasera"></option>
+        <option value="Gedung Utama Lt. 2 - Sport Center & Area Serbaguna"></option>
+        <option value="Skybridge Penghubung (Terminal Tirtonadi - Stasiun Solo Balapan)"></option>
+        <option value="Area Parkir Kendaraan & Drop Zone Pintu Barat"></option>
+        <option value="Area Parkir Kendaraan & Drop Zone Pintu Timur"></option>
+        <option value="Area Toilet Umum & Musholla Terminal"></option>
+    </datalist>
 </x-layouts.admin>

@@ -39,4 +39,30 @@ class Claim extends Model
     {
         return $this->claimant_email;
     }
+
+    /**
+     * Get descriptive status message for tracking.
+     */
+    public function statusMessage(): string
+    {
+        return match ($this->status) {
+            'Disetujui' => 'Permohonan klaim Anda telah DISETUJUI! Silakan bawa kartu identitas (KTP/SIM) asli ke Pos Pelayanan Lost & Found Terminal Tirtonadi untuk verifikasi fisik & serah terima barang.',
+            'Ditolak' => 'Mohon maaf, permohonan klaim Anda DITOLAK karena bukti kepemilikan atau ciri khusus yang dilampirkan belum cocok. Silakan hubungi CS Pos Informasi untuk verifikasi ulang.',
+            default => 'Permohonan klaim Anda sedang dalam proses verifikasi oleh tim Customer Service & Petugas Terminal Tirtonadi. Mohon siapkan bukti pendukung tambahan jika diperlukan.',
+        };
+    }
+
+    /**
+     * Get tracking steps timeline.
+     */
+    public function statusSteps(): array
+    {
+        return [
+            'Permohonan Terkirim',
+            'Verifikasi Berkas',
+            'Keputusan Klaim',
+            'Penyerahan Barang'
+        ];
+    }
 }
+

@@ -2,16 +2,26 @@
     <div x-data="{
         step: 1,
         submitted: false,
+        customLocation: false,
         errorMessage: '',
+        categoriesMap: {
+            @foreach($categories as $category)
+                '{{ $category->id }}': '{{ addslashes($category->name) }}',
+            @endforeach
+        },
         form: {
             name: '',
             phone: '',
+            instagram: '',
             item_name: '',
             category: '{{ $categories->first()->id ?? '' }}',
             color: '',
             description: '',
-            location: 'Platform 4 Bus Intercity',
+            location: 'Peron Pintu Timur - Jalur Bus AKAP (Antar Kota Antar Provinsi)',
             time: ''
+        },
+        getCategoryName(id) {
+            return this.categoriesMap[id] || id;
         },
         goToStep(targetStep) {
             this.errorMessage = '';
@@ -61,10 +71,23 @@
                 this.step = 4;
             }
         },
-        submitForm() {
-            if (this.validateStep1() && this.validateStep2() && this.validateStep3()) {
-                this.submitted = true;
+        submitForm(e) {
+            if (!this.validateStep1()) {
+                e.preventDefault();
+                this.step = 1;
+                return false;
             }
+            if (!this.validateStep2()) {
+                e.preventDefault();
+                this.step = 2;
+                return false;
+            }
+            if (!this.validateStep3()) {
+                e.preventDefault();
+                this.step = 3;
+                return false;
+            }
+            this.submitted = true;
         }
     }" class="w-full max-w-3xl mx-auto px-4 md:px-6 py-6 md:py-10">
 
@@ -76,6 +99,45 @@
                 Lengkapi formulir berikut. Vision AI akan mencocokkan data Anda dengan inventaris barang temuan secara otomatis.
             </p>
         </div>
+
+        @if(session('success'))
+            <div class="mb-6 p-5 bg-emerald-50 text-emerald-900 border border-emerald-200 rounded-2xl shadow-sm space-y-3">
+                <div class="flex items-start gap-3">
+                    <span class="material-symbols-outlined text-emerald-600 text-3xl shrink-0 mt-0.5">check_circle</span>
+                    <div>
+                        <h3 class="font-extrabold text-base text-emerald-950">Terima Kasih! Laporan Kehilangan Berhasil Dikirim</h3>
+                        <p class="text-xs md:text-sm text-emerald-800 mt-1 leading-relaxed font-medium">{{ session('success') }}</p>
+                    </div>
+                </div>
+                <div class="p-3.5 bg-white/80 rounded-xl border border-emerald-200/60 text-xs text-slate-700 leading-relaxed space-y-1">
+                    <p class="font-bold text-slate-900">💡 Informasi & Langkah Selanjutnya:</p>
+                    <p>1. Petugas Pos Information & Lost Found Terminal Tirtonadi akan segera memverifikasi laporan Anda.</p>
+                    <p>2. Mesin <strong>Vision AI Smart Matching</strong> otomatis mencocokkan data Anda dengan inventaris barang temuan.</p>
+                    <p>3. Jika barang cocok terdeteksi, petugas kami akan langsung menghubungi nomor WhatsApp yang Anda daftarkan.</p>
+                </div>
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="mb-6 p-4 bg-red-50 text-red-800 border border-red-200 rounded-2xl flex items-center gap-3">
+                <span class="material-symbols-outlined text-red-600 text-2xl">error</span>
+                <span class="text-xs font-semibold">{{ session('error') }}</span>
+            </div>
+        @endif
+
+        @if ($errors->any())
+            <div class="mb-6 p-4 bg-red-50 text-red-800 border border-red-200 rounded-2xl space-y-1">
+                <div class="text-xs font-bold flex items-center gap-2 text-red-900">
+                    <span class="material-symbols-outlined text-sm">warning</span>
+                    <span>Mohon periksa kembali isian formulir:</span>
+                </div>
+                <ul class="list-disc list-inside text-xs space-y-0.5 text-red-700">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
         <!-- Progress Header & Step Pills -->
         <div class="mb-6 bg-slate-50 border border-slate-200/80 rounded-2xl p-4 soft-shadow">
@@ -123,7 +185,7 @@
 
         <!-- Form Card Container -->
         <div class="w-full bg-white rounded-2xl border border-slate-200/80 soft-shadow p-5 md:p-7">
-            <form action="{{ route('lost-report.store') }}" method="POST" enctype="multipart/form-data" @submit="if (!validateStep1() || !validateStep2() || !validateStep3()) { $event.preventDefault(); }">
+            <form action="{{ route('lost-report.store') }}" method="POST" enctype="multipart/form-data" @submit="submitForm($event)">
                 @csrf
                 <!-- Step 1: Data Pelapor -->
                 <div x-show="step === 1" class="space-y-5">
@@ -135,17 +197,23 @@
                     <div class="space-y-3.5">
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1">Nama Lengkap Pelapor <span class="text-red-500">*</span></label>
-                            <input type="text" name="reporter_name" x-model="form.name" placeholder="Masukkan nama lengkap Anda" class="w-full px-3.5 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-500/20 transition-all" required/>
+                            <input type="text" name="reporter_name" x-model="form.name" placeholder="Masukkan nama lengkap Anda" class="w-full px-3.5 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-500/20 transition-all"/>
                         </div>
 
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1">Nomor WhatsApp / Telepon Aktif <span class="text-red-500">*</span></label>
-                            <input type="tel" name="reporter_phone" x-model="form.phone" placeholder="Contoh: 08123456789" class="w-full px-3.5 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-500/20 transition-all" required/>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">Nomor Identitas (KTP/SIM/Paspor) <span class="text-red-500">*</span></label>
-                            <input type="text" name="reporter_id_number" placeholder="Nomor KTP/SIM/Paspor" class="w-full px-3.5 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-500/20 transition-all" required/>
+                            <input type="tel" name="reporter_phone" x-model="form.phone" placeholder="Contoh: 08123456789" class="w-full px-3.5 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-500/20 transition-all"/>
                             <input type="hidden" name="reporter_id_type" value="KTP"/>
+                            <input type="hidden" name="reporter_id_number" value="-"/>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Username Instagram (Opsional)</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 font-semibold text-sm pointer-events-none">@</span>
+                                <input type="text" name="reporter_instagram" x-model="form.instagram" placeholder="username_anda" class="w-full pl-8 pr-3.5 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-500/20 transition-all"/>
+                            </div>
+                            <p class="text-[11px] text-slate-400 mt-1">Digunakan sebagai jalur kontak alternatif via Instagram Direct Message (DM).</p>
                         </div>
                     </div>
 
@@ -167,13 +235,13 @@
                     <div class="space-y-3.5">
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1">Nama / Judul Barang <span class="text-red-500">*</span></label>
-                            <input type="text" name="item_name" x-model="form.item_name" placeholder="Contoh: Dompet Kulit Pria Hitam Imperial Horse" class="w-full px-3.5 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-600 transition-all" required/>
+                            <input type="text" name="item_name" x-model="form.item_name" placeholder="Contoh: Dompet Kulit Pria Hitam Imperial Horse" class="w-full px-3.5 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-600 transition-all"/>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                             <div>
                                 <label class="block text-xs font-bold text-slate-700 mb-1">Kategori Barang</label>
-                                <select name="category_id" x-model="form.category" class="w-full px-3.5 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-600 bg-white" required>
+                                <select name="category_id" x-model="form.category" class="w-full px-3.5 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-600 bg-white">
                                     @foreach ($categories as $category)
                                         <option value="{{ $category->id }}">{{ $category->name }}</option>
                                     @endforeach
@@ -210,12 +278,72 @@
                     <div class="space-y-3.5">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                             <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1">Perkiraan Lokasi Hilang <span class="text-red-500">*</span></label>
-                                <input type="text" name="location_lost" x-model="form.location" placeholder="Contoh: Ruang Tunggu Zone B" maxlength="255" class="w-full px-3.5 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-600 bg-white" required/>
+                                <label class="block text-xs font-bold text-slate-700 mb-1.5">Perkiraan Lokasi Hilang di Terminal Tirtonadi <span class="text-red-500">*</span></label>
+
+                                <!-- Quick Location Choice Pills -->
+                                <div class="flex flex-wrap gap-1.5 mb-2.5">
+                                    <button type="button" @click="customLocation = false; form.location = 'Peron Pintu Timur - Jalur Bus AKAP (Antar Kota Antar Provinsi)'" :class="!customLocation && form.location === 'Peron Pintu Timur - Jalur Bus AKAP (Antar Kota Antar Provinsi)' ? 'bg-blue-600 text-white border-blue-600 shadow-2xs font-bold' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 font-semibold'" class="px-2.5 py-1 rounded-lg text-xs border transition-all cursor-pointer">
+                                        🚌 Peron AKAP (Pintu Timur)
+                                    </button>
+                                    <button type="button" @click="customLocation = false; form.location = 'Peron Pintu Barat - Jalur Bus AKDP (Antar Kota Dalam Provinsi)'" :class="!customLocation && form.location === 'Peron Pintu Barat - Jalur Bus AKDP (Antar Kota Dalam Provinsi)' ? 'bg-blue-600 text-white border-blue-600 shadow-2xs font-bold' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 font-semibold'" class="px-2.5 py-1 rounded-lg text-xs border transition-all cursor-pointer">
+                                        🚌 Peron AKDP (Pintu Barat)
+                                    </button>
+                                    <button type="button" @click="customLocation = false; form.location = 'Gedung Utama Lt. 1 - Ruang Tunggu Utama (AC)'" :class="!customLocation && form.location === 'Gedung Utama Lt. 1 - Ruang Tunggu Utama (AC)' ? 'bg-blue-600 text-white border-blue-600 shadow-2xs font-bold' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 font-semibold'" class="px-2.5 py-1 rounded-lg text-xs border transition-all cursor-pointer">
+                                        ❄️ Ruang Tunggu Utama (AC)
+                                    </button>
+                                    <button type="button" @click="customLocation = false; form.location = 'Skybridge Penghubung (Terminal Tirtonadi - Stasiun Solo Balapan)'" :class="!customLocation && form.location === 'Skybridge Penghubung (Terminal Tirtonadi - Stasiun Solo Balapan)' ? 'bg-blue-600 text-white border-blue-600 shadow-2xs font-bold' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 font-semibold'" class="px-2.5 py-1 rounded-lg text-xs border transition-all cursor-pointer">
+                                        🌉 Skybridge Solo Balapan
+                                    </button>
+                                    <button type="button" @click="customLocation = false; form.location = 'Gedung Utama Lt. 2 - Food Court & Area Pujasera'" :class="!customLocation && form.location === 'Gedung Utama Lt. 2 - Food Court & Area Pujasera' ? 'bg-blue-600 text-white border-blue-600 shadow-2xs font-bold' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 font-semibold'" class="px-2.5 py-1 rounded-lg text-xs border transition-all cursor-pointer">
+                                        🍜 Food Court Lt. 2
+                                    </button>
+                                    <button type="button" @click="customLocation = true; form.location = ''" :class="customLocation ? 'bg-indigo-600 text-white border-indigo-600 shadow-2xs font-bold' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 font-semibold'" class="px-2.5 py-1 rounded-lg text-xs border transition-all cursor-pointer">
+                                        ✏️ Tulis Detail Kustom...
+                                    </button>
+                                </div>
+
+                                <!-- Select Dropdown or Manual Input -->
+                                <template x-if="!customLocation">
+                                    <select name="location_lost" x-model="form.location" class="w-full px-3.5 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-600 bg-white">
+                                        <option value="">-- Pilih Lokasi Kehilangan di Terminal Tirtonadi --</option>
+                                        <optgroup label="🚌 Peron / Jalur Keberangkatan & Kedatangan Bus">
+                                            <option value="Peron Pintu Timur - Jalur Bus AKAP (Antar Kota Antar Provinsi)">Peron Pintu Timur - Jalur Bus AKAP (Antar Kota Antar Provinsi)</option>
+                                            <option value="Peron Pintu Barat - Jalur Bus AKDP (Antar Kota Dalam Provinsi)">Peron Pintu Barat - Jalur Bus AKDP (Antar Kota Dalam Provinsi)</option>
+                                            <option value="Halte Batik Solo Trans (BST) & Trans Jateng">Halte Batik Solo Trans (BST) & Trans Jateng</option>
+                                            <option value="Area Sub-Terminal & Angkutan Pedesaan">Area Sub-Terminal & Angkutan Pedesaan</option>
+                                        </optgroup>
+                                        <optgroup label="🏢 Gedung Utama Terminal (Lantai 1)">
+                                            <option value="Gedung Utama Lt. 1 - Ruang Tunggu Utama (AC)">Gedung Utama Lt. 1 - Ruang Tunggu Utama (AC)</option>
+                                            <option value="Gedung Utama Lt. 1 - Hall Kedatangan / Keberangkatan">Gedung Utama Lt. 1 - Hall Kedatangan / Keberangkatan</option>
+                                            <option value="Gedung Utama Lt. 1 - Area Loket Tiket Bus">Gedung Utama Lt. 1 - Area Loket Tiket Bus</option>
+                                            <option value="Gedung Utama Lt. 1 - Pos Informasi & Lost Found">Gedung Utama Lt. 1 - Pos Informasi & Lost Found</option>
+                                        </optgroup>
+                                        <optgroup label="🏛️ Gedung Utama & Fasilitas (Lantai 2 Hub Tirtonadi)">
+                                            <option value="Gedung Utama Lt. 2 - Convention Hall Tirtonadi">Gedung Utama Lt. 2 - Convention Hall Tirtonadi</option>
+                                            <option value="Gedung Utama Lt. 2 - Food Court & Area Pujasera">Gedung Utama Lt. 2 - Food Court & Area Pujasera</option>
+                                            <option value="Gedung Utama Lt. 2 - Sport Center & Area Serbaguna">Gedung Utama Lt. 2 - Sport Center & Area Serbaguna</option>
+                                        </optgroup>
+                                        <optgroup label="🌉 Integrasi Transportasi & Area Luar">
+                                            <option value="Skybridge Penghubung (Terminal Tirtonadi - Stasiun Solo Balapan)">Skybridge Penghubung (Terminal Tirtonadi - Stasiun Solo Balapan)</option>
+                                            <option value="Area Parkir Kendaraan & Drop Zone Pintu Barat">Area Parkir Kendaraan & Drop Zone Pintu Barat</option>
+                                            <option value="Area Parkir Kendaraan & Drop Zone Pintu Timur">Area Parkir Kendaraan & Drop Zone Pintu Timur</option>
+                                            <option value="Area Toilet Umum & Musholla Terminal">Area Toilet Umum & Musholla Terminal</option>
+                                        </optgroup>
+                                    </select>
+                                </template>
+
+                                <template x-if="customLocation">
+                                    <div class="space-y-1">
+                                        <input type="text" name="location_lost" x-model="form.location" placeholder="Ketik lokasi kustom (Contoh: Bangku Tunggu Depan Toko Roti Peron 3)" class="w-full px-3.5 py-2 border border-indigo-300 rounded-xl text-sm focus:outline-none focus:border-indigo-600 bg-white shadow-2xs"/>
+                                        <button type="button" @click="customLocation = false; form.location = 'Peron Pintu Timur - Jalur Bus AKAP (Antar Kota Antar Provinsi)'" class="text-[11px] text-blue-600 font-semibold hover:underline">
+                                            ← Kembali ke pilihan daftar lokasi resmi
+                                        </button>
+                                    </div>
+                                </template>
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-slate-700 mb-1">Perkiraan Tanggal & Waktu Hilang <span class="text-red-500">*</span></label>
-                                <input type="datetime-local" name="date_lost" x-model="form.time" class="w-full px-3.5 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-600 bg-white transition-all" required/>
+                                <input type="datetime-local" name="date_lost" x-model="form.time" class="w-full px-3.5 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-600 bg-white transition-all"/>
                             </div>
                         </div>
 
@@ -226,7 +354,7 @@
                                 <input type="file" name="image" accept="image/jpeg,image/png,image/webp" class="block w-full text-xs text-slate-500 mb-2"/>
                                 <span class="material-symbols-outlined text-3xl text-blue-600 mb-1">cloud_upload</span>
                                 <p class="text-xs font-bold text-slate-700">Pilih Foto atau Tarik File ke Sini</p>
-                                <p class="text-[11px] text-slate-400 mt-0.5">PNG, JPG, WEBP (Maks. 5MB)</p>
+                                <p class="text-[11px] text-slate-400 mt-0.5">PNG, JPG, WEBP (Maks. 2MB)</p>
                             </div>
                         </div>
                     </div>
@@ -257,13 +385,19 @@
                             <span class="text-slate-500">No. WhatsApp:</span>
                             <span class="font-bold text-slate-900" x-text="form.phone"></span>
                         </div>
+                        <template x-if="form.instagram">
+                            <div class="flex justify-between border-b border-slate-200 pb-1.5">
+                                <span class="text-slate-500">Instagram:</span>
+                                <span class="font-bold text-pink-600" x-text="'@' + form.instagram.replace(/^@/, '')"></span>
+                            </div>
+                        </template>
                         <div class="flex justify-between border-b border-slate-200 pb-1.5">
                             <span class="text-slate-500">Barang Hilang:</span>
                             <span class="font-bold text-blue-700" x-text="form.item_name"></span>
                         </div>
                         <div class="flex justify-between border-b border-slate-200 pb-1.5">
                             <span class="text-slate-500">Kategori & Warna:</span>
-                            <span class="font-bold text-slate-900" x-text="form.category + (form.color ? ' (' + form.color + ')' : '')"></span>
+                            <span class="font-bold text-slate-900" x-text="getCategoryName(form.category) + (form.color ? ' (' + form.color + ')' : '')"></span>
                         </div>
                         <div class="flex justify-between border-b border-slate-200 pb-1.5">
                             <span class="text-slate-500">Lokasi & Waktu:</span>
@@ -274,14 +408,6 @@
                             <span class="font-bold text-emerald-600 flex items-center gap-1">
                                 <span class="material-symbols-outlined text-sm">auto_awesome</span> Vision AI Matching Aktif
                             </span>
-                        </div>
-                    </div>
-
-                    <!-- Success Alert Message -->
-                    <div x-show="submitted" x-transition class="p-3 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-xl text-xs leading-relaxed flex items-center gap-2.5">
-                        <span class="material-symbols-outlined text-emerald-600 text-xl">check_circle</span>
-                        <div>
-                            <strong>Laporan Kehilangan Berhasil Dikirim!</strong> Nomor Tiket: <span class="font-mono font-bold">#REP-2024-9902</span>. Petugas & Vision AI akan segera memproses laporan Anda.
                         </div>
                     </div>
 

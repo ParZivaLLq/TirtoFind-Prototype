@@ -72,14 +72,18 @@ class AiAutoDescController extends Controller
             (string) ($data['brand'] ?? '')
         );
 
+        $finalTitle = !empty($result['catalog_title']) ? $result['catalog_title'] : $title;
+        $finalColor = !empty($color) ? $color : ($result['detected_color'] !== '-' ? $result['detected_color'] : null);
+        $finalBrand = !empty($data['brand']) ? $data['brand'] : ($result['detected_brand'] !== '-' ? $result['detected_brand'] : null);
+
         if ($existingItem) {
             $foundItem = $existingItem;
             $foundItem->update([
-                'title' => $title,
+                'title' => $finalTitle,
                 'category_id' => $categoryId,
                 'description' => $result['description'],
-                'color' => $color ?: $foundItem->color,
-                'brand' => $data['brand'] ?: ($result['detected_brand'] !== '-' ? $result['detected_brand'] : $foundItem->brand),
+                'color' => $finalColor ?: $foundItem->color,
+                'brand' => $finalBrand ?: $foundItem->brand,
                 'location_found' => $data['location_found'],
                 'date_found' => $data['date_found'],
                 'storage_location' => $data['storage_location'] ?? $foundItem->storage_location,
@@ -90,11 +94,11 @@ class AiAutoDescController extends Controller
             $nextNumber = $latestItem ? $latestItem->id + 1 : 1;
             $foundItem = FoundItem::create([
                 'ref_code' => '#TF-' . date('Y') . '-' . str_pad($nextNumber, 4, '0', STR_PAD_LEFT),
-                'title' => $title,
+                'title' => $finalTitle,
                 'category_id' => $categoryId,
                 'description' => $result['description'],
-                'color' => $color,
-                'brand' => $data['brand'] ?? $result['detected_brand'],
+                'color' => $finalColor,
+                'brand' => $finalBrand,
                 'location_found' => $data['location_found'],
                 'date_found' => $data['date_found'],
                 'storage_location' => $data['storage_location'] ?? null,
